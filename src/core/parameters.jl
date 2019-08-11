@@ -1,7 +1,17 @@
-# 
+#
+using TBComponents
+
 include( "definitions.jl" )
 
 mutable struct IncomeTax
+
+   earnings_rates :: RateBands
+   earnings_bands :: RateBands
+   savings_rates  :: RateBands
+   savings_bands  :: RateBands
+   dividend_rates :: RateBands
+   dividend_bands :: RateBands
+   pa    :: Real
 
 end
 
