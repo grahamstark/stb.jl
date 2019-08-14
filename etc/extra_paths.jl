@@ -6,7 +6,6 @@ push!(LOAD_PATH,joinpath(VW_DIR,"DDIMeta.jl","src"))
 
 STB_DIR=pwd() # joinpath(VW_DIR,"stb.jl")
 for dr in ["core","web","data_mapping","persist", "general"]
-    # print(dr)
     push!(LOAD_PATH, joinpath(STB_DIR,"src",dr))
 end
 for dr in ["test","scratch","scripts"]
