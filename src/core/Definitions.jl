@@ -3,6 +3,7 @@ module Definitions
 #
 # see: https://discourse.julialang.org/t/export-enum/5396
 
+      export renting, owner_occupier
 #
    @exported_enum Sex male female
 
