@@ -1,7 +1,6 @@
 module Definitions
 #
 #
-# see: https://discourse.julialang.org/t/export-enum/5396
 
       export renting, owner_occupier
 #
@@ -23,9 +22,7 @@ module Definitions
      end
 
      function owner_occupier( tt :: Tenure_Type ) :: Bool
-           tt >= mortgaged
+           tt in [mortgaged,owned_outright]
      end
-
-
 
 end
