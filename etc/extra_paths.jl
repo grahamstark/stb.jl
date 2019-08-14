@@ -1,11 +1,15 @@
-
 ## fixme ** should work
 # or add_dirs in project
 VW_DIR="/home/graham_s/VirtualWorlds/projects/"
+push!(LOAD_PATH,joinpath(VW_DIR,"TBComponents.jl","src"))
+
 STB_DIR=joinpath(VW_DIR,"stb.jl")
 for dr in ["core","web","data_mapping","persist", "general"]
     # print(dr)
     push!(LOAD_PATH, joinpath(STB_DIR,"src",dr))
 end
-push!(LOAD_PATH,joinpath(STB_DIR,"test"))
-# if exists in startup dir "add_path.jl"
+for dr in ["test","scratch","scripts"]
+    push!(LOAD_PATH,joinpath(STB_DIR,dr))
+end
+
+using Revise
