@@ -18,4 +18,5 @@ drop view dictionaries.efs_normalisations ;
 
 alter table dictionaries.variables drop column normalised_variable;
 
-update dictionaries.variables set name=lower(name) where dataset='frs' and year >= 2016;
+-- forgot to downcase new FRS variables
+update dictionaries.variables set name=lower(name) where dataset in ('frs', 'lcf', 'shs' ) and year >= 2016;
