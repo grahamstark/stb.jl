@@ -4,13 +4,47 @@ using Definitions
 using Dates
 
 mutable struct Person
-
-   age :: Integer
-   sex :: Sex
-
+    age                                            :: Integer
+    sex                                            :: Sex
+	hid                                            :: Int128
+	pid                                            :: Int128    
+	age                                            :: Integer        
+	sex                                            :: Gender_Type      
+	
+	ethnic_group                                   :: Ethnic_Group_Type 
+	marital_status                                 :: Marital_Status_Type 
+	highest_qualification                          :: Msc_Data_Enums.Qualification_Type 
+	industrial_classification                      :: Standard_Industrial_Classification_2007 
+	occupational_classification                    :: Standard_Occupational_Classification 
+	# FIXME needs work on the mapping - leeve out for now
+	socio_economic_grouping                        :: Socio_Economic_Grouping_Type 
+	age_completed_full_time_education              :: Age_Range        
+	years_in_full_time_work                        :: Integer          
+	employment_status                              :: Employment_Status_ILO_Definition 
+	usual_hours_worked_per_week                    :: Natural 
+	
+	income                                         :: Incomes_Type_Real_Array 
+	assets                                         :: Asset_Type_Real_Array 
+	pension_contributions                          :: Real 
+	contracted_out_of_serps                        :: Bool 
+	
+	registered_blind                               :: Bool 
+	registered_partially_sighted                   :: Bool 
+	registered_deaf                                :: Bool 
+	has_learning_difficulty                        :: Bool 
+	has_dementia                                   :: Bool 
+	
+	disabilities                                   :: Disabilities_Type_Bool_Array 
+	events_next_period                             :: Events_Type_Bool_Array 
+	adls                                           :: Activities_Of_Daily_Living_Bool_Array 
+	health_status                                  :: Health_Status_Self_Reported 
+	wealth                                         :: Wealth_List 
+	has_any_adls                                   :: Bool 
+	receives_informal_care_from_household_member   :: Bool 
+	receives_informal_care_from_non_householder    :: Bool 
+	hours_of_care_received                         :: Real  
+	hours_of_care_given                            :: Real   
 end
-
-
 
 mutable struct Household
    hid                           :: BigInt
@@ -42,3 +76,5 @@ mutable struct Household
    people :: PeopleArray;
 
 end
+
+
