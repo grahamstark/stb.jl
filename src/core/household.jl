@@ -3,6 +3,15 @@ using Definitions
 
 using Dates
 
+mutable struct Person
+
+   age :: Integer
+   sex :: Sex
+
+end
+
+
+
 mutable struct Household
    hid                           :: BigInt
    year                          :: Unsigned
@@ -29,5 +38,7 @@ mutable struct Household
    wealth                        :: IncomesDict
    house_value                   :: Real
    is_care_home                  :: Bool
+
+   people :: PeopleArray;
 
 end

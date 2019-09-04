@@ -3,11 +3,11 @@ using DDIMeta
 
 function make_from_frs()
 
-    conn = init( "../../etc/msc.ini")
+    conn = init( "/home/graham_s/VirtualWorlds/projects/ou/stb.jl/etc/msc.ini")
 
-    hhv :: VariableList = loadvariablelist( conn, "frs", "househol", 2015 )
+    hhv :: VariableList = loadvariablelist( conn, "frs", "househol", 2017 )
     @assert length( hhv )[1] > 0
-    adv :: VariableList = loadvariablelist( conn, "frs", "adult", 2015 )
+    adv :: VariableList = loadvariablelist( conn, "frs", "adult", 2017 )
     @assert length( adv )[1] > 0
 
     allv = merge( hhv, adv )
