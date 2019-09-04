@@ -2,7 +2,7 @@ module Utils
 
 using Base.Unicode
 
-      export exported_enum, pretty, basiccensor
+      export @exported_enum, pretty, basiccensor
 
       """
       returns the string converted to a form suitable to be used as (e.g.) a Symbol,
