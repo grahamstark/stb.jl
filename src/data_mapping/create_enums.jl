@@ -25,10 +25,10 @@ function make_from_frs()
     Marital_Status_Type :: MARITAL
     Msc_Data_Enums.Qualification_Type :: DVHIQUAL
     Region_Type :: GVTREGN
-    Socio_Economic_Grouping_Type :: 
-    Standard_Industrial_Classification_2007
-    Standard_Occupational_Classification
-    Tenure_Type
+    Socio_Economic_Grouping_Type :: NSSEC
+    Standard_Industrial_Classification_2007 :: SIC
+    Standard_Occupational_Classification :: SC2010HD
+    Tenure_Type :: tentyp2
 
 
 

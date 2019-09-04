@@ -17,3 +17,5 @@ alter table dictionaries.tables drop column  key3_type;
 drop view dictionaries.efs_normalisations ;
 
 alter table dictionaries.variables drop column normalised_variable;
+
+update dictionaries.variables set name=lower(name) where dataset='frs' and year >= 2016;
