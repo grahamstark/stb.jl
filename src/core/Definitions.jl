@@ -854,14 +854,14 @@ export
    national_savings_deposit_bonds,
    first_option_bonds,
    yearly_plan,
-   isa,
+   isas,
    fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds,
    geb,
    basic_account,
    credit_unions,
    endowment_policy_not_linked
 
-   @enum Asset_Type
+   @enum Asset_Type begin
       current_account
       nsb_ordinary_account
       nsb_investment_account
@@ -881,12 +881,14 @@ export
       national_savings_deposit_bonds
       first_option_bonds
       yearly_plan
-      isa
+      isas
       fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds
       geb
       basic_account
       credit_unions
       endowment_policy_not_linked
-   Asset_Dict = Dict( Asset_Type, Real )
-   
+   end
+
+   Asset_Dict = Dict{ Asset_Type, Real }
+
 end # module

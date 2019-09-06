@@ -50,7 +50,7 @@ mutable struct Household
    region                        :: Region_Type
 
    ct_band                       :: Council_Tax_Band_Type
-   average_council_tax           :: Real
+   council_tax                   :: Real
 
    sewerage                      :: Real
    water                         :: Real
@@ -67,7 +67,6 @@ mutable struct Household
    total_wealth                  :: Real
    # wealth                        :: Incomes_Dict
    house_value                   :: Real
-   is_care_home                  :: Bool
 
    people :: PeopleArray;
 
