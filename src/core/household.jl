@@ -4,10 +4,11 @@ using Definitions
 using Dates
 
 mutable struct Person
-    age                                            :: Integer
-    sex                                            :: Sex
-	hid                                            :: BigInt
+    hid                                            :: BigInt
 	pid                                            :: BigInt
+
+	age                                            :: Integer
+	sex                                            :: Sex
 
 	ethnic_group                                   :: Ethnic_Group
 	marital_status                                 :: Marital_Status

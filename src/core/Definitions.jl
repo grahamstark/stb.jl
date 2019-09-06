@@ -706,9 +706,7 @@ export
    socially = 9
    other_difficulty = 10
 end
-
 Disability_Dict = Dict{Disability_Type,Bool}
-
 
 export Incomes_Type, Incomes_Dict
 
