@@ -152,7 +152,7 @@ export Missing_Marital_Status
 end
 
 
-export Highest_Qualification  # mapped from dvhiqual
+export Qualification_Type  # mapped from dvhiqual
 export Doctorate_or_MPhil,
        Masters_PGCE_or_some_other_post_graduate_degree,
        Degree_inc_foundation_degree_or_professional_institute_member,
@@ -241,7 +241,7 @@ export Doctorate_or_MPhil,
        Any_other_professional_or_vocational_or_foreign_qualifications
 export Missing_Highest_Qualification
 
-@enum Highest_Qualification begin  # mapped from dvhiqual
+@enum Qualification_Type begin  # mapped from dvhiqual
    Missing_Highest_Qualification = -1
    Doctorate_or_MPhil = 1
    Masters_PGCE_or_some_other_post_graduate_degree = 2
@@ -682,6 +682,7 @@ end
 
 export
    Disability_Type,
+   Disability_Dict,
    vision,
    hearing,
    mobility,
@@ -692,8 +693,6 @@ export
    stamina,
    socially,
    other_difficulty
-
-
 
 @enum Disability_Type begin  # mapped from ctband
    vision = 1
@@ -707,6 +706,9 @@ export
    socially = 9
    other_difficulty = 10
 end
+
+Disability_Dict = Dict{Disability_Type,Bool}
+
 
 export Incomes_Type, Incomes_Dict
 
