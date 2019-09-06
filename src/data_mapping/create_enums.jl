@@ -15,8 +15,8 @@ function make_from_frs()
     println( make_enumerated_type( allv[:empstat], true, true ))
 
     # todo
-    Activities_Of_Daily_Living_Bool_Array
-    Council_Tax_Band_Type CTBAND Houshol
+    # Activities_Of_Daily_Living_Bool_Array
+    # Council_Tax_Band_Type CTBAND Houshol
 
 #    Employment_Status_ILO_Definition :: EMPSTATI
 #    Ethnic_Group_Type :: ETHGRP [ETHGRPS - 2016/2017 only]
@@ -41,7 +41,7 @@ function make_from_frs()
     println( make_enumerated_type( allv[:sic], true, true )) # standard_industrial_classification_2007
     println( make_enumerated_type( allv[:sc], true, true )) # standard_occupational_classification2010hd
     println( make_enumerated_type( allv[:tentyp], true, true )) # tenure_type2
-
+    println( make_enumerated_type( allv[:ctband], true, true )) # Council_Tax_Band_Type
 
 end
 
