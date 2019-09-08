@@ -10,6 +10,9 @@ function make_from_frs()
     adv :: VariableList = loadvariablelist( conn, "frs", "adult", 2017 )
     @assert length( adv )[1] > 0
 
+    chv :: VariableList = loadvariablelist( conn, "frs", "child", 2017 )
+    @assert length( chv )[1] > 0
+
     allv = merge( hhv, adv )
     println( make_enumerated_type( "Employment_Status", allv[:empstat], true, true ))
 
@@ -42,6 +45,9 @@ function make_from_frs()
     println( make_enumerated_type( "Standard_Occupational_Classification", allv[:soc2010], true, true )) # standard_occupational_classification2010hd
     println( make_enumerated_type( "Tenure_Type", allv[:tentyp2], true, true )) # tenure_type2
     println( make_enumerated_type( "CT_Band", allv[:ctband], true, true )) # Council_Tax_Band_Type
+
+    println( make_enumerated_type( "Adult_Relationship", allv[:relhrp], true, true )) # Council_Tax_Band_Type
+    println( make_enumerated_type( "Child_Relationship", chv[:relhrp], true, true )) # Council_Tax_Band_Type
 
 end
 
