@@ -6,6 +6,9 @@ using IterableTables
 using IteratorInterfaceExtensions
 using TableTraits
 using CSV
+
+using Definitions
+
 #
 #
 global FRS_DIR = "/mnt/data/frs/"

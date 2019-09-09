@@ -963,7 +963,7 @@ export
 
   function safeInc( a :: Real, b :: Real ) :: Real
      if b in DEFAULT_MISSING_VALUES
-        a
+        return a
      end
      a+b
   end
