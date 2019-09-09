@@ -130,35 +130,20 @@ function initialise_household( n :: Integer ) :: DataFrame
         merged
 end
 
-
-
-"""
-Load one frame using [] and jam all names to lower case (FRS changes case by year)
-"""
-function loadtoframe(name)
-    (pname, ext) = splitext(name)
-    if ext == " = loadone( "    if ext == "", year )
-"
-        df = CSV.File(name, delim = '\t') |> DataFrame
-    else
-        df = DataFrame(load(name))
-    end
-        # all names as lc strings
-    lcnames = Symbol.(lowercase.(string.(names(df))))
-    names!(df, lcnames)
-    df
+function loadtoframe( filename :: AbstractString ) :: DataFrame
+        df = CSV.File( filename, delim = '\t') |> DataFrame
+        lcnames = Symbol.(lowercase.(string.(names(df))))
+        names!(df, lcnames)
+        df
 end
 
-function loadone(which, year) :: DataFrame
-    fname = string( FRS_DIR, year, "/tab/", which, " = loadone( "    fname = string( FRS_DIR, year, "/tab/", which, "", year )
-")
-    loadtoframe(fname)
+function loadfrs( which :: AbstractString, year :: Integer ) :: DataFrame
+    filename = "$(FRS_DIR)/$(year)/tab/$(which).tab"
+    loadtoframe( filename )
 end
 
-hbai_hhld = loadtoframe( "$(HBAI_DIR)/tab/i1718_all = loadone( "hbai_hhld = loadtoframe( "$(HBAI_DIR)/tab/i1718_all", year )
-" )
-hbai_indiv = loadtoframe( "$(HBAI_DIR)/tab/h1718_all = loadone( "hbai_indiv = loadtoframe( "$(HBAI_DIR)/tab/h1718_all", year )
-" )
+hbai_indiv = loadtoframe( "$(HBAI_DIR)/tab/i1718_all.tab" )
+hbai_household = loadtoframe( "$(HBAI_DIR)/tab/h1718_all.tab" )
 
 prices = loadPrices( "/mnt/data/prices/mm23/mm23_edited.csv" );
 gdpdef = loadGDPDeflator( "/mnt/data/prices/gdpdef.csv" )
@@ -170,35 +155,35 @@ for year in 2015:2017
 
         print( "on year $year " )
 
-        accounts = loadone( "accounts", year )
-        benunit = loadone( "benunit", year )
-        extchild = loadone( "extchild", year )
-        maint = loadone( "maint", year )
-        penprov = loadone( "penprov", year )
+        accounts = loadfrs( "accounts", year )
+        benunit = loadfrs( "benunit", year )
+        extchild = loadfrs( "extchild", year )
+        maint = loadfrs( "maint", year )
+        penprov = loadfrs( "penprov", year )
 
-        admin = loadone( "admin", year )
-        care = loadone( "care", year )
-        frs1718 = loadone( "frs1718", year )
-        mortcont = loadone( "mortcont", year )
-        pension = loadone( "pension", year )
+        admin = loadfrs( "admin", year )
+        care = loadfrs( "care", year )
+        frs1718 = loadfrs( "frs1718", year )
+        mortcont = loadfrs( "mortcont", year )
+        pension = loadfrs( "pension", year )
 
-        adult = loadone( "adult", year )
-        child = loadone( "child", year )
-        govpay = loadone( "govpay", year )
-        mortgage = loadone( "mortgage", year )
-        pianon1718 = loadone( "pianon1718", year )
+        adult = loadfrs( "adult", year )
+        child = loadfrs( "child", year )
+        govpay = loadfrs( "govpay", year )
+        mortgage = loadfrs( "mortgage", year )
+        pianon1718 = loadfrs( "pianon1718", year )
 
-        assets = loadone( "assets", year )
-        chldcare = loadone( "chldcare", year )
-        househol = loadone( "househol", year )
-        oddjob = loadone( "oddjob", year )
-        rentcont = loadone( "rentcont", year )
+        assets = loadfrs( "assets", year )
+        chldcare = loadfrs( "chldcare", year )
+        househol = loadfrs( "househol", year )
+        oddjob = loadfrs( "oddjob", year )
+        rentcont = loadfrs( "rentcont", year )
 
-        benefits = loadone( "benefits", year )
-        endowmnt = loadone( "endowmnt", year )
-        job = loadone( "job", year )
-        owner = loadone( "owner", year )
-        renter = loadone( "renter", year )
+        benefits = loadfrs( "benefits", year )
+        endowmnt = loadfrs( "endowmnt", year )
+        job = loadfrs( "job", year )
+        owner = loadfrs( "owner", year )
+        renter = loadfrs( "renter", year )
 
 
 end

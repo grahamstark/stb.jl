@@ -4,9 +4,10 @@ using Definitions
 using Dates
 
 mutable struct Person
-    hid                                            :: BigInt
-	pid                                            :: BigInt
-
+    hid                                            :: Integer ## == sernum
+	pid                                            :: BigInt ## == unique id (year * 100000)+
+	pno                                            :: Integer ## person number in household
+	default_benefit_unit                           :: Integer
 	age                                            :: Integer
 	sex                                            :: Sex
 
@@ -35,6 +36,7 @@ mutable struct Person
 
 	disabilities                                   :: Disability_Dict
 	health_status                                  :: Health_Status
+	relationships                                  :: Relationship_Dict
 	wealth                                         :: Asset_Dict
 	is_informal_carer                              :: Bool
 	receives_informal_care_from_non_householder    :: Bool
@@ -47,7 +49,6 @@ People_Dict = Dict{BigInt,Person}
 mutable struct Household
    hid                           :: BigInt
    year                          :: Unsigned
-   current_simulated_date        :: Date
    tenure                        :: Tenure_Type
    region                        :: Standard_Region
 

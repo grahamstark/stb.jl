@@ -855,7 +855,7 @@ export
    first_option_bonds,
    yearly_plan,
    isas,
-   fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds,
+   fixd_rate_svngs_bonds,
    geb,
    basic_account,
    credit_unions,
@@ -882,7 +882,7 @@ export
       first_option_bonds
       yearly_plan
       isas
-      fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds
+      fixd_rate_svngs_bonds
       geb
       basic_account
       credit_unions
@@ -890,5 +890,84 @@ export
    end
 
    Asset_Dict = Dict{ Asset_Type, Real }
+
+
+   export Relationship  # mapped from relhrp
+      export
+         Spouse,
+         Cohabitee,
+         Son_or_daughter_incl_adopted,
+         Step_son_or_daughter,
+         Foster_child,
+         Son_in_law_or_daughter_in_law,
+         Parent,
+         Step_parent,
+         Foster_parent,
+         Parent_in_law,
+         Brother_or_sister_incl_adopted,
+         Step_brother_or_sister,
+         Foster_brother_or_sister,
+         Brother_or_sister_in_law,
+         Grand_child,
+         Grand_parent,
+         Other_relative,
+         Other_non_relative,
+         Civil_Partner,
+         Missing_Relationship
+
+   @enum Relationship begin  # mapped from relhrp
+     Missing_Relationship = -1
+     Spouse = 1
+     Cohabitee = 2
+     Son_or_daughter_incl_adopted = 3
+     Step_son_or_daughter = 4
+     Foster_child = 5
+     Son_in_law_or_daughter_in_law = 6
+     Parent = 7
+     Step_parent = 8
+     Foster_parent = 9
+     Parent_in_law = 10
+     Brother_or_sister_incl_adopted = 11
+     Step_brother_or_sister = 12
+     Foster_brother_or_sister = 13
+     Brother_or_sister_in_law = 14
+     Grand_child = 15
+     Grand_parent = 16
+     Other_relative = 17
+     Other_non_relative = 18
+     Civil_Partner = 20
+  end
+
+  export BIG_NOTHING
+  const BIG_NOTHING = BigInt(0)
+
+  Relationship_Dict = Dict{ BigInt, Relationship }
+
+  export DataSource, FRS, OtherSource
+
+  @enum DataSource begin  # mapped from relhrp
+    FRS = 1
+    OtherSource = 2
+  end
+
+  """
+  get a unique ID for a person from (say) a certain year of the FRS, given hhld number and number inside the household
+  """
+  function getPid( source :: DataSource, year :: Integer, hid :: Integer, pno :: Integer ) :: BigInt
+     (Int(source) * 10^11) + (year*10^7) + (hid*10^2) + pno
+  end
+
+  export DEFAULT_MISSING_VALUES, safeInc
+
+  const DEFAULT_MISSING_VALUES = [-9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0]
+
+  function safeInc( a :: Real, b :: Real ) :: Real
+     if b in DEFAULT_MISSING_VALUES
+        a
+     end
+     a+b
+  end
+
+
 
 end # module
