@@ -208,7 +208,7 @@ function initialise_household(n::Integer)::DataFrame
         # .. example check
         # select value,count(value),label from dictionaries.enums where dataset='frs' and tables='househol' and variable_name='hhcomps' group by value,label;
     hh = DataFrame(
-        frs_year = Vector{Union{Integer,Missing}}(missing, n),
+        year = Vector{Union{Integer,Missing}}(missing, n),
         hid = Vector{Union{BigInt,Missing}}(missing, n),
         year = Vector{Union{Unsigned,Missing}}(missing, n),
         tenure = Vector{Union{Tenure_Type,Missing}}(missing, n),
@@ -233,6 +233,39 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
+function create_household(
+    year            :: Integer,
+    frs_household   :: DataFrame,
+    renter          :: DataFrame,
+    mortgage        :: DataFrame,
+    mortcont        :: DataFrame,
+    owner           :: DataFrame,
+    hbai_adults  :: DataFrame )
+
+    num_households = size(frs_household)[1]
+    hh_model = initialise_household(num_households)
+    hhno = 0
+    hbai_year = year - 1993
+
+    for hn in 1:num_households
+        hsn = frs_household.sernum
+
+        ad_hbai = hbai_adults[((hbai_adults.year .== hbai_year ) .& ( hbai_adults.sernum .== hsn ), :]
+        if( size( ad_hbai)[1] > 0 ) # only non-missing in HBAI
+            ad1_hbai = ad_hbai[1,:]
+            hhno += 1
+
+            hh_model[hhno, :href] = hsn
+            hh_model[hnno, :year] = year
+
+            hb_frs = frs_household[((frs_household.sernum.==hsn).&(hbai.year.==year)), :]
+        end
+
+
+    end
+    hh_model
+end
+
 function loadtoframe(filename::AbstractString)::DataFrame
     df = CSV.File(filename, delim = '\t') |> DataFrame
     lcnames = Symbol.(lowercase.(string.(names(df))))
@@ -245,14 +278,14 @@ function loadfrs(which::AbstractString, year::Integer)::DataFrame
     loadtoframe(filename)
 end
 
-hbai_indiv = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
+hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
 hbai_household = loadtoframe("$(HBAI_DIR)/tab/h1718_all.tab")
 
 prices = loadPrices("/mnt/data/prices/mm23/mm23_edited.csv")
 gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 
-households = initialise_household(0)
-people = initialise_personal(0)
+model_households = initialise_household(0)
+model_people = initialise_personal(0)
 
 for year in 2015:2017
 
@@ -288,5 +321,13 @@ for year in 2015:2017
     owner = loadfrs("owner", year)
     renter = loadfrs("renter", year)
 
+    model_households = create_household(
+        year,
+        househol,
+        renter,
+        mortgage,
+        mortcont,
+        owner,
+        hbai_adults )
 
 end
