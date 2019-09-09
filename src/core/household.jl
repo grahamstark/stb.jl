@@ -52,8 +52,7 @@ mutable struct Household
     region::Standard_Region
     ct_band::CT_Band
     council_tax::Real
-    sewerage::Real
-    water::Real
+    water_and_sewerage ::Real
     mortgage_payment::Real
     mortgage_interest::Real
     years_outstanding_on_mortgage::Integer

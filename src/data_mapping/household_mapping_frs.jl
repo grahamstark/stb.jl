@@ -210,13 +210,11 @@ function initialise_household(n::Integer)::DataFrame
     hh = DataFrame(
         year = Vector{Union{Integer,Missing}}(missing, n),
         hid = Vector{Union{BigInt,Missing}}(missing, n),
-        year = Vector{Union{Unsigned,Missing}}(missing, n),
         tenure = Vector{Union{Tenure_Type,Missing}}(missing, n),
         region = Vector{Union{Standard_Region,Missing}}(missing, n),
         ct_band = Vector{Union{CT_Band,Missing}}(missing, n),
         council_tax = Vector{Union{Real,Missing}}(missing, n),
-        sewerage = Vector{Union{Real,Missing}}(missing, n),
-        water = Vector{Union{Real,Missing}}(missing, n),
+        water_and_sewerage = Vector{Union{Real,Missing}}(missing, n),
         mortgage_payment = Vector{Union{Real,Missing}}(missing, n),
         mortgage_interest = Vector{Union{Real,Missing}}(missing, n),
         years_outstanding_on_mortgage = Vector{Union{Integer,Missing}}(missing, n),
@@ -234,13 +232,14 @@ function initialise_household(n::Integer)::DataFrame
 end
 
 function create_household(
-    year            :: Integer,
-    frs_household   :: DataFrame,
-    renter          :: DataFrame,
-    mortgage        :: DataFrame,
-    mortcont        :: DataFrame,
-    owner           :: DataFrame,
-    hbai_adults  :: DataFrame )
+    year::Integer,
+    frs_household::DataFrame,
+    renter::DataFrame,
+    mortgage::DataFrame,
+    mortcont::DataFrame,
+    owner::DataFrame,
+    hbai_adults::DataFrame
+)
 
     num_households = size(frs_household)[1]
     hh_model = initialise_household(num_households)
@@ -248,20 +247,67 @@ function create_household(
     hbai_year = year - 1993
 
     for hn in 1:num_households
-        hsn = frs_household.sernum
-
-        ad_hbai = hbai_adults[((hbai_adults.year .== hbai_year ) .& ( hbai_adults.sernum .== hsn ), :]
-        if( size( ad_hbai)[1] > 0 ) # only non-missing in HBAI
-            ad1_hbai = ad_hbai[1,:]
-            hhno += 1
-
-            hh_model[hhno, :href] = hsn
-            hh_model[hnno, :year] = year
-
-            hb_frs = frs_household[((frs_household.sernum.==hsn).&(hbai.year.==year)), :]
+        if hn % 1000 == 0
+            println("on year $year, hid $hn")
         end
+        hh = frs_household[hn, :]
+        sernum = hh.sernum
+        ad_hbai = hbai_adults[((hbai_adults.year.==hbai_year).&(hbai_adults.sernum.==sernum)), :]
+        if (size(ad_hbai)[1] > 0) # only non-missing in HBAI
+            ad1_hbai = ad_hbai[1, :]
+            hhno += 1
+            hh_model[hhno, :hid] = sernum
+            hh_model[hhno, :year] = year
+
+            hh_model[hhno, :tenure] = hh.tentyp2 > 0 ? Tenure_Type(hh.tentyp2) :
+                                      Missing_Tenure_Type
+            hh_model[hhno, :region] = hh.gvtregn > 0 ? Standard_Region(hh.gvtregn) :
+                                      Missing_Standard_Region
+            hh_model[hhno, :ct_band] = hh.ctband > 0 ? CT_Band(hh.ctband) : Missing_CT_Band
+
+            # council_tax::Real
+            hh_model[hhno, :water_and_sewerage] = hh_model[hhno, :region] == Scotland ?
+                                                  ad1_hbai.cwathh : ad1_hbai.watsewrt
 
 
+            # hh_model[hhno, :mortgage_payment]
+            hh_model[hhno, :mortgage_interest] = ad1_hbai.hbxmort
+
+            # TODO
+            # years_outstanding_on_mortgage::Integer
+            # mortgage_outstanding::Real
+            # year_house_bought::Integer
+
+            hh_model[hhno, :gross_rent] = hh.hhrent #  rentg Gross rent including Housing Benefit  or rent Net amount of last rent payment
+
+            rents = renter[(renter.sernum.==sernum), :]
+            nrents = size(rents)[1]
+            hh_model[hhno, :rent_includes_water_and_sewerage] = false
+            for r in 1:nrents
+                if (rents[r, :wsinc] in [1, 2, 3])
+                    hh_model[hhno, :rent_includes_water_and_sewerage] = true
+                end
+            end
+            ohc = 0.0
+            ohc = safe_inc(ohc, hh.chrgamt1)
+            ohc = safe_inc(ohc, hh.chrgamt2)
+            ohc = safe_inc(ohc, hh.chrgamt3)
+            ohc = safe_inc(ohc, hh.chrgamt4)
+            ohc = safe_inc(ohc, hh.chrgamt5)
+            ohc = safe_inc(ohc, hh.chrgamt6)
+            ohc = safe_inc(ohc, hh.chrgamt7)
+            ohc = safe_inc(ohc, hh.chrgamt8)
+            ohc = safe_inc(ohc, hh.chrgamt9)
+            hh_model[hhno, :other_housing_charges] = ohc
+
+
+        # TODO
+            # gross_housing_costs::Real
+            # total_income::Real
+            # total_wealth::Real
+            # house_value::Real
+            # people::People_Dict
+        end
     end
     hh_model
 end
@@ -287,7 +333,7 @@ gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 model_households = initialise_household(0)
 model_people = initialise_personal(0)
 
-for year in 2015:2017
+for year in 2017:2017
 
     print("on year $year ")
 
@@ -299,7 +345,7 @@ for year in 2015:2017
 
     admin = loadfrs("admin", year)
     care = loadfrs("care", year)
-    frs1718 = loadfrs("frs1718", year)
+    # frs1718 = loadfrs("frs1718", year)
     mortcont = loadfrs("mortcont", year)
     pension = loadfrs("pension", year)
 
@@ -307,7 +353,7 @@ for year in 2015:2017
     child = loadfrs("child", year)
     govpay = loadfrs("govpay", year)
     mortgage = loadfrs("mortgage", year)
-    pianon1718 = loadfrs("pianon1718", year)
+    # pianon1718 = loadfrs("pianon1718", year)
 
     assets = loadfrs("assets", year)
     chldcare = loadfrs("chldcare", year)
@@ -321,13 +367,17 @@ for year in 2015:2017
     owner = loadfrs("owner", year)
     renter = loadfrs("renter", year)
 
-    model_households = create_household(
+    model_households_yr = create_household(
         year,
         househol,
         renter,
         mortgage,
         mortcont,
         owner,
-        hbai_adults )
+        hbai_adults
+    )
+    append!(model_households, model_households_yr)
 
 end
+
+CSV.write("test.tab", model_households, delim = "\t")

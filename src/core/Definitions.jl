@@ -959,12 +959,12 @@ export
      (Int(source) * 10^11) + (year*10^7) + (hid*10^2) + pno
   end
 
-  export DEFAULT_MISSING_VALUES, safeInc
+  export DEFAULT_MISSING_VALUES, safe_inc
 
   const DEFAULT_MISSING_VALUES = [-9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0]
 
-  function safeInc( a :: Real, b :: Real ) :: Real
-     if b in DEFAULT_MISSING_VALUES
+  function safe_inc( a :: Real, b :: Union{Real,Missing} ) :: Real
+     if ismissing( b ) || (b in DEFAULT_MISSING_VALUES)
         return a
      end
      a+b
