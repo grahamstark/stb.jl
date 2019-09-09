@@ -694,7 +694,7 @@ export
    socially,
    other_difficulty
 
-@enum Disability_Type begin  # mapped from ctband
+@enum Disability_Type begin  # mapped from "disd01..10" "cdisd01..10"
    vision = 1
    hearing  = 2
    mobility  = 3

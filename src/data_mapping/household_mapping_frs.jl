@@ -204,7 +204,11 @@ function initialise_personal(n::Integer)::DataFrame
 
 end
 
-const HH_TYPE_HINTS = [:region=>Standard_Region,:ct_band=>CT_Band, :tenure => Tenure_Type ]
+const HH_TYPE_HINTS = [
+    :region => Standard_Region,
+    :ct_band => CT_Band,
+    :tenure => Tenure_Type
+]
 
 
 
@@ -216,7 +220,6 @@ function initialise_household(n::Integer)::DataFrame
         interview_year = Vector{Union{Integer,Missing}}(missing, n),
         interview_month = Vector{Union{Integer,Missing}}(missing, n),
         quarter = Vector{Union{Integer,Missing}}(missing, n),
-
         hid = Vector{Union{BigInt,Missing}}(missing, n),
         tenure = Vector{Union{Integer,Missing}}(missing, n),
         region = Vector{Union{Integer,Missing}}(missing, n),
@@ -236,9 +239,58 @@ function initialise_household(n::Integer)::DataFrame
         total_wealth = Vector{Union{Real,Missing}}(missing, n),
         house_value = Vector{Union{Real,Missing}}(missing, n),
         weight = Vector{Union{Real,Missing}}(missing, n),
-
     )
     hh
+end
+
+function create_adult(
+    year::Integer,
+    adult::DataFrame,
+
+    accounts::DataFrame,
+    benunit::DataFrame,
+    extchild::DataFrame,
+    maint::DataFrame,
+    penprov::DataFrame,
+    admin::DataFrame,
+    care::DataFrame,
+    mortcont::DataFrame,
+    pension::DataFrame,
+    govpay::DataFrame,
+    mortgage::DataFrame,
+    assets::DataFrame,
+    chldcare::DataFrame,
+    househol::DataFrame,
+    oddjob::DataFrame,
+    benefits::DataFrame,
+    endowmnt::DataFrame,
+    job::DataFrame,
+    hbai_adults :: DataFrame
+
+) :: DataFrame
+
+frs_year = Vector{Union{Int64,Missing}}(missing, n),
+hid = Vector{Union{BigInt,Missing}}(missing, n),
+pid = Vector{Union{BigInt,Missing}}(missing, n),
+pno = Vector{Union{Integer,Missing}}(missing, n),
+default_benefit_unit = Vector{Union{Integer,Missing}}(missing, n),
+
+
+age =  adult[ao,:age80]
+
+sex = Vector{Union{Sex,Missing}}(missing, n),
+ethnic_group = Vector{Union{Ethnic_Group,Missing}}(missing, n),
+marital_status = Vector{Union{Marital_Status,Missing}}(missing, n),
+highest_qualification = Vector{Union{Qualification_Type,Missing}}(missing, n),
+industrial_classification = Vector{Union{SIC_2007,Missing}}(missing, n),
+
+end
+
+function create_child(
+    year :: Integer,
+    child :: DataFrame ) :: DataFrame
+
+
 end
 
 function create_household(
@@ -268,11 +320,11 @@ function create_household(
         if (size(ad_hbai)[1] > 0) # only non-missing in HBAI
             ad1_hbai = ad_hbai[1, :]
             hhno += 1
-            dd = split( hh.intdate, "/" )
-            hh_model[hhno,:interview_year] = parse( Int64, dd[3])
-            interview_month = parse( Int8, dd[1])
-            hh_model[hhno,:interview_month] = interview_month
-            hh_model[hhno,:quarter] = div( interview_month-1, 3 ) + 1
+            dd = split(hh.intdate, "/")
+            hh_model[hhno, :interview_year] = parse(Int64, dd[3])
+            interview_month = parse(Int8, dd[1])
+            hh_model[hhno, :interview_month] = interview_month
+            hh_model[hhno, :quarter] = div(interview_month - 1, 3) + 1
 
             hh_model[hhno, :hid] = sernum
             hh_model[hhno, :data_year] = year
@@ -287,8 +339,15 @@ function create_household(
             # hh_model[hhno, :ct_band] = hh.ctband > 0 ? CT_Band(hh.ctband) : Missing_CT_Band
             #
             # council_tax::Real
-            hh_model[hhno, :water_and_sewerage] = hh_model[hhno, :region] == Scotland ?
-                                                  ad1_hbai.cwathh : ad1_hbai.watsewrt
+            # FIXME this is rounded to £
+            if hh_model[hhno, :region] == 299999999 # Scotland
+                hh_model[hhno, :water_and_sewerage] = ad1_hbai.cwathh
+            elseif hh_model[hhno, :region] == 399999999 # Nireland
+                hh_model[hhno, :water_and_sewerage] = 0.0 # FIXME
+            else #
+                hh_model[hhno, :water_and_sewerage] = ad1_hbai.watsewhh
+            end
+
 
 
             # hh_model[hhno, :mortgage_payment]
@@ -298,8 +357,8 @@ function create_household(
             # years_outstanding_on_mortgage::Integer
             # mortgage_outstanding::Real
             # year_house_bought::Integer
-
-            hh_model[hhno, :gross_rent] = max(0.0,hh.hhrent) #  rentg Gross rent including Housing Benefit  or rent Net amount of last rent payment
+            # FIXME rounded to £1
+            hh_model[hhno, :gross_rent] = max(0.0, hh.hhrent) #  rentg Gross rent including Housing Benefit  or rent Net amount of last rent payment
 
             rents = renter[(renter.sernum.==sernum), :]
             nrents = size(rents)[1]
@@ -330,7 +389,7 @@ function create_household(
             # people::People_Dict
         end
     end
-    hh_model
+    hh_model[1:hhno,:]
 end
 
 function loadtoframe(filename::AbstractString)::DataFrame
@@ -354,7 +413,7 @@ gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 model_households = initialise_household(0)
 model_people = initialise_personal(0)
 
-for year in 2017:2017
+for year in 2014:2017
 
     print("on year $year ")
 
@@ -401,4 +460,4 @@ for year in 2017:2017
 
 end
 
-CSV.write("test.tab", model_households, delim = "\t")
+CSV.write("model_households.tab", model_households, delim = "\t")
