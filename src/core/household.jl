@@ -50,10 +50,8 @@ mutable struct Household
     year::Unsigned
     tenure::Tenure_Type
     region::Standard_Region
-
     ct_band::CT_Band
     council_tax::Real
-
     sewerage::Real
     water::Real
     mortgage_payment::Real
@@ -67,9 +65,7 @@ mutable struct Household
     gross_housing_costs::Real
     total_income::Real
     total_wealth::Real
-   # wealth                        :: Incomes_Dict
     house_value::Real
-
     people::People_Dict
 
 end
