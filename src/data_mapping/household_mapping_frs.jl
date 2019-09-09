@@ -204,15 +204,23 @@ function initialise_personal(n::Integer)::DataFrame
 
 end
 
+const HH_TYPE_HINTS = [:region=>Standard_Region,:ct_band=>CT_Band, :tenure => Tenure_Type ]
+
+
+
 function initialise_household(n::Integer)::DataFrame
         # .. example check
         # select value,count(value),label from dictionaries.enums where dataset='frs' and tables='househol' and variable_name='hhcomps' group by value,label;
     hh = DataFrame(
-        year = Vector{Union{Integer,Missing}}(missing, n),
+        data_year = Vector{Union{Integer,Missing}}(missing, n),
+        interview_year = Vector{Union{Integer,Missing}}(missing, n),
+        interview_month = Vector{Union{Integer,Missing}}(missing, n),
+        quarter = Vector{Union{Integer,Missing}}(missing, n),
+
         hid = Vector{Union{BigInt,Missing}}(missing, n),
-        tenure = Vector{Union{Tenure_Type,Missing}}(missing, n),
-        region = Vector{Union{Standard_Region,Missing}}(missing, n),
-        ct_band = Vector{Union{CT_Band,Missing}}(missing, n),
+        tenure = Vector{Union{Integer,Missing}}(missing, n),
+        region = Vector{Union{Integer,Missing}}(missing, n),
+        ct_band = Vector{Union{Integer,Missing}}(missing, n),
         council_tax = Vector{Union{Real,Missing}}(missing, n),
         water_and_sewerage = Vector{Union{Real,Missing}}(missing, n),
         mortgage_payment = Vector{Union{Real,Missing}}(missing, n),
@@ -226,7 +234,9 @@ function initialise_household(n::Integer)::DataFrame
         gross_housing_costs = Vector{Union{Real,Missing}}(missing, n),
         total_income = Vector{Union{Real,Missing}}(missing, n),
         total_wealth = Vector{Union{Real,Missing}}(missing, n),
-        house_value = Vector{Union{Real,Missing}}(missing, n)
+        house_value = Vector{Union{Real,Missing}}(missing, n),
+        weight = Vector{Union{Real,Missing}}(missing, n),
+
     )
     hh
 end
@@ -251,20 +261,31 @@ function create_household(
             println("on year $year, hid $hn")
         end
         hh = frs_household[hn, :]
+
+
         sernum = hh.sernum
         ad_hbai = hbai_adults[((hbai_adults.year.==hbai_year).&(hbai_adults.sernum.==sernum)), :]
         if (size(ad_hbai)[1] > 0) # only non-missing in HBAI
             ad1_hbai = ad_hbai[1, :]
             hhno += 1
+            dd = split( hh.intdate, "/" )
+            hh_model[hhno,:interview_year] = parse( Int64, dd[3])
+            interview_month = parse( Int8, dd[1])
+            hh_model[hhno,:interview_month] = interview_month
+            hh_model[hhno,:quarter] = div( interview_month-1, 3 ) + 1
+
             hh_model[hhno, :hid] = sernum
-            hh_model[hhno, :year] = year
-
-            hh_model[hhno, :tenure] = hh.tentyp2 > 0 ? Tenure_Type(hh.tentyp2) :
-                                      Missing_Tenure_Type
-            hh_model[hhno, :region] = hh.gvtregn > 0 ? Standard_Region(hh.gvtregn) :
-                                      Missing_Standard_Region
-            hh_model[hhno, :ct_band] = hh.ctband > 0 ? CT_Band(hh.ctband) : Missing_CT_Band
-
+            hh_model[hhno, :data_year] = year
+            hh_model[hhno, :tenure] = hh.tentyp2 > 0 ? hh.tentyp2 : -1
+            hh_model[hhno, :region] = hh.gvtregn > 0 ? hh.gvtregn : -1
+            hh_model[hhno, :ct_band] = hh.ctband > 0 ? hh.ctband : -1
+            hh_model[hhno, :weight] = hh.gross4
+            # hh_model[hhno, :tenure] = hh.tentyp2 > 0 ? Tenure_Type(hh.tentyp2) :
+            #                          Missing_Tenure_Type
+            # hh_model[hhno, :region] = hh.gvtregn > 0 ? Standard_Region(hh.gvtregn) :
+            #                           Missing_Standard_Region
+            # hh_model[hhno, :ct_band] = hh.ctband > 0 ? CT_Band(hh.ctband) : Missing_CT_Band
+            #
             # council_tax::Real
             hh_model[hhno, :water_and_sewerage] = hh_model[hhno, :region] == Scotland ?
                                                   ad1_hbai.cwathh : ad1_hbai.watsewrt
@@ -278,7 +299,7 @@ function create_household(
             # mortgage_outstanding::Real
             # year_house_bought::Integer
 
-            hh_model[hhno, :gross_rent] = hh.hhrent #  rentg Gross rent including Housing Benefit  or rent Net amount of last rent payment
+            hh_model[hhno, :gross_rent] = max(0.0,hh.hhrent) #  rentg Gross rent including Housing Benefit  or rent Net amount of last rent payment
 
             rents = renter[(renter.sernum.==sernum), :]
             nrents = size(rents)[1]

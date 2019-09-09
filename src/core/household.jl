@@ -47,7 +47,9 @@ People_Dict = Dict{BigInt,Person}
 
 mutable struct Household
     hid::BigInt
-    year::Unsigned
+    interview_year::Unsigned
+    interview_month::Unsigned
+    quarter::Unsigned
     tenure::Tenure_Type
     region::Standard_Region
     ct_band::CT_Band
@@ -65,6 +67,7 @@ mutable struct Household
     total_income::Real
     total_wealth::Real
     house_value::Real
+    weight::Real
     people::People_Dict
 
 end
