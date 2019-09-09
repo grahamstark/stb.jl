@@ -68,55 +68,146 @@ function loadPrices( name :: AbstractString ) :: DataFrame
 end
 
 function initialise_personal( n :: Integer ) :: DataFrame
-
-# .. example check
-# select value,count(value),label from dictionaries.enums where dataset='frs' and tables='househol' and variable_name='hhcomps' group by value,label;
-
         pers = DataFrame(
                 frs_year = Vector{Union{Int64,Missing}}(missing,n),
-                sernum  = Vector{Union{Int64,Missing}}(missing,n),
-                benunit = Vector{Union{Integer,Missing}}(missing,n),
-                person  = Vector{Union{Integer,Missing}}(missing,n),
-                is_child  = Vector{Union{Integer,Missing}}(missing,n),
 
-                hid                                            :: BigInt
-            	pid                                            :: BigInt
+                hid  = Vector{Union{BigInt,Missing}}(missing,n),
+                pid  = Vector{Union{BigInt,Missing}}(missing,n),
+                pno  = Vector{Union{Integer,Missing}}(missing,n),
 
-            	age                                            :: Integer
-            	sex                                            :: Sex
+                default_benefit_unit = Vector{Union{Integer,Missing}}(missing,n),
 
-            	ethnic_group                                   :: Ethnic_Group
-            	marital_status                                 :: Marital_Status
-            	highest_qualification                          :: Qualification_Type
-            	industrial_classification                      :: SIC_2007
-            	occupational_classification                    :: Standard_Occupational_Classification
-            	# FIXME needs work on the mapping - leeve out for now
-            	socio_economic_grouping                        :: Socio_Economic_Group
-            	age_completed_full_time_education              :: Integer
-            	years_in_full_time_work                        :: Integer
-            	employment_status                              :: ILO_Employment
-            	hours_worked                                   :: Integer
+                age = Vector{Union{Integer,Missing}}(missing,n),
+            	sex  = Vector{Union{Sex,Missing}}(missing,n),
 
-            	income                                         :: Incomes_Dict
-            	assets                                         :: Asset_Dict
-            	pension_contributions                          :: Real
-            	contracted_out_of_serps                        :: Bool
+            	ethnic_group  = Vector{Union{Ethnic_Group,Missing}}(missing,n),
+            	marital_status  = Vector{Union{Marital_Status,Missing}}(missing,n),
+            	highest_qualification  = Vector{Union{Qualification_Type,Missing}}(missing,n),
+            	industrial_classification  = Vector{Union{SIC_2007,Missing}}(missing,n),
+            	occupational_classification  = Vector{Union{Standard_Occupational_Classification,Missing}}(missing,n),
 
-            	registered_blind                               :: Bool
-            	registered_partially_sighted                   :: Bool
-            	registered_deaf                                :: Bool
-            	has_learning_difficulty                        :: Bool
-            	has_dementia                                   :: Bool
+            	socio_economic_grouping  = Vector{Union{Socio_Economic_Group,Missing}}(missing,n),
+            	age_completed_full_time_education  = Vector{Union{Integer,Missing}}(missing,n),
+            	years_in_full_time_work  = Vector{Union{Integer,Missing}}(missing,n),
+            	employment_status  = Vector{Union{ILO_Employment,Missing}}(missing,n),
+            	hours_worked  = Vector{Union{Integer,Missing}}(missing,n),
 
-            	disabilities                                   :: Disability_Dict
-            	health_status                                  :: Health_Status
-            	wealth                                         :: Asset_Dict
-            	is_informal_carer                              :: Bool
-            	receives_informal_care_from_non_householder    :: Bool
-            	hours_of_care_received                         :: Real
-            	hours_of_care_given                            :: Real
+            income_wages = Vector{Union{Real,Missing}}(missing,n),
+            income_self_employment_income = Vector{Union{Real,Missing}}(missing,n),
+            income_self_employment_expenses = Vector{Union{Real,Missing}}(missing,n),
+            income_self_employment_losses = Vector{Union{Real,Missing}}(missing,n),
+            income_private_pensions = Vector{Union{Real,Missing}}(missing,n),
 
-        pers
+            income_national_savings = Vector{Union{Real,Missing}}(missing,n),
+            income_bank_interest = Vector{Union{Real,Missing}}(missing,n),
+            income_building_society = Vector{Union{Real,Missing}}(missing,n),
+            income_stocks_shares = Vector{Union{Real,Missing}}(missing,n),
+            income_peps = Vector{Union{Real,Missing}}(missing,n),
+            income_isa = Vector{Union{Real,Missing}}(missing,n),
+            income_dividends = Vector{Union{Real,Missing}}(missing,n),
+            income_property = Vector{Union{Real,Missing}}(missing,n),
+            income_royalties = Vector{Union{Real,Missing}}(missing,n),
+            income_bonds_and_gilts = Vector{Union{Real,Missing}}(missing,n),
+            income_other_investment_income = Vector{Union{Real,Missing}}(missing,n),
+
+            income_other_income = Vector{Union{Real,Missing}}(missing,n),
+            income_alimony_and_child_support_received = Vector{Union{Real,Missing}}(missing,n),
+
+            income_health_insurance = Vector{Union{Real,Missing}}(missing,n),
+            income_alimony_and_child_support_paid = Vector{Union{Real,Missing}}(missing,n),
+            income_care_insurance = Vector{Union{Real,Missing}}(missing,n),
+            income_trade_unions_etc = Vector{Union{Real,Missing}}(missing,n),
+            income_friendly_societies = Vector{Union{Real,Missing}}(missing,n),
+            income_work_expenses = Vector{Union{Real,Missing}}(missing,n),
+            income_repayments = Vector{Union{Real,Missing}}(missing,n),
+            income_pension_contributions = Vector{Union{Real,Missing}}(missing,n),
+
+            income_education_allowances = Vector{Union{Real,Missing}}(missing,n),
+            income_foster_care_payments = Vector{Union{Real,Missing}}(missing,n),
+            income_student_grants = Vector{Union{Real,Missing}}(missing,n),
+            income_student_loans = Vector{Union{Real,Missing}}(missing,n),
+
+            income_income_tax = Vector{Union{Real,Missing}}(missing,n),
+            income_national_insurance = Vector{Union{Real,Missing}}(missing,n),
+            income_local_taxes = Vector{Union{Real,Missing}}(missing,n),
+
+            income_child_benefit = Vector{Union{Real,Missing}}(missing,n),
+            income_pension_credit = Vector{Union{Real,Missing}}(missing,n),
+            income_retirement_pension = Vector{Union{Real,Missing}}(missing,n),
+            income_other_pensions = Vector{Union{Real,Missing}}(missing,n),
+            income_disabled_living_allowance = Vector{Union{Real,Missing}}(missing,n),
+            income_pip = Vector{Union{Real,Missing}}(missing,n),
+            income_severe_disablement_allowance = Vector{Union{Real,Missing}}(missing,n),
+            income_attendance_allowance = Vector{Union{Real,Missing}}(missing,n),
+            income_invalid_care_allowance = Vector{Union{Real,Missing}}(missing,n),
+            income_incapacity_benefit = Vector{Union{Real,Missing}}(missing,n),
+            income_jobseekers_allowance = Vector{Union{Real,Missing}}(missing,n),
+            income_income_support_jsa = Vector{Union{Real,Missing}}(missing,n),
+            income_maternity_allowance = Vector{Union{Real,Missing}}(missing,n),
+            income_other_benefits = Vector{Union{Real,Missing}}(missing,n),
+            income_winter_fuel_payments = Vector{Union{Real,Missing}}(missing,n),
+            income_housing_benefit = Vector{Union{Real,Missing}}(missing,n),
+            income_council_tax_benefit = Vector{Union{Real,Missing}}(missing,n),
+            income_tax_credits = Vector{Union{Real,Missing}}(missing,n),
+            income_sickness_benefits = Vector{Union{Real,Missing}}(missing,n),
+
+            	assets  = Vector{Union{Asset_Dict,Missing}}(missing,n),
+
+asset_current_account = Vector{Union{Real,Missing}}(missing,n),
+asset_nsb_ordinary_account = Vector{Union{Real,Missing}}(missing,n),
+asset_nsb_investment_account = Vector{Union{Real,Missing}}(missing,n),
+asset_not_used = Vector{Union{Real,Missing}}(missing,n),
+asset_savings_investments_etc = Vector{Union{Real,Missing}}(missing,n),
+asset_government_gilt_edged_stock = Vector{Union{Real,Missing}}(missing,n),
+asset_unit_or_investment_trusts = Vector{Union{Real,Missing}}(missing,n),
+asset_stocks_shares_bonds_etc = Vector{Union{Real,Missing}}(missing,n),
+asset_pep = Vector{Union{Real,Missing}}(missing,n),
+asset_national_savings_capital_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_index_linked_national_savings_certificates = Vector{Union{Real,Missing}}(missing,n),
+asset_fixed_interest_national_savings_certificates = Vector{Union{Real,Missing}}(missing,n),
+asset_pensioners_guaranteed_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_saye = Vector{Union{Real,Missing}}(missing,n),
+asset_premium_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_national_savings_income_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_national_savings_deposit_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_first_option_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_yearly_plan = Vector{Union{Real,Missing}}(missing,n),
+asset_isas = Vector{Union{Real,Missing}}(missing,n),
+asset_fixd_rate_svngs_bonds = Vector{Union{Real,Missing}}(missing,n),
+asset_geb = Vector{Union{Real,Missing}}(missing,n),
+asset_basic_account = Vector{Union{Real,Missing}}(missing,n),
+asset_credit_unions = Vector{Union{Real,Missing}}(missing,n),
+asset_endowment_policy_not_linked = Vector{Union{Real,Missing}}(missing,n),
+
+
+            	pension_contributions  = Vector{Union{Real,Missing}}(missing,n),
+            	contracted_out_of_serps  = Vector{Union{Bool,Missing}}(missing,n),
+
+            	registered_blind  = Vector{Union{Bool,Missing}}(missing,n),
+            	registered_partially_sighted  = Vector{Union{Bool,Missing}}(missing,n),
+            	registered_deaf  = Vector{Union{Bool,Missing}}(missing,n),
+            	has_learning_difficulty  = Vector{Union{Bool,Missing}}(missing,n),
+            	has_dementia  = Vector{Union{Bool,Missing}}(missing,n),
+
+                disability_vision = Vector{Union{Real,Missing}}(missing,n),
+                disability_hearing = Vector{Union{Real,Missing}}(missing,n),
+                disability_mobility = Vector{Union{Real,Missing}}(missing,n),
+                disability_dexterity = Vector{Union{Real,Missing}}(missing,n),
+                disability_learning = Vector{Union{Real,Missing}}(missing,n),
+                disability_memory = Vector{Union{Real,Missing}}(missing,n),
+                disability_mental_disability = Vector{Union{Real,Missing}}(missing,n),
+                disability_stamina = Vector{Union{Real,Missing}}(missing,n),
+                disability_socially = Vector{Union{Real,Missing}}(missing,n),
+                disability_other_difficulty = Vector{Union{Real,Missing}}(missing,n),
+
+            	health_status  = Vector{Union{Health_Status,Missing}}(missing,n),
+
+                is_informal_carer  = Vector{Union{Bool,Missing}}(missing,n),
+            	receives_informal_care_from_non_householder  = Vector{Union{Bool,Missing}}(missing,n),
+            	hours_of_care_received  = Vector{Union{Real,Missing}}(missing,n),
+            	hours_of_care_given  = Vector{Union{Real,Missing}}(missing,n)
+        )
+
 end
 
 function initialise_household( n :: Integer ) :: DataFrame

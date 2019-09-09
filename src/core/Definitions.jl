@@ -680,24 +680,23 @@ export Missing_CT_Band
    Household_not_valued_separately = 10
 end
 
-export
-   Disability_Type,
-   Disability_Dict,
-   vision,
-   hearing,
-   mobility,
-   dexterity,
-   learning,
-   memory,
-   mental_health,
-   stamina,
-   socially,
-   other_difficulty
+export Disability_Type,
+       Disability_Dict,
+       vision,
+       hearing,
+       mobility,
+       dexterity,
+       learning,
+       memory,
+       mental_health,
+       stamina,
+       socially,
+       other_difficulty
 
 @enum Disability_Type begin  # mapped from ctband
    vision = 1
-   hearing  = 2
-   mobility  = 3
+   hearing = 2
+   mobility = 3
    dexterity = 4
    learning = 5
    memory = 6
@@ -710,65 +709,58 @@ Disability_Dict = Dict{Disability_Type,Bool}
 
 export Incomes_Type, Incomes_Dict
 
-export
-      wages,
-      self_employment_income,
-      self_employment_expenses,
-      self_employment_losses,
-      private_pensions,
-
-      national_savings,
-      bank_interest,
-      building_society,
-      stocks_shares,
-      peps,
-      isa,
-      dividends,
-      property,
-      royalties,
-      bonds_and_gilts,
-      other_investment_income,
-
-      other_income,
-      alimony_and_child_support_received,
-
-      health_insurance,
-      alimony_and_child_support_paid,
-      care_insurance,
-      trade_unions_etc,
-      friendly_societies,
-      work_expenses,
-      repayments,
-      pension_contributions,
-
-      education_allowances,
-      foster_care_payments,
-      student_grants,
-      student_loans,
-
-      income_tax,
-      national_insurance,
-      local_taxes,
-
-      child_benefit,
-      pension_credit,
-      retirement_pension,
-      other_pensions,
-      disabled_living_allowance,
-      severe_disablement_allowance,
-      pip,
-      attendance_allowance,
-      invalid_care_allowance,
-      incapacity_benefit,
-      jobseekers_allowance,
-      income_support_jsa,
-      maternity_allowance,
-      other_benefits,
-      winter_fuel_payments,
-      housing_benefit,
-      council_tax_benefit,
-      tax_credits,
-      sickness_benefits
+export wages,
+       self_employment_income,
+       self_employment_expenses,
+       self_employment_losses,
+       private_pensions,
+       national_savings,
+       bank_interest,
+       building_society,
+       stocks_shares,
+       peps,
+       isa,
+       dividends,
+       property,
+       royalties,
+       bonds_and_gilts,
+       other_investment_income,
+       other_income,
+       alimony_and_child_support_received,
+       health_insurance,
+       alimony_and_child_support_paid,
+       care_insurance,
+       trade_unions_etc,
+       friendly_societies,
+       work_expenses,
+       repayments,
+       pension_contributions,
+       education_allowances,
+       foster_care_payments,
+       student_grants,
+       student_loans,
+       income_tax,
+       national_insurance,
+       local_taxes,
+       child_benefit,
+       pension_credit,
+       retirement_pension,
+       other_pensions,
+       disabled_living_allowance,
+       severe_disablement_allowance,
+       pip,
+       attendance_allowance,
+       invalid_care_allowance,
+       incapacity_benefit,
+       jobseekers_allowance,
+       income_support_jsa,
+       maternity_allowance,
+       other_benefits,
+       winter_fuel_payments,
+       housing_benefit,
+       council_tax_benefit,
+       tax_credits,
+       sickness_benefits
 
 @enum Incomes_Type begin
    wages
@@ -834,139 +826,139 @@ end
 Incomes_Dict = Dict{Incomes_Type,Real}
 
 export Asset_Type, Asset_Dict
-export
-   current_account,
-   nsb_ordinary_account,
-   nsb_investment_account,
-   not_used,
-   savings_investments_etc,
-   government_gilt_edged_stock,
-   unit_or_investment_trusts,
-   stocks_shares_bonds_etc,
-   pep,
-   national_savings_capital_bonds,
-   index_linked_national_savings_certificates,
-   fixed_interest_national_savings_certificates,
-   pensioners_guaranteed_bonds,
-   saye,
-   premium_bonds,
-   national_savings_income_bonds,
-   national_savings_deposit_bonds,
-   first_option_bonds,
-   yearly_plan,
-   isas,
-   fixd_rate_svngs_bonds,
-   geb,
-   basic_account,
-   credit_unions,
+export current_account,
+       nsb_ordinary_account,
+       nsb_investment_account,
+       not_used,
+       savings_investments_etc,
+       government_gilt_edged_stock,
+       unit_or_investment_trusts,
+       stocks_shares_bonds_etc,
+       pep,
+       national_savings_capital_bonds,
+       index_linked_national_savings_certificates,
+       fixed_interest_national_savings_certificates,
+       pensioners_guaranteed_bonds,
+       saye,
+       premium_bonds,
+       national_savings_income_bonds,
+       national_savings_deposit_bonds,
+       first_option_bonds,
+       yearly_plan,
+       isas,
+       fixd_rate_svngs_bonds,
+       geb,
+       basic_account,
+       credit_unions,
+       endowment_policy_not_linked
+
+@enum Asset_Type begin
+   current_account
+   nsb_ordinary_account
+   nsb_investment_account
+   not_used
+   savings_investments_etc
+   government_gilt_edged_stock
+   unit_or_investment_trusts
+   stocks_shares_bonds_etc
+   pep
+   national_savings_capital_bonds
+   index_linked_national_savings_certificates
+   fixed_interest_national_savings_certificates
+   pensioners_guaranteed_bonds
+   saye
+   premium_bonds
+   national_savings_income_bonds
+   national_savings_deposit_bonds
+   first_option_bonds
+   yearly_plan
+   isas
+   fixd_rate_svngs_bonds
+   geb
+   basic_account
+   credit_unions
    endowment_policy_not_linked
+end
 
-   @enum Asset_Type begin
-      current_account
-      nsb_ordinary_account
-      nsb_investment_account
-      not_used
-      savings_investments_etc
-      government_gilt_edged_stock
-      unit_or_investment_trusts
-      stocks_shares_bonds_etc
-      pep
-      national_savings_capital_bonds
-      index_linked_national_savings_certificates
-      fixed_interest_national_savings_certificates
-      pensioners_guaranteed_bonds
-      saye
-      premium_bonds
-      national_savings_income_bonds
-      national_savings_deposit_bonds
-      first_option_bonds
-      yearly_plan
-      isas
-      fixd_rate_svngs_bonds
-      geb
-      basic_account
-      credit_unions
-      endowment_policy_not_linked
-   end
-
-   Asset_Dict = Dict{ Asset_Type, Real }
+Asset_Dict = Dict{Asset_Type,Real}
 
 
-   export Relationship  # mapped from relhrp
-      export
-         Spouse,
-         Cohabitee,
-         Son_or_daughter_incl_adopted,
-         Step_son_or_daughter,
-         Foster_child,
-         Son_in_law_or_daughter_in_law,
-         Parent,
-         Step_parent,
-         Foster_parent,
-         Parent_in_law,
-         Brother_or_sister_incl_adopted,
-         Step_brother_or_sister,
-         Foster_brother_or_sister,
-         Brother_or_sister_in_law,
-         Grand_child,
-         Grand_parent,
-         Other_relative,
-         Other_non_relative,
-         Civil_Partner,
-         Missing_Relationship
+export Relationship  # mapped from relhrp
+export Spouse,
+       Cohabitee,
+       Son_or_daughter_incl_adopted,
+       Step_son_or_daughter,
+       Foster_child,
+       Son_in_law_or_daughter_in_law,
+       Parent,
+       Step_parent,
+       Foster_parent,
+       Parent_in_law,
+       Brother_or_sister_incl_adopted,
+       Step_brother_or_sister,
+       Foster_brother_or_sister,
+       Brother_or_sister_in_law,
+       Grand_child,
+       Grand_parent,
+       Other_relative,
+       Other_non_relative,
+       Civil_Partner,
+       Missing_Relationship
 
-   @enum Relationship begin  # mapped from relhrp
-     Missing_Relationship = -1
-     Spouse = 1
-     Cohabitee = 2
-     Son_or_daughter_incl_adopted = 3
-     Step_son_or_daughter = 4
-     Foster_child = 5
-     Son_in_law_or_daughter_in_law = 6
-     Parent = 7
-     Step_parent = 8
-     Foster_parent = 9
-     Parent_in_law = 10
-     Brother_or_sister_incl_adopted = 11
-     Step_brother_or_sister = 12
-     Foster_brother_or_sister = 13
-     Brother_or_sister_in_law = 14
-     Grand_child = 15
-     Grand_parent = 16
-     Other_relative = 17
-     Other_non_relative = 18
-     Civil_Partner = 20
-  end
+@enum Relationship begin  # mapped from relhrp
+   Missing_Relationship = -1
+   Spouse = 1
+   Cohabitee = 2
+   Son_or_daughter_incl_adopted = 3
+   Step_son_or_daughter = 4
+   Foster_child = 5
+   Son_in_law_or_daughter_in_law = 6
+   Parent = 7
+   Step_parent = 8
+   Foster_parent = 9
+   Parent_in_law = 10
+   Brother_or_sister_incl_adopted = 11
+   Step_brother_or_sister = 12
+   Foster_brother_or_sister = 13
+   Brother_or_sister_in_law = 14
+   Grand_child = 15
+   Grand_parent = 16
+   Other_relative = 17
+   Other_non_relative = 18
+   Civil_Partner = 20
+end
 
-  export BIG_NOTHING
-  const BIG_NOTHING = BigInt(0)
+export Relationship_Dict
+Relationship_Dict = Dict{BigInt,Relationship}
 
-  Relationship_Dict = Dict{ BigInt, Relationship }
 
-  export DataSource, FRS, OtherSource
+export BIG_NOTHING
+const BIG_NOTHING = BigInt(0)
 
-  @enum DataSource begin  # mapped from relhrp
-    FRS = 1
-    OtherSource = 2
-  end
+export DataSource, FRS, OtherSource
 
-  """
+@enum DataSource begin  # mapped from relhrp
+   FRS = 1
+   OtherSource = 2
+end
+
+"""
   get a unique ID for a person from (say) a certain year of the FRS, given hhld number and number inside the household
-  """
-  function getPid( source :: DataSource, year :: Integer, hid :: Integer, pno :: Integer ) :: BigInt
-     (Int(source) * 10^11) + (year*10^7) + (hid*10^2) + pno
-  end
+"""
+function getPid(source::DataSource, year::Integer, hid::Integer, pno::Integer)::BigInt
+   (Int(source) * 10^11) + (year * 10^7) + (hid * 10^2) + pno
+end
 
-  export DEFAULT_MISSING_VALUES, safeInc
+export DEFAULT_MISSING_VALUES, safeInc
 
-  const DEFAULT_MISSING_VALUES = [-9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0]
+const DEFAULT_MISSING_VALUES = [-9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0]
 
-  function safeInc( a :: Real, b :: Real ) :: Real
-     if b in DEFAULT_MISSING_VALUES
-        return a
-     end
-     a+b
-  end
+function safeInc(a::Real, b::Real)::Real
+   if b in DEFAULT_MISSING_VALUES
+      return a
+   end
+   a + b
+end
 
 
 
