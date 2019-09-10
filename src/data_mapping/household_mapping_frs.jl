@@ -252,13 +252,18 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
+
 function process_pensions( a_pens :: DataFrame ) :: NamedTuple
     npens =  size( a_pens )[1]
     private_pension = 0.0
+    tax = 0.0
     for p in 1:npens
-        private_pension = safe_inc( private_pension, a_pens[p, :penpay])
+        private_pension = safe_inc( private_pension, a_pens[p, :penpay ])
+        private_pension = safe_inc( private_pension, a_pens[p, :ptamt ]) # tax
+        private_pension = safe_inc( private_pension, a_pens[p, :penpd2 ]) # other deduction
+        tax = safe_inc( tax, a_pens[p, :ptamt ])
     end
-    return ( private_pension = private_pension )
+    return ( pension = private_pension, tax=tax )
 end
 
 
@@ -429,9 +434,9 @@ function create_adults(
                         ( job.benunit .== frs_person.benunit ) .&
                         ( job.person .== frs_person.person )),:]
 
-            a_pencont = penprov[(( pencont.sernum .== frs_person.sernum ) .&
-                            ( pencont.benunit .== frs_person.benunit ) .&
-                            ( pencont.person .== frs_person.person )),:]
+            a_pension = pension[(( pension.sernum .== frs_person.sernum ) .&
+                            ( pension.benunit .== frs_person.benunit ) .&
+                            ( pension.person .== frs_person.person )),:]
             a_penprov = penprov[(( penprov.sernum .== frs_person.sernum ) .&
                             ( penprov.benunit .== frs_person.benunit ) .&
                             ( penprov.person .== frs_person.person )),:]
@@ -441,7 +446,7 @@ function create_adults(
             an_account = accounts[(( accounts.sernum .== frs_person.sernum ) .&
                             ( accounts.benunit .== frs_person.benunit ) .&
                             ( accounts.person .== frs_person.person )),:]
-            npens = size( a_pen )[1]
+            npens = size( a_pension )[1]
             nassets = size( an_asset )[1]
             naaccounts = size( an_account )[1]
 
@@ -476,9 +481,9 @@ function create_adults(
             adult_model[adno,:income_self_employment_expenses] = wkstuff.self_employment_expenses
             adult_model[adno,:income_self_employment_losses] = wkstuff.self_employment_losses
 
-            penstuff = process_pensions( a_penprov )
-            adult_model[adno,:income_private_pensions] = penstuff.private_pension
-
+            penstuff = process_pensions( a_pension )
+            adult_model[adno,:income_private_pensions] = penstuff.pension
+            adult_model[adno,:income_income_tax] += penstuff.tax
 
 
             # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
