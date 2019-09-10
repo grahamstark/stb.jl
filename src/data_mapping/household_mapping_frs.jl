@@ -353,7 +353,7 @@ function add_in_earnings( a_job :: DataFrame ) :: NamedTuple
      )
 end
 
-function create_adult(
+function create_adults(
     year::Integer,
     frs_adults::DataFrame,
     accounts::DataFrame,
@@ -693,7 +693,30 @@ for year in 2014:2017
         hbai_adults
     )
     append!(model_households, model_households_yr)
-
+    model_adults_yr = create_adults(
+        year,
+        frs_adults,
+        accounts,
+        benunit,
+        extchild,
+        maint,
+        penprov,
+        admin,
+        care,
+        mortcont,
+        pension,
+        govpay,
+        mortgage,
+        assets,
+        chldcare,
+        househol,
+        oddjob,
+        benefits,
+        endowmnt,
+        job,
+        hbai_adults
+    )
+    append!(model_adults, model_adults_yr)
 end
 
 CSV.write("model_households.tab", model_households, delim = "\t")
