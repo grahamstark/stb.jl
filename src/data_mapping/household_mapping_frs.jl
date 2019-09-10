@@ -252,7 +252,7 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
-function process_pensions( a_pens : DataFrame ) :: NamedTuple
+function process_pensions( a_pens :: DataFrame ) :: NamedTuple
     npens =  size( a_pens )[1]
     private_pension = 0.0
     for p in 1:npens
