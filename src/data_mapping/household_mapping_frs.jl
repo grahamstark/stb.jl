@@ -80,7 +80,7 @@ function initialise_person(n::Integer)::DataFrame
         highest_qualification = Vector{Union{Integer,Missing}}(missing, n),
         sic = Vector{Union{Integer,Missing}}(missing, n),
         occupational_classification = Vector{Union{
-            Standard_Occupational_Classification,
+            Integer,
             Missing
         }}(
             missing,
@@ -93,8 +93,8 @@ function initialise_person(n::Integer)::DataFrame
         age_completed_full_time_education = Vector{Union{Integer,Missing}}(missing, n),
         years_in_full_time_work = Vector{Union{Integer,Missing}}(missing, n),
         employment_status = Vector{Union{Integer,Missing}}(missing, n),
-        usual_hours_worked = Vector{Union{Integer,Missing}}(missing, n),
-        actual_hours_worked = Vector{Union{Integer,Missing}}(missing, n),
+        usual_hours_worked = Vector{Union{Real,Missing}}(missing, n),
+        actual_hours_worked = Vector{Union{Real,Missing}}(missing, n),
         income_wages = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_income = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_expenses = Vector{Union{Real,Missing}}(missing, n),
@@ -252,8 +252,9 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
-function add_in_earnings( a_job :: DataFrame ) :: NamedTuple
+function create_earnings( a_job :: DataFrame ) :: NamedTuple
     njobs = size( a_job )[1]
+
     earnings = 0.0
     actual_hours = 0.0
     usual_hours = 0.0
@@ -267,32 +268,33 @@ function add_in_earnings( a_job :: DataFrame ) :: NamedTuple
     avcs = 0.0
     other_deductions = 0.0
     student_loan_repayments = 0.0
-
+    loan_repayments = 0.0
     self_employment_income = 0.0
     self_employment_expenses = 0.0
     self_employment_losses = 0.0
-
+    principal_employment_type = -1
+    public_or_private = -1
     for j in 1:njobs
         if j == 1 # take 1st record job for all of these
-            adult_model[adno,:principal_employment_type] =  safe_assign(a_job[j,:etype])
-            adult_model[adno,:public_or_private ] =  safe_assign(a_job[j,:jobsect])
+            principal_employment_type =  safe_assign(a_job[j,:etype])
+            public_or_private =  safe_assign(a_job[j,:jobsect])
         end
         usual_hours = safe_inc( usual_hours, a_job[j,:dvushr])
         actual_hours = safe_inc( actual_hours, a_job[j,:jobhours])
 
-        # alimony_and_child_support_paid  = safe_add( alimony_and_child_support_paid , a_job[j,udeduc0X])
-        # care_insurance  = safe_add( care_insurance , a_job[j,:othded0X]
+        # alimony_and_child_support_paid  = safe_inc( alimony_and_child_support_paid , a_job[j,udeduc0X])
+        # care_insurance  = safe_inc( care_insurance , a_job[j,:othded0X]
 
-        pension_contributions = safe_add( pension_contributions, a_job[j,:udeduc1])
-        avcs = safe_add( avcs, a_job[j,:udeduc2])
-        trade_unions_etc = safe_add( trade_unions_etc, a_job[j,:udeduc3])
-        friendly_societies = safe_add( friendly_societies, a_job[j,:udeduc4])
-        other_deductions= safe_add( other_deductions, a_job[j,:udeduc5])
-        loan_repayments = safe_add( loan_repayments, a_job[j,:udeduc6])
-        health_insurance  = safe_add( health_insurance , a_job[j,:udeduc7])
-        other_deductions= safe_add( other_deductions, a_job[j,:udeduc8])
-        student_loan_repayments = safe_add( student_loan_repayments, a_job[j,:udeduc9])
-        work_expenses = safe_add( work_expenses, a_job[j,:umotamt]) ## CARS FIXME add to this
+        pension_contributions = safe_inc( pension_contributions, a_job[j,:udeduc1])
+        avcs = safe_inc( avcs, a_job[j,:udeduc2])
+        trade_unions_etc = safe_inc( trade_unions_etc, a_job[j,:udeduc3])
+        friendly_societies = safe_inc( friendly_societies, a_job[j,:udeduc4])
+        other_deductions= safe_inc( other_deductions, a_job[j,:udeduc5])
+        loan_repayments = safe_inc( loan_repayments, a_job[j,:udeduc6])
+        health_insurance  = safe_inc( health_insurance , a_job[j,:udeduc7])
+        other_deductions= safe_inc( other_deductions, a_job[j,:udeduc8])
+        student_loan_repayments = safe_inc( student_loan_repayments, a_job[j,:udeduc9])
+        work_expenses = safe_inc( work_expenses, a_job[j,:umotamt]) ## CARS FIXME add to this
 
         # self employment
         if a_job[j,:prbefore] > 0.0
@@ -334,19 +336,22 @@ function add_in_earnings( a_job :: DataFrame ) :: NamedTuple
         end # add bonuses
     end # jobs loop
     return (
+        principal_employment_type = principal_employment_type,
+        public_or_private = public_or_private,
         earnings = earnings,
         usual_hours = usual_hours,
-        actual_hours=actual_hours,
+        actual_hours = actual_hours,
         health_insurance = health_insurance ,
         alimony_and_child_support_paid = alimony_and_child_support_paid ,
         # care_insurance =   # care_insurance ,
-        trade_unions_etc =   trade_unions_etc,
-        friendly_societies =   friendly_societies,
-        work_expenses =   work_expenses,
-        pension_contributions =   pension_contributions,
-        avcs =   avcs,
+        trade_unions_etc = trade_unions_etc,
+        friendly_societies = friendly_societies,
+        work_expenses = work_expenses,
+        pension_contributions = pension_contributions,
+        avcs = avcs,
         other_deductions = other_deductions,
-        student_loan_repayments =   student_loan_repayments,
+        student_loan_repayments = student_loan_repayments,
+        loan_repayments = loan_repayments,
         self_employment_income = self_employment_income,
         self_employment_expenses = self_employment_expenses,
         self_employment_losses = self_employment_losses
@@ -382,15 +387,14 @@ function create_adults(
     adult_model = initialise_person(num_adults)
     adno = 0
     hbai_year = year - 1993
-
+    println( "hbai_year $hbai_year")
     for pn in 1:num_adults
         if pn % 1000 == 0
-            println("on year $year, hid $hn")
+            println("on year $year, hid $pn")
         end
 
         frs_person = frs_adults[pn, :]
-        adno = 0
-        sernum = pers.sernum
+        sernum = frs_person.sernum
         ad_hbai = hbai_adults[(
             (hbai_adults.year .== hbai_year) .&
             (hbai_adults.sernum .== sernum) .&
@@ -401,10 +405,10 @@ function create_adults(
 
         if nhbai == 1 # only non-missing in HBAI
             adno += 1
-            ## also for children
+                ## also for children
             adult_model[adno,:pno] = frs_person.person
             adult_model[adno,:hid] = frs_person.sernum
-            adult_model[adno,:pid] = getPid( FRS, year, frs_person.sernum, frs_person.person )
+            adult_model[adno,:pid] = get_pid( FRS, year, frs_person.sernum, frs_person.person )
             adult_model[adno,:frs_year] = year
             adult_model[adno,:default_benefit_unit] = frs_person.benunit
             adult_model[adno,:age] = frs_person.age80
@@ -419,10 +423,10 @@ function create_adults(
             a_pen = penprov[(( penprov.sernum .== frs_person.sernum ) .&
                             ( penprov.benunit .== frs_person.benunit ) .&
                             ( penprov.person .== frs_person.person )),:]
-            an_asset = penprov[(( assets.sernum .== frs_person.sernum ) .&
+            an_asset = assets[(( assets.sernum .== frs_person.sernum ) .&
                             ( assets.benunit .== frs_person.benunit ) .&
                             ( assets.person .== frs_person.person )),:]
-            an_account = penprov[(( accounts.sernum .== frs_person.sernum ) .&
+            an_account = accounts[(( accounts.sernum .== frs_person.sernum ) .&
                             ( accounts.benunit .== frs_person.benunit ) .&
                             ( accounts.person .== frs_person.person )),:]
             npens = size( a_pen )[1]
@@ -433,15 +437,17 @@ function create_adults(
             adult_model[adno,:highest_qualification] = safe_assign( frs_person.dvhiqual )
             adult_model[adno,:sic] = safe_assign( frs_person.sic )
 
-            adult_model[adno,:socio_economic_grouping]= safe_assign( frs_person.soc2010 )
+            adult_model[adno,:socio_economic_grouping]= safe_assign( frs_person.nssec )
             adult_model[adno,:age_completed_full_time_education] = safe_assign( frs_person.tea )
             adult_model[adno,:years_in_full_time_work] = safe_assign( frs_person.ftwk )
             adult_model[adno,:employment_status] = safe_assign( frs_person.empstati )
+            adult_model[adno,:occupational_classification] = safe_assign( frs_person.soc2010 )
             wkstuff = create_earnings( a_job )
             adult_model[adno,:usual_hours_worked] = wkstuff.usual_hours
             adult_model[adno,:actual_hours_worked] = wkstuff.actual_hours
             adult_model[adno,:income_wages] = wkstuff.earnings
-
+            adult_model[adno,:principal_employment_type] = wkstuff.principal_employment_type
+            adult_model[adno,:public_or_private] = wkstuff.public_or_private
             ## FIXME look at this mapping again: pcodes
             adult_model[adno,:income_health_insurance ] = wkstuff.health_insurance
             # adult_model[adno,:income_# care_insurance ] = wkstuff.# care_insurance
@@ -452,6 +458,7 @@ function create_adults(
             adult_model[adno,:income_avcs] = wkstuff.avcs
             adult_model[adno,:income_other_deductions ] = wkstuff.other_deductions
             adult_model[adno,:income_student_loan_repayments] = wkstuff.student_loan_repayments # fixme maybe "slrepamt" or "slreppd"
+            adult_model[adno,:income_loan_repayments] = wkstuff.loan_repayments # fixme maybe "slrepamt" or "slreppd"
 
             adult_model[adno,:income_self_employment_income] = wkstuff.self_employment_income
             adult_model[adno,:income_self_employment_expenses] = wkstuff.self_employment_expenses
@@ -520,7 +527,8 @@ function create_adults(
 
         end # if in HBAI
     end # adult loop
-    adult_model[1:adno]
+    println( "final adno $adno")
+    adult_model[1:adno,:]
 end # proc create_adult
 
 function create_child(
@@ -729,7 +737,7 @@ for year in 2017:2017
         job,
         hbai_adults
     )
-    append!(model_adults, model_adults_yr)
+    append!(model_people, model_adults_yr)
 
 
     model_households_yr = create_household(
@@ -746,3 +754,4 @@ for year in 2017:2017
 end
 
 CSV.write("model_households.tab", model_households, delim = "\t")
+CSV.write("model_people.tab", model_people, delim = "\t")

@@ -972,10 +972,11 @@ export DataSource, FRS, OtherSource
    OtherSource = 2
 end
 
+export get_pid, safe_assign, safe_inc
 """
   get a unique ID for a person from (say) a certain year of the FRS, given hhld number and number inside the household
 """
-function getPid(source::DataSource, year::Integer, hid::Integer, pno::Integer)::BigInt
+function get_pid(source::DataSource, year::Integer, hid::Integer, pno::Integer)::BigInt
    (Int(source) * 10^11) + (year * 10^7) + (hid * 10^2) + pno
 end
 
