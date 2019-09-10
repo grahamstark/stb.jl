@@ -66,7 +66,7 @@ function loadPrices(name::AbstractString)::DataFrame
     prices
 end
 
-function initialise_personal(n::Integer)::DataFrame
+function initialise_person(n::Integer)::DataFrame
     pers = DataFrame(
         frs_year = Vector{Union{Int64,Missing}}(missing, n),
         hid = Vector{Union{BigInt,Missing}}(missing, n),
@@ -74,11 +74,11 @@ function initialise_personal(n::Integer)::DataFrame
         pno = Vector{Union{Integer,Missing}}(missing, n),
         default_benefit_unit = Vector{Union{Integer,Missing}}(missing, n),
         age = Vector{Union{Integer,Missing}}(missing, n),
-        sex = Vector{Union{Sex,Missing}}(missing, n),
-        ethnic_group = Vector{Union{Ethnic_Group,Missing}}(missing, n),
-        marital_status = Vector{Union{Marital_Status,Missing}}(missing, n),
-        highest_qualification = Vector{Union{Qualification_Type,Missing}}(missing, n),
-        industrial_classification = Vector{Union{SIC_2007,Missing}}(missing, n),
+        sex = Vector{Union{Integer,Missing}}(missing, n),
+        ethnic_group = Vector{Union{Integer,Missing}}(missing, n),
+        marital_status = Vector{Union{Integer,Missing}}(missing, n),
+        highest_qualification = Vector{Union{Integer,Missing}}(missing, n),
+        sic = Vector{Union{Integer,Missing}}(missing, n),
         occupational_classification = Vector{Union{
             Standard_Occupational_Classification,
             Missing
@@ -86,11 +86,12 @@ function initialise_personal(n::Integer)::DataFrame
             missing,
             n
         ),
-        socio_economic_grouping = Vector{Union{Socio_Economic_Group,Missing}}(missing, n),
+        socio_economic_grouping = Vector{Union{Integer,Missing}}(missing, n),
         age_completed_full_time_education = Vector{Union{Integer,Missing}}(missing, n),
         years_in_full_time_work = Vector{Union{Integer,Missing}}(missing, n),
-        employment_status = Vector{Union{ILO_Employment,Missing}}(missing, n),
-        hours_worked = Vector{Union{Integer,Missing}}(missing, n),
+        employment_status = Vector{Union{Integer,Missing}}(missing, n),
+        usual_hours_worked = Vector{Union{Integer,Missing}}(missing, n),
+        actual_hours_worked = Vector{Union{Integer,Missing}}(missing, n),
         income_wages = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_income = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_expenses = Vector{Union{Real,Missing}}(missing, n),
@@ -243,9 +244,11 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
+
+
 function create_adult(
     year::Integer,
-    adult::DataFrame,
+    frs_adults::DataFrame,
 
     accounts::DataFrame,
     benunit::DataFrame,
@@ -269,20 +272,83 @@ function create_adult(
 
 ) :: DataFrame
 
-frs_year = Vector{Union{Int64,Missing}}(missing, n),
-hid = Vector{Union{BigInt,Missing}}(missing, n),
-pid = Vector{Union{BigInt,Missing}}(missing, n),
-pno = Vector{Union{Integer,Missing}}(missing, n),
-default_benefit_unit = Vector{Union{Integer,Missing}}(missing, n),
+num_adults = size(frs_adults)[1]
+adult_model = initialise_person(num_adults)
+adno = 0
+hbai_year = year - 1993
+
+for pn in 1:num_adults
+    if pn % 1000 == 0
+        println("on year $year, hid $hn")
+    end
+
+    pers = frs_adult[pn, :]
+    adno = 0
+
+    sernum = pers.sernum
+    ad_hbai = hbai_adults[(
+        (hbai_adults.year .== hbai_year) .&
+        (hbai_adults.sernum .== sernum) .&
+        (hbai_adults.person .== frs_person.person) .&
+        (hbai_adults.benunit .== frs_person.benunit)),  :]
+    if (size(ad_hbai)[1] > 0) # only non-missing in HBAI
+        adno += 1
+
+        ## also for children
+        adult_model[adno,:pno] = frs_person.person
+        adult_model[adno,:hid] = frs_person.sernum
+        adult_model[adno,:pid] = getPid( FRS, year, frs_person.sernum, frs_person.person )
+        adult_model[adno,:frs_year] = year
+        adult_model[adno,:default_benefit_unit] = frs_person.benunit
+        adult_model[adno,:age] = frs_person.age80
+        adult_model[adno,:sex] = safe_assign(  frs_person.sex )
+        adult_model[adno,:ethnic_group] = safe_assign(  frs_person.ethgr3 )
+
+        ## adult only
+        a_job = job[(( job.sernum .== pers.sernum ) .&
+                    ( job.benunit .== pers.benunit ) .&
+                    ( job.person .== pers.person )),:]
+
+        a_pen = penprov[(( penprov.sernum .== pers.sernum ) .&
+                        ( penprov.benunit .== pers.benunit ) .&
+                        ( penprov.person .== pers.person )),:]
+        an_asset = penprov[(( assets.sernum .== pers.sernum ) .&
+                        ( assets.benunit .== pers.benunit ) .&
+                        ( assets.person .== pers.person )),:]
+        an_account = penprov[(( accounts.sernum .== pers.sernum ) .&
+                        ( accounts.benunit .== pers.benunit ) .&
+                        ( accounts.person .== pers.person )),:]
+        njobs = size( a_job )[1]
+        npens = size( a_pen )[1]
+        nassets = size( an_asset )[1]
+        naaccounts = size( an_account )[1]
+
+        adult_model[adno,:marital_status] = safe_assign( frs_person.marital )
+        adult_model[adno,:highest_qualification] = safe_assign( frs_person.dvhiqual )
+        adult_model[adno,:sic] = safe_assign( frs_person.sic )
+
+        adult_model[adno,:socio_economic_grouping]= safe_assign( frs_person.soc2010 )
+        adult_model[adno,:age_completed_full_time_education] = safe_assign( frs_person.tea )
+        adult_model[adno,:years_in_full_time_work] = safe_assign( frs_person.ftwk )
+        adult_model[adno,:employment_status] = safe_assign( frs_person.empstati )
+
+        earnings = 0.0
+        actual_hours = 0.0
+        usual_hours = 0.0
+        for j in 1:njobs
+            if j == 1 # take 1st record job for all of these
+                    merged[adno,:etype] =  ajob[j,:etype]
+                    merged[adno,:jobtype] =  ajob[j,:jobtype]
+                    if( year >= 2010 )
+                            merged[adno,:jobsect] = ajob[j,:jobsect]
+                    end
+            end
+        end
+        adult_model[adno,:usual_hours_worked] = usual_hours
+        adult_model[adno,:actual_hours_worked] = actual_hours
+        adult_model[adno,:income_wages] = earnings
 
 
-age =  adult[ao,:age80]
-
-sex = Vector{Union{Sex,Missing}}(missing, n),
-ethnic_group = Vector{Union{Ethnic_Group,Missing}}(missing, n),
-marital_status = Vector{Union{Marital_Status,Missing}}(missing, n),
-highest_qualification = Vector{Union{Qualification_Type,Missing}}(missing, n),
-industrial_classification = Vector{Union{SIC_2007,Missing}}(missing, n),
 
 end
 
@@ -300,8 +366,7 @@ function create_household(
     mortgage::DataFrame,
     mortcont::DataFrame,
     owner::DataFrame,
-    hbai_adults::DataFrame
-)
+    hbai_adults::DataFrame ) :: DataFrame
 
     num_households = size(frs_household)[1]
     hh_model = initialise_household(num_households)
@@ -411,7 +476,7 @@ prices = loadPrices("/mnt/data/prices/mm23/mm23_edited.csv")
 gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 
 model_households = initialise_household(0)
-model_people = initialise_personal(0)
+model_people = initialise_person(0)
 
 for year in 2014:2017
 

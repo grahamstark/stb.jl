@@ -14,14 +14,18 @@ mutable struct Person
     ethnic_group::Ethnic_Group
     marital_status::Marital_Status
     highest_qualification::Qualification_Type
-    industrial_classification::SIC_2007
+    sic::SIC_2007
     occupational_classification::Standard_Occupational_Classification
+
+    public_or_private :: Employment_Sector
+    principal_employment_type :: Employment_Type
 
     socio_economic_grouping::Socio_Economic_Group
     age_completed_full_time_education::Integer
     years_in_full_time_work::Integer
     employment_status::ILO_Employment
-    hours_worked::Integer
+    actual_hours_worked::Real
+    usual_hours_worked::Real
 
     income::Incomes_Dict
     assets::Asset_Dict
