@@ -252,7 +252,17 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
-function create_earnings( a_job :: DataFrame ) :: NamedTuple
+function process_pensions( a_pens : DataFrame ) :: NamedTuple
+    npens =  size( a_pens )[1]
+    private_pension = 0.0
+    for p in 1:npens
+        private_pension = safe_inc( private_pension, a_pens[p, :penpay])
+    end
+    return ( private_pension = private_pension )
+end
+
+
+function process_job_rec( a_job :: DataFrame ) :: NamedTuple
     njobs = size( a_job )[1]
 
     earnings = 0.0
@@ -298,7 +308,6 @@ function create_earnings( a_job :: DataFrame ) :: NamedTuple
 
         # self employment
         if a_job[j,:prbefore] > 0.0
-
             self_employment_income += a_job[j,:prbefore]
         elseif a_job[j,:profit1] > 0.0
             @assert a_job[j,:profit2] in [1,2]
@@ -420,7 +429,10 @@ function create_adults(
                         ( job.benunit .== frs_person.benunit ) .&
                         ( job.person .== frs_person.person )),:]
 
-            a_pen = penprov[(( penprov.sernum .== frs_person.sernum ) .&
+            a_pencont = penprov[(( pencont.sernum .== frs_person.sernum ) .&
+                            ( pencont.benunit .== frs_person.benunit ) .&
+                            ( pencont.person .== frs_person.person )),:]
+            a_penprov = penprov[(( penprov.sernum .== frs_person.sernum ) .&
                             ( penprov.benunit .== frs_person.benunit ) .&
                             ( penprov.person .== frs_person.person )),:]
             an_asset = assets[(( assets.sernum .== frs_person.sernum ) .&
@@ -437,12 +449,12 @@ function create_adults(
             adult_model[adno,:highest_qualification] = safe_assign( frs_person.dvhiqual )
             adult_model[adno,:sic] = safe_assign( frs_person.sic )
 
-            adult_model[adno,:socio_economic_grouping]= safe_assign( frs_person.nssec )
+            adult_model[adno,:socio_economic_grouping]= safe_assign( Integer(trunc(frs_person.nssec )))
             adult_model[adno,:age_completed_full_time_education] = safe_assign( frs_person.tea )
             adult_model[adno,:years_in_full_time_work] = safe_assign( frs_person.ftwk )
             adult_model[adno,:employment_status] = safe_assign( frs_person.empstati )
             adult_model[adno,:occupational_classification] = safe_assign( frs_person.soc2010 )
-            wkstuff = create_earnings( a_job )
+            wkstuff = process_job_rec( a_job )
             adult_model[adno,:usual_hours_worked] = wkstuff.usual_hours
             adult_model[adno,:actual_hours_worked] = wkstuff.actual_hours
             adult_model[adno,:income_wages] = wkstuff.earnings
@@ -463,6 +475,11 @@ function create_adults(
             adult_model[adno,:income_self_employment_income] = wkstuff.self_employment_income
             adult_model[adno,:income_self_employment_expenses] = wkstuff.self_employment_expenses
             adult_model[adno,:income_self_employment_losses] = wkstuff.self_employment_losses
+
+            penstuff = process_pensions( a_penprov )
+            adult_model[adno,:income_private_pensions] = penstuff.private_pension
+
+
 
             # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
 
