@@ -334,21 +334,21 @@ function add_in_earnings( a_job :: DataFrame ) :: NamedTuple
         end # add bonuses
     end # jobs loop
     return (
-        earnings=earnings,
-        usual_hours=usual_hours,
+        earnings = earnings,
+        usual_hours = usual_hours,
         actual_hours=actual_hours,
-        health_insurance =   health_insurance ,
-        alimony_and_child_support_paid =   alimony_and_child_support_paid ,
+        health_insurance = health_insurance ,
+        alimony_and_child_support_paid = alimony_and_child_support_paid ,
         # care_insurance =   # care_insurance ,
         trade_unions_etc =   trade_unions_etc,
-        friendly_societies=   friendly_societies,
-        work_expenses=   work_expenses,
-        pension_contributions=   pension_contributions,
-        avcs=   avcs,
+        friendly_societies =   friendly_societies,
+        work_expenses =   work_expenses,
+        pension_contributions =   pension_contributions,
+        avcs =   avcs,
         other_deductions = other_deductions,
-        student_loan_repayments=   student_loan_repayments,
-        self_employment_income = self_employment_income
-        self_employment_expenses = self_employment_expenses
+        student_loan_repayments =   student_loan_repayments,
+        self_employment_income = self_employment_income,
+        self_employment_expenses = self_employment_expenses,
         self_employment_losses = self_employment_losses
      )
 end
@@ -388,7 +388,7 @@ function create_adults(
             println("on year $year, hid $hn")
         end
 
-        frs_person = frs_adult[pn, :]
+        frs_person = frs_adults[pn, :]
         adno = 0
         sernum = pers.sernum
         ad_hbai = hbai_adults[(
@@ -628,6 +628,26 @@ function create_household(
     hh_model[1:hhno,:]
 end
 
+
+global HBAIS = Dict(
+        2017=>"i1718.tab",
+        2016=>"hbai1617_g4.tab",
+        2015=>"hbai1516_g4.tab",
+        2014=>"hbai1415_g4.tab",
+        2013=>"hbai1314_g4.tab",
+        2012=>"hbai1213_g4.tab",
+        2011=>"hbai1112_g4.tab",
+        2010=>"hbai1011_g4.tab",
+        2009=>"hbai0910_g4.tab",
+        2008=>"hbai0809_g4.tab",
+        2007=>"hbai0708_g4.tab",
+        2006=>"hbai0607_g4.tab",
+        2005=>"hbai0506_g4.tab",
+        2004=>"hbai0405_g4.tab",
+        2003=>"hbai0304_g4.tab"
+)
+
+
 function loadtoframe(filename::AbstractString)::DataFrame
     df = CSV.File(filename, delim = '\t') |> DataFrame
     lcnames = Symbol.(lowercase.(string.(names(df))))
@@ -640,8 +660,8 @@ function loadfrs(which::AbstractString, year::Integer)::DataFrame
     loadtoframe(filename)
 end
 
-hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
-hbai_household = loadtoframe("$(HBAI_DIR)/tab/h1718_all.tab")
+# hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
+# hbai_household = loadtoframe("$(HBAI_DIR)/tab/h1718_all.tab")
 
 prices = loadPrices("/mnt/data/prices/mm23/mm23_edited.csv")
 gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
@@ -649,9 +669,12 @@ gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 model_households = initialise_household(0)
 model_people = initialise_person(0)
 
-for year in 2014:2017
+for year in 2017:2017
 
     print("on year $year ")
+
+    hbf =  HBAIS[year]
+    hbai_adults = loadtoframe("$(HBAI_DIR)/tab/$hbf")
 
     accounts = loadfrs("accounts", year)
     benunit = loadfrs("benunit", year)
@@ -683,19 +706,9 @@ for year in 2014:2017
     owner = loadfrs("owner", year)
     renter = loadfrs("renter", year)
 
-    model_households_yr = create_household(
-        year,
-        househol,
-        renter,
-        mortgage,
-        mortcont,
-        owner,
-        hbai_adults
-    )
-    append!(model_households, model_households_yr)
     model_adults_yr = create_adults(
         year,
-        frs_adults,
+        adult,
         accounts,
         benunit,
         extchild,
@@ -717,6 +730,19 @@ for year in 2014:2017
         hbai_adults
     )
     append!(model_adults, model_adults_yr)
+
+
+    model_households_yr = create_household(
+        year,
+        househol,
+        renter,
+        mortgage,
+        mortcont,
+        owner,
+        hbai_adults
+    )
+    append!(model_households, model_households_yr)
+
 end
 
 CSV.write("model_households.tab", model_households, delim = "\t")

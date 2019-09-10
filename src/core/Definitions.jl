@@ -768,7 +768,6 @@ export wages,
    self_employment_expenses
    self_employment_losses
    private_pensions
-
    national_savings
    bank_interest
    building_society
@@ -780,32 +779,26 @@ export wages,
    royalties
    bonds_and_gilts
    other_investment_income
-
    other_income
    alimony_and_child_support_received
-
    health_insurance
    alimony_and_child_support_paid
    care_insurance
    trade_unions_etc
    friendly_societies
    work_expenses
-   pension_contributions
    avcs
    other_deductions
-   loan_repayments,
-   student_loan_repayments,
-   pension_contributions,
-
+   loan_repayments
+   student_loan_repayments
+   pension_contributions
    education_allowances
    foster_care_payments
    student_grants
    student_loans
-
    income_tax
    national_insurance
    local_taxes
-
    child_benefit
    pension_credit
    retirement_pension
