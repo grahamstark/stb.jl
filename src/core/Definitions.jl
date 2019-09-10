@@ -731,12 +731,15 @@ export wages,
        trade_unions_etc,
        friendly_societies,
        work_expenses,
-       repayments,
+       loan_repayments,
+       student_loan_repayments,
        pension_contributions,
+       avcs,
        education_allowances,
        foster_care_payments,
        student_grants,
        student_loans,
+       other_deductions,
        income_tax,
        national_insurance,
        local_taxes,
@@ -788,8 +791,12 @@ export wages,
    trade_unions_etc
    friendly_societies
    work_expenses
-   repayments
    pension_contributions
+   avcs
+   other_deductions
+   loan_repayments,
+   student_loan_repayments,
+   pension_contributions,
 
    education_allowances
    foster_care_payments
@@ -930,7 +937,7 @@ export Relationship_Dict
 Relationship_Dict = Dict{BigInt,Relationship}
 
 export Employment_Type  # mapped from etype
-export Employee,
+export An_Employee,
        Running_a_business_or_prof_practice,
        Partner_in_a_business_or_practice,
        Working_for_myself,
@@ -941,7 +948,7 @@ export Missing_Employment_Type
 
 @enum Employment_Type begin  # mapped from etype
    Missing_Employment_Type = -1
-   Employee = 1
+   An_Employee = 1
    Running_a_business_or_prof_practice = 2
    Partner_in_a_business_or_practice = 3
    Working_for_myself = 4
