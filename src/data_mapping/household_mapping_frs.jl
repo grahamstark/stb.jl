@@ -86,6 +86,9 @@ function initialise_person(n::Integer)::DataFrame
             missing,
             n
         ),
+        public_or_private = Vector{Union{Integer,Missing}}(missing, n),
+        principal_employment_type = Vector{Union{Integer,Missing}}(missing, n),
+
         socio_economic_grouping = Vector{Union{Integer,Missing}}(missing, n),
         age_completed_full_time_education = Vector{Union{Integer,Missing}}(missing, n),
         years_in_full_time_work = Vector{Union{Integer,Missing}}(missing, n),
@@ -337,13 +340,35 @@ for pn in 1:num_adults
         usual_hours = 0.0
         for j in 1:njobs
             if j == 1 # take 1st record job for all of these
-                    merged[adno,:etype] =  ajob[j,:etype]
-                    merged[adno,:jobtype] =  ajob[j,:jobtype]
-                    if( year >= 2010 )
-                            merged[adno,:jobsect] = ajob[j,:jobsect]
-                    end
+                adult_model[adno,:principal_employment_type] =  safe_assign(a_job[j,:etype])
+                adult_model[adno,:public_or_private ] =  safe_assign(a_job[j,:jobsect])
             end
-        end
+            usual_hours = safe_inc( usual_hours, a_job[j,:dvushr])
+            actual_hours = safe_inc( actual_hours, a_job[j,:jobhours])
+            addBonus = false
+            if ajob[j,:ugross] > 0.0 # take usual when last not usual
+                    earnings += ajob[j,:ugross]
+                    addBonus = true
+            elseif ajob[j,:grwage] > 0.0 # then take last
+                    earnings += ajob[j,:grwage]
+                    addBonus = true
+            elseif ajob[j,:ugrspay] > 0.0 # then take total pay, but don't add bonuses
+                    earnings += ajob[j,:ugrspay]
+            end
+            if addBonus
+                    for i in 1:6
+                            bon = Symbol( string("bonamt",i))
+                            tax = Symbol( string("bontax",i))
+                            if ajob[j,bon] > 0.0
+                                    bon = ajob[j,bon]
+                                    if  ajob[j,tax] == 2
+                                            bon /= (1-0.22) # fixme hack basic rate
+                                    end
+                                    earnings += bon/52.0 # fixwme weeks per year
+                            end
+                    end # bonuses loop
+            end # add bonuses
+        end # jobs loop
         adult_model[adno,:usual_hours_worked] = usual_hours
         adult_model[adno,:actual_hours_worked] = actual_hours
         adult_model[adno,:income_wages] = earnings
