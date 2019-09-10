@@ -106,7 +106,6 @@ function initialise_person(n::Integer)::DataFrame
         income_stocks_shares = Vector{Union{Real,Missing}}(missing, n),
         income_peps = Vector{Union{Real,Missing}}(missing, n),
         income_isa = Vector{Union{Real,Missing}}(missing, n),
-        income_dividends = Vector{Union{Real,Missing}}(missing, n),
         income_property = Vector{Union{Real,Missing}}(missing, n),
         income_royalties = Vector{Union{Real,Missing}}(missing, n),
         income_bonds_and_gilts = Vector{Union{Real,Missing}}(missing, n),
@@ -445,7 +444,6 @@ function create_adult(
 
             ## FIXME look at this mapping again: pcodes
             adult_model[adno,:income_health_insurance ] = wkstuff.health_insurance
-            adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
             # adult_model[adno,:income_# care_insurance ] = wkstuff.# care_insurance
             adult_model[adno,:income_trade_unions_etc ] = wkstuff.trade_unions_etc
             adult_model[adno,:income_friendly_societies] = wkstuff.friendly_societies
@@ -453,11 +451,72 @@ function create_adult(
             adult_model[adno,:income_pension_contributions] = wkstuff.pension_contributions
             adult_model[adno,:income_avcs] = wkstuff.avcs
             adult_model[adno,:income_other_deductions ] = wkstuff.other_deductions
-            adult_model[adno,:income_student_loan_repayments] = wkstuff.student_loan_repayments
+            adult_model[adno,:income_student_loan_repayments] = wkstuff.student_loan_repayments # fixme maybe "slrepamt" or "slreppd"
 
             adult_model[adno,:income_self_employment_income] = wkstuff.self_employment_income
             adult_model[adno,:income_self_employment_expenses] = wkstuff.self_employment_expenses
             adult_model[adno,:income_self_employment_losses] = wkstuff.self_employment_losses
+
+            # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
+
+# wages,   X
+# self_employment_income, X
+# self_employment_expenses, X
+# self_employment_losses,X
+
+# private_pensions,
+# national_savings,
+# bank_interest,
+# building_society,
+# stocks_shares,
+# peps,
+# isa,
+# dividends,
+# property,
+# royalties,
+# bonds_and_gilts,
+# other_investment_income,
+# other_income,
+
+# alimony_and_child_support_received, X
+# health_insurance, X
+# alimony_and_child_support_paid,
+# care_insurance, X
+# trade_unions_etc, X
+# friendly_societies, X
+# work_expenses, X
+# loan_repayments, X
+# student_loan_repayments, X
+# pension_contributions,
+# avcs, X
+
+# education_allowances,
+# foster_care_payments,
+# student_grants,
+# student_loans,
+# other_deductions,
+# income_tax,
+# national_insurance,
+# local_taxes,
+# child_benefit,
+# pension_credit,
+# retirement_pension,
+# other_pensions,
+# disabled_living_allowance,
+# severe_disablement_allowance,
+# pip,
+# attendance_allowance,
+# invalid_care_allowance,
+# incapacity_benefit,
+# jobseekers_allowance,
+# income_support_jsa,
+# maternity_allowance,
+# other_benefits,
+# winter_fuel_payments,
+# housing_benefit,
+# council_tax_benefit,
+# tax_credits,
+# sickness_benefits
 
         end # if in HBAI
     end # adult loop
