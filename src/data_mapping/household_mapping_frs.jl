@@ -739,7 +739,7 @@ function loadfrs(which::AbstractString, year::Integer)::DataFrame
     loadtoframe(filename)
 end
 
-# hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
+hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
 # hbai_household = loadtoframe("$(HBAI_DIR)/tab/h1718_all.tab")
 
 prices = loadPrices("/mnt/data/prices/mm23/mm23_edited.csv")
@@ -752,8 +752,8 @@ for year in 2015:2017
 
     print("on year $year ")
 
-    hbf = HBAIS[year]
-    hbai_adults = loadtoframe("$(HBAI_DIR)/tab/$hbf")
+    ## hbf = HBAIS[year]
+    ## hbai_adults = loadtoframe("$(HBAI_DIR)/tab/$hbf")
 
     accounts = loadfrs("accounts", year)
     benunit = loadfrs("benunit", year)
