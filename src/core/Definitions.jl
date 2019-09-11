@@ -711,12 +711,12 @@ export wages,
        self_employment_income,
        self_employment_expenses,
        self_employment_losses,
+       odd_jobs,
        private_pensions,
        national_savings,
        bank_interest,
        building_society,
        stocks_shares,
-       peps,
        isa,
        property,
        royalties,
@@ -767,11 +767,11 @@ export wages,
    self_employment_income
    self_employment_expenses
    self_employment_losses
+   odd_jobs
    private_pensions
    national_savings
    bank_interest
    stocks_shares
-   peps
    isa
    dividends
    property
@@ -830,7 +830,6 @@ export current_account,
        government_gilt_edged_stock,
        unit_or_investment_trusts,
        stocks_shares_bonds_etc,
-       pep,
        national_savings_capital_bonds,
        index_linked_national_savings_certificates,
        fixed_interest_national_savings_certificates,
@@ -857,7 +856,6 @@ export current_account,
    government_gilt_edged_stock
    unit_or_investment_trusts
    stocks_shares_bonds_etc
-   pep
    national_savings_capital_bonds
    index_linked_national_savings_certificates
    fixed_interest_national_savings_certificates
@@ -984,7 +982,7 @@ export Current_account,
        Company_Share_Option_Plans,
        Member_of_Share_Club,
        Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds,
-       Guaranteed_Equity_Bond, # label is actually 'GEB'
+       Guaranteed_Equity_Bond,
        Basic_Account,
        Credit_Unions,
        Endowment_Policy_Not_Linked,
@@ -1017,7 +1015,7 @@ export Missing_Account_Type
    Company_Share_Option_Plans = 23
    Member_of_Share_Club = 24
    Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds = 25
-   Guaranteed_Equity_Bond = 26 ## Guaranteed/Fixed rate E bond
+   Guaranteed_Equity_Bond = 26# Guaranteed/Fixed rate E bond
    Basic_Account = 27
    Credit_Unions = 28
    Endowment_Policy_Not_Linked = 29
@@ -1035,6 +1033,128 @@ export Missing_Account_Tax_Status
    Before_tax = 2
 end
 
+export Benefit_Type  # mapped from benefit
+export DLAself_care,
+       DLAmobility,
+       Child_Benefit,
+       Pension_credit,
+       State_Pension,
+       Bereavement_Allowance_or_Widowed_Parents_Allowance_or_Bereavement,
+       Armed_Forces_Compensation_Scheme,
+       War_Widows_or_Widowers_Pension,
+       Severe_Disability_Allowance,
+       Attendence_Allowance,
+       Carers_Allowance,
+       Jobseekers_Allowance,
+       Industrial_Injury_Disablement_Benefit,
+       Employment_and_Support_Allowance,
+       Incapacity_Benefit,
+       Income_Support,
+       Maternity_Allowance,
+       Maternity_Grant_from_Social_Fund,
+       Funeral_Grant_from_Social_Fund,
+       Any_other_NI_or_State_benefit,
+       Trade_Union_sick_or_strike_pay,
+       Friendly_Society_Benefits,
+       Private_sickness_scheme_benefits,
+       Accident_insurance_scheme_benefits,
+       Hospital_savings_scheme_benefits,
+       Government_training_allowances,
+       Guardians_Allowance,
+       Widows_Payment,
+       Unemployment_or_Redundancy_Insurance,
+       Winter_Fuel_Payments,
+       DWP_third_party_payments_IS_or_PC,
+       DWP_third_party_payments_JSA_or_ESA,
+       Social_Fund_Loan_Repayment_from_IS_or_PC,
+       Social_Fund_Loan_Repayment_from_JSA_or_ESA,
+       Extended_HB,
+       Permanent_health_insurance,
+       Any_other_sickness_insurance,
+       Critical_Illness_Cover,
+       Working_Tax_Credit,
+       Child_Tax_Credit,
+       Working_Tax_Credit_Lump_Sum,
+       Child_Tax_Credit_Lump_Sum,
+       Housing_Benefit,
+       Universal_Credit,
+       Personal_Independence_Payment_Daily_Living,
+       Personal_Independence_Payment_Mobility,
+       A_loan_from_the_DWP_and_DfC,
+       A_loan_or_grant_from_local_authority,
+       Future_Pension_Credit,
+       Future_Universal_Credit,
+       Future_Housing_Benefit,
+       Future_Working_Tax_Credit,
+       Future_Child_Tax_Credit,
+       Future_Income_Support,
+       Future_Jobseekers_Allowance,
+       Future_Employment_and_Support_Allowance,
+       DWP_third_party_payments_UC,
+       Social_Fund_Loan_UC
+export Missing_Benefit_Type
+
+@enum Benefit_Type begin  # mapped from benefit
+   Missing_Benefit_Type = -1
+   DLAself_care = 1
+   DLAmobility = 2
+   Child_Benefit = 3
+   Pension_credit = 4
+   State_Pension = 5
+   Bereavement_Allowance_or_Widowed_Parents_Allowance_or_Bereavement = 6
+   Armed_Forces_Compensation_Scheme = 8
+   War_Widows_or_Widowers_Pension = 9
+   Severe_Disability_Allowance = 10
+   Attendence_Allowance = 12
+   Carers_Allowance = 13
+   Jobseekers_Allowance = 14
+   Industrial_Injury_Disablement_Benefit = 15
+   Employment_and_Support_Allowance = 16
+   Incapacity_Benefit = 17
+   Income_Support = 19
+   Maternity_Allowance = 21
+   Maternity_Grant_from_Social_Fund = 22
+   Funeral_Grant_from_Social_Fund = 24
+   Any_other_NI_or_State_benefit = 30
+   Trade_Union_sick_or_strike_pay = 31
+   Friendly_Society_Benefits = 32
+   Private_sickness_scheme_benefits = 33
+   Accident_insurance_scheme_benefits = 34
+   Hospital_savings_scheme_benefits = 35
+   Government_training_allowances = 36
+   Guardians_Allowance = 37
+   Widows_Payment = 60
+   Unemployment_or_Redundancy_Insurance = 61
+   Winter_Fuel_Payments = 62
+   DWP_third_party_payments_IS_or_PC = 65
+   DWP_third_party_payments_JSA_or_ESA = 66
+   Social_Fund_Loan_Repayment_from_IS_or_PC = 69
+   Social_Fund_Loan_Repayment_from_JSA_or_ESA = 70
+   Extended_HB = 78
+   Permanent_health_insurance = 81
+   Any_other_sickness_insurance = 82
+   Critical_Illness_Cover = 83
+   Working_Tax_Credit = 90
+   Child_Tax_Credit = 91
+   Working_Tax_Credit_Lump_Sum = 92
+   Child_Tax_Credit_Lump_Sum = 93
+   Housing_Benefit = 94
+   Universal_Credit = 95
+   Personal_Independence_Payment_Daily_Living = 96
+   Personal_Independence_Payment_Mobility = 97
+   A_loan_from_the_DWP_and_DfC = 98
+   A_loan_or_grant_from_local_authority = 99
+   Future_Pension_Credit = 102
+   Future_Universal_Credit = 103
+   Future_Housing_Benefit = 104
+   Future_Working_Tax_Credit = 105
+   Future_Child_Tax_Credit = 106
+   Future_Income_Support = 107
+   Future_Jobseekers_Allowance = 108
+   Future_Employment_and_Support_Allowance = 109
+   DWP_third_party_payments_UC = 110
+   Social_Fund_Loan_UC = 111
+end
 
 
 

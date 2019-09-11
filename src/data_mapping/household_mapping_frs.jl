@@ -92,11 +92,11 @@ function initialise_person(n::Integer)::DataFrame
         income_self_employment_income = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_expenses = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_losses = Vector{Union{Real,Missing}}(missing, n),
+        income_odd_jobs = Vector{Union{Real,Missing}}(missing, n),
         income_private_pensions = Vector{Union{Real,Missing}}(missing, n),
         income_national_savings = Vector{Union{Real,Missing}}(missing, n),
         income_bank_interest = Vector{Union{Real,Missing}}(missing, n),
         income_stocks_shares = Vector{Union{Real,Missing}}(missing, n),
-        income_peps = Vector{Union{Real,Missing}}(missing, n),
         income_isa = Vector{Union{Real,Missing}}(missing, n),
         income_property = Vector{Union{Real,Missing}}(missing, n),
         income_royalties = Vector{Union{Real,Missing}}(missing, n),
@@ -151,7 +151,6 @@ function initialise_person(n::Integer)::DataFrame
         asset_government_gilt_edged_stock = Vector{Union{Real,Missing}}(missing, n),
         asset_unit_or_investment_trusts = Vector{Union{Real,Missing}}(missing, n),
         asset_stocks_shares_bonds_etc = Vector{Union{Real,Missing}}(missing, n),
-        asset_pep = Vector{Union{Real,Missing}}(missing, n),
         asset_national_savings_capital_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_index_linked_national_savings_certificates = Vector{Union{Real,Missing}}(
             missing,
@@ -275,7 +274,6 @@ function map_investment_income(person_model::DataFrameRow, accounts::DataFrame)
     person_model.income_national_savings = 0.0
     person_model.income_bank_interest = 0.0
     person_model.income_stocks_shares = 0.0
-    person_model.income_peps = 0.0
     person_model.income_isa = 0.0
     person_model.income_property = 0.0
     person_model.income_royalties = 0.0
@@ -284,7 +282,7 @@ function map_investment_income(person_model::DataFrameRow, accounts::DataFrame)
 
 
     for i in 1:naccts
-        v = accounts[i, :accint]
+        v = max(0.0, accounts[i, :accint]) # FIXME national savings stuff appears to be coded -1 for missing
         if accounts[i, :invtax] == 1
             # FIXME is this right for dividends anymore?
             v /= 0.8
@@ -308,11 +306,9 @@ function map_investment_income(person_model::DataFrameRow, accounts::DataFrame)
             National_Savings_deposit_bonds,
             Pensioners_Guaranteed_Bonds
         ]
-            person_model.income_national_savings += v
+            person_model.income_national_savings += v ## FIXME appears to be all zero!
         elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club]
             person_model.income_stocks_shares += v
-        elseif atype in [PEP]
-            person_model.income_peps += v
         elseif atype in [ISA]
             person_model.income_isa += v
         elseif atype in [
@@ -336,7 +332,21 @@ function map_investment_income(person_model::DataFrameRow, accounts::DataFrame)
     end # accounts loop
 end # map_investment_income
 
-
+function map_alimony( frs_person::DataFrameRow, a_maint::DataFrame ) :: Real
+    nmaints = size(a_maint)[1]
+    alimony = 0.0 # note: not including children
+    if frs_person.alimny == 1 # receives alimony
+        if frs_person.alius == 2 # not usual
+            alimony = safe_add(0.0, frs_person.aluamt )
+        else
+            alimony = safe_add(0.0, frs_person.alamt )
+        end
+    end
+    for c in 1:nmaints
+        alimony = safe_inc( alimony, a_maint[i,:mramt])
+    end
+    alimony
+end
 
 function process_job_rec(person_model::DataFrameRow, a_job::DataFrame)
     njobs = size(a_job)[1]
@@ -446,6 +456,7 @@ function process_job_rec(person_model::DataFrameRow, a_job::DataFrame)
     person_model.income_self_employment_expenses = self_employment_expenses
     person_model.income_self_employment_losses = self_employment_losses
 
+
 end
 
 
@@ -494,19 +505,20 @@ function create_adults(
         if nhbai == 1 # only non-missing in HBAI
             adno += 1
                 ## also for children
-            adult_model[adno, :pno] = frs_person.person
-            adult_model[adno, :hid] = frs_person.sernum
-            adult_model[adno, :pid] = get_pid(
+            model_adult = adult_model[adno,:]
+            model_adult.pno = frs_person.person
+            model_adult.hid = frs_person.sernum
+            model_adult.pid = get_pid(
                 FRS,
                 year,
                 frs_person.sernum,
                 frs_person.person
             )
-            adult_model[adno, :frs_year] = year
-            adult_model[adno, :default_benefit_unit] = frs_person.benunit
-            adult_model[adno, :age] = frs_person.age80
-            adult_model[adno, :sex] = safe_assign(frs_person.sex)
-            adult_model[adno, :ethnic_group] = safe_assign(frs_person.ethgr3)
+            model_adult.frs_year = year
+            model_adult.default_benefit_unit = frs_person.benunit
+            model_adult.age = frs_person.age80
+            model_adult.sex = safe_assign(frs_person.sex)
+            model_adult.ethnic_group = safe_assign(frs_person.ethgr3)
 
             ## adult only
             a_job = job[((job.sernum.==frs_person.sernum).&(job.benunit.==frs_person.benunit).&(job.person.==frs_person.person)), :]
@@ -515,29 +527,56 @@ function create_adults(
             a_penprov = penprov[((penprov.sernum.==frs_person.sernum).&(penprov.benunit.==frs_person.benunit).&(penprov.person.==frs_person.person)), :]
             an_asset = assets[((assets.sernum.==frs_person.sernum).&(assets.benunit.==frs_person.benunit).&(assets.person.==frs_person.person)), :]
             an_account = accounts[((accounts.sernum.==frs_person.sernum).&(accounts.benunit.==frs_person.benunit).&(accounts.person.==frs_person.person)), :]
+            a_maint = maint[((maint.sernum.==frs_person.sernum).&(maint.benunit.==frs_person.benunit).&(maint.person.==frs_person.person)), :]
+            a_oddjob = oddjob[((oddjob.sernum.==frs_person.sernum).&(oddjob.benunit.==frs_person.benunit).&(oddjob.person.==frs_person.person)), :]
             npens = size(a_pension)[1]
             nassets = size(an_asset)[1]
             naaccounts = size(an_account)[1]
 
-            adult_model[adno, :marital_status] = safe_assign(frs_person.marital)
-            adult_model[adno, :highest_qualification] = safe_assign(frs_person.dvhiqual)
-            adult_model[adno, :sic] = safe_assign(frs_person.sic)
+            model_adult.marital_status = safe_assign(frs_person.marital)
+            model_adult.highest_qualification = safe_assign(frs_person.dvhiqual)
+            model_adult.sic = safe_assign(frs_person.sic)
 
-            adult_model[adno, :socio_economic_grouping] = safe_assign(Integer(trunc(frs_person.nssec)))
-            adult_model[adno, :age_completed_full_time_education] = safe_assign(frs_person.tea)
-            adult_model[adno, :years_in_full_time_work] = safe_assign(frs_person.ftwk)
-            adult_model[adno, :employment_status] = safe_assign(frs_person.empstati)
-            adult_model[adno, :occupational_classification] = safe_assign(frs_person.soc2010)
+            model_adult.socio_economic_grouping = safe_assign(Integer(trunc(frs_person.nssec)))
+            model_adult.age_completed_full_time_education = safe_assign(frs_person.tea)
+            model_adult.years_in_full_time_work = safe_assign(frs_person.ftwk)
+            model_adult.employment_status = safe_assign(frs_person.empstati)
+            model_adult.occupational_classification = safe_assign(frs_person.soc2010)
 
-            process_job_rec( adult_model[adno, :], a_job )
+            process_job_rec( model_adult, a_job )
 
             penstuff = process_pensions(a_pension)
-            adult_model[adno, :income_private_pensions] = penstuff.pension
-            adult_model[adno, :income_income_tax] += penstuff.tax
+            model_adult.income_private_pensions = penstuff.pension
+            model_adult.income_income_tax += penstuff.tax
 
-            adult_model[adno, :income_pension_contributions] = process_penprovs(a_penprov)
+            model_adult.income_pension_contributions = process_penprovs(a_penprov)
 
-            map_investment_income(adult_model[adno, :], an_account)
+            map_investment_income(model_adult, an_account)
+            model_adult.income_property = safe_inc( 0.0, frs_person.royyr1 )
+            if frs_person.rentprof == 2 # it's a loss
+                model_adult.income_property *= -1 # a loss
+            end
+            model_adult.income_royalties = safe_inc( 0.0, frs_person.royyr2 )
+            model_adult.income_other_income = safe_inc( 0.0, frs_person.royyr3 ) # sleeping partners
+            model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.royyr4 ) # overseas pensions
+            model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.
+            model_adult.alimony_and_child_support_received = map_alimony( frs_person, a_maint )
+
+            model_adult.income_odd_jobs = 0.0;
+            for o in 1:nojs
+                model_adult.income_odd_jobs = safe_inc(model_adult.income_odd_jobs, a_oddjob[o,:obamt])
+            end
+            model_adult.income_odd_jobs /= 4.0 # since it's monthly
+
+            ## TODO babysitting,chartities (secure version only??)
+            ## TODO alimony and childcare PAID ??
+            ## TODO allowances from absent spouses
+
+            
+
+
+
+
 
             # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
 
@@ -546,19 +585,17 @@ function create_adults(
 # self_employment_expenses, X
 # self_employment_losses,X
 
-# private_pensions,
-# national_savings,
-# bank_interest,
-# building_society,
-# stocks_shares,
-# peps,
-# isa,
-# dividends,
-# property,
-# royalties,
-# bonds_and_gilts,
-# other_investment_income,
-# other_income,
+# private_pensions,x
+# national_savings,x
+# bank_interest,x
+# building_society,x
+# stocks_shares, x
+# isa, x
+# property, x
+# royalties,x
+# bonds_and_gilts,x
+# other_investment_income,x
+# other_income,x
 
 # alimony_and_child_support_received, X
 # health_insurance, X
