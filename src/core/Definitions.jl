@@ -715,9 +715,9 @@ export wages,
        private_pensions,
        national_savings,
        bank_interest,
-       building_society,
        stocks_shares,
        isa,
+       dividends,
        property,
        royalties,
        bonds_and_gilts,
@@ -730,93 +730,159 @@ export wages,
        trade_unions_etc,
        friendly_societies,
        work_expenses,
+       avcs,
+       other_deductions,
        loan_repayments,
        student_loan_repayments,
        pension_contributions,
-       avcs,
        education_allowances,
        foster_care_payments,
        student_grants,
        student_loans,
-       other_deductions,
        income_tax,
        national_insurance,
        local_taxes,
+       dlaself_care,
+       dlamobility,
        child_benefit,
        pension_credit,
-       retirement_pension,
-       other_pensions,
-       disabled_living_allowance,
-       severe_disablement_allowance,
-       pip,
-       attendance_allowance,
-       invalid_care_allowance,
-       incapacity_benefit,
+       state_pension,
+       bereavement_allowance_or_widowed_parents_allowance_or_bereavement,
+       armed_forces_compensation_scheme,
+       war_widows_or_widowers_pension,
+       severe_disability_allowance,
+       attendence_allowance,
+       carers_allowance,
        jobseekers_allowance,
-       income_support_jsa,
+       industrial_injury_disablement_benefit,
+       employment_and_support_allowance,
+       incapacity_benefit,
+       income_support,
        maternity_allowance,
-       other_benefits,
+       maternity_grant_from_social_fund,
+       funeral_grant_from_social_fund,
+       any_other_ni_or_state_benefit,
+       trade_union_sick_or_strike_pay,
+       friendly_society_benefits,
+       private_sickness_scheme_benefits,
+       accident_insurance_scheme_benefits,
+       hospital_savings_scheme_benefits,
+       government_training_allowances,
+       guardians_allowance,
+       widows_payment,
+       unemployment_or_redundancy_insurance,
        winter_fuel_payments,
+       dwp_third_party_payments_is_or_pc,
+       dwp_third_party_payments_jsa_or_esa,
+       social_fund_loan_repayment_from_is_or_pc,
+       social_fund_loan_repayment_from_jsa_or_esa,
+       extended_hb,
+       permanent_health_insurance,
+       any_other_sickness_insurance,
+       critical_illness_cover,
+       working_tax_credit,
+       child_tax_credit,
+       working_tax_credit_lump_sum,
+       child_tax_credit_lump_sum,
        housing_benefit,
-       council_tax_benefit,
-       tax_credits,
-       sickness_benefits
+       universal_credit,
+       personal_independence_payment_daily_living,
+       personal_independence_payment_mobility,
+       a_loan_from_the_dwp_and_dfc,
+       a_loan_or_grant_from_local_authority,
+       social_fund_loan_uc,
+       other_benefits
 
 @enum Incomes_Type begin
-   wages
-   self_employment_income
-   self_employment_expenses
-   self_employment_losses
-   odd_jobs
-   private_pensions
-   national_savings
-   bank_interest
-   stocks_shares
-   isa
-   dividends
-   property
-   royalties
-   bonds_and_gilts
-   other_investment_income
-   other_income
-   alimony_and_child_support_received
-   health_insurance
-   alimony_and_child_support_paid
-   care_insurance
-   trade_unions_etc
-   friendly_societies
-   work_expenses
-   avcs
-   other_deductions
-   loan_repayments
-   student_loan_repayments
-   pension_contributions
-   education_allowances
-   foster_care_payments
-   student_grants
-   student_loans
-   income_tax
-   national_insurance
-   local_taxes
-   child_benefit
-   pension_credit
-   retirement_pension
-   other_pensions
-   disabled_living_allowance
-   pip
-   severe_disablement_allowance
-   attendance_allowance
-   invalid_care_allowance
-   incapacity_benefit
-   jobseekers_allowance
-   income_support_jsa
-   maternity_allowance
-   other_benefits
-   winter_fuel_payments
-   housing_benefit
-   council_tax_benefit
-   tax_credits
-   sickness_benefits
+      wages = 1
+      self_employment_income = 2
+      self_employment_expenses = 3
+      self_employment_losses = 4
+      odd_jobs = 5
+      private_pensions = 6
+      national_savings = 7
+      bank_interest = 8
+      stocks_shares = 9
+      isa = 10
+      dividends = 11
+      property = 12
+      royalties = 13
+      bonds_and_gilts = 14
+      other_investment_income = 15
+      other_income = 16
+      alimony_and_child_support_received = 17
+      health_insurance = 18
+      alimony_and_child_support_paid = 19
+      care_insurance = 20
+      trade_unions_etc = 21
+      friendly_societies = 22
+      work_expenses = 23
+      avcs = 24
+      other_deductions = 25
+      loan_repayments = 26
+      student_loan_repayments = 27
+      pension_contributions = 28
+      education_allowances = 29
+      foster_care_payments = 30
+      student_grants = 31
+      student_loans = 32
+      income_tax = 33
+      national_insurance = 34
+      local_taxes = 35
+
+      dlaself_care = 201
+      dlamobility = 202
+      child_benefit = 203
+      pension_credit = 204
+      state_pension = 205
+      bereavement_allowance_or_widowed_parents_allowance_or_bereavement = 206
+      armed_forces_compensation_scheme = 208
+      war_widows_or_widowers_pension = 209
+      severe_disability_allowance = 2010
+      attendence_allowance = 2012
+      carers_allowance = 2013
+      jobseekers_allowance = 2014
+      industrial_injury_disablement_benefit = 2015
+      employment_and_support_allowance = 2016
+      incapacity_benefit = 2017
+      income_support = 2019
+      maternity_allowance = 2021
+      maternity_grant_from_social_fund = 2022
+      funeral_grant_from_social_fund = 2024
+      any_other_ni_or_state_benefit = 2030
+      trade_union_sick_or_strike_pay = 2031
+      friendly_society_benefits = 2032
+      private_sickness_scheme_benefits = 2033
+      accident_insurance_scheme_benefits = 2034
+      hospital_savings_scheme_benefits = 2035
+      government_training_allowances = 2036
+      guardians_allowance = 2037
+      widows_payment = 2060
+      unemployment_or_redundancy_insurance = 2061
+      winter_fuel_payments = 2062
+      dwp_third_party_payments_is_or_pc = 2065
+      dwp_third_party_payments_jsa_or_esa = 2066
+      social_fund_loan_repayment_from_is_or_pc = 2069
+      social_fund_loan_repayment_from_jsa_or_esa = 2070
+      extended_hb = 2078
+      permanent_health_insurance = 2081
+      any_other_sickness_insurance = 2082
+      critical_illness_cover = 2083
+      working_tax_credit = 2090
+      child_tax_credit = 2091
+      working_tax_credit_lump_sum = 2092
+      child_tax_credit_lump_sum = 2093
+      housing_benefit = 2094
+      universal_credit = 2095
+      personal_independence_payment_daily_living = 2096
+      personal_independence_payment_mobility = 2097
+      a_loan_from_the_dwp_and_dfc = 2098
+      a_loan_or_grant_from_local_authority = 2099
+      social_fund_loan_uc = 2111
+
+      other_benefits = 3000
+
+
 end
 
 Incomes_Dict = Dict{Incomes_Type,Real}
