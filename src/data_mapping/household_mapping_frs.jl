@@ -79,16 +79,9 @@ function initialise_person(n::Integer)::DataFrame
         marital_status = Vector{Union{Integer,Missing}}(missing, n),
         highest_qualification = Vector{Union{Integer,Missing}}(missing, n),
         sic = Vector{Union{Integer,Missing}}(missing, n),
-        occupational_classification = Vector{Union{
-            Integer,
-            Missing
-        }}(
-            missing,
-            n
-        ),
+        occupational_classification = Vector{Union{Integer,Missing}}(missing, n),
         public_or_private = Vector{Union{Integer,Missing}}(missing, n),
         principal_employment_type = Vector{Union{Integer,Missing}}(missing, n),
-
         socio_economic_grouping = Vector{Union{Integer,Missing}}(missing, n),
         age_completed_full_time_education = Vector{Union{Integer,Missing}}(missing, n),
         years_in_full_time_work = Vector{Union{Integer,Missing}}(missing, n),
@@ -112,7 +105,6 @@ function initialise_person(n::Integer)::DataFrame
         income_other_income = Vector{Union{Real,Missing}}(missing, n),
         income_alimony_and_child_support_received = Vector{Union{Real,Missing}}(missing, n),
         income_health_insurance = Vector{Union{Real,Missing}}(missing, n),
-
         income_alimony_and_child_support_paid = Vector{Union{Real,Missing}}(missing, n),
         income_care_insurance = Vector{Union{Real,Missing}}(missing, n),
         income_trade_unions_etc = Vector{Union{Real,Missing}}(missing, n),
@@ -124,7 +116,6 @@ function initialise_person(n::Integer)::DataFrame
         income_loan_repayments = Vector{Union{Real,Missing}}(missing, n),
         income_student_loan_repayments = Vector{Union{Real,Missing}}(missing, n),
         income_other_deductions = Vector{Union{Real,Missing}}(missing, n),
-
         income_education_allowances = Vector{Union{Real,Missing}}(missing, n),
         income_foster_care_payments = Vector{Union{Real,Missing}}(missing, n),
         income_student_grants = Vector{Union{Real,Missing}}(missing, n),
@@ -251,13 +242,13 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
-function process_penprovs( a_pens :: DataFrame ) :: Real
-    npens =  size( a_pens )[1]
+function process_penprovs(a_pens::DataFrame)::Real
+    npens = size(a_pens)[1]
     penconts = 0.0
     for p in 1:npens
-        pc = safe_add( 0.0, a_pens[p,:penamt] )
-        if a_pens[p,:penamtpd] == 95
-            pc/=52.0
+        pc = safe_add(0.0, a_pens[p, :penamt])
+        if a_pens[p, :penamtpd] == 95
+            pc /= 52.0
         end
         penconts += pc
     end
@@ -265,29 +256,27 @@ function process_penprovs( a_pens :: DataFrame ) :: Real
     penconts
 end
 
-function process_pensions( a_pens :: DataFrame ) :: NamedTuple
-    npens =  size( a_pens )[1]
+function process_pensions(a_pens::DataFrame)::NamedTuple
+    npens = size(a_pens)[1]
     private_pension = 0.0
     tax = 0.0
     for p in 1:npens
-        private_pension = safe_inc( private_pension, a_pens[p, :penpay ])
-        private_pension = safe_inc( private_pension, a_pens[p, :ptamt ]) # tax
-        private_pension = safe_inc( private_pension, a_pens[p, :penpd2 ]) # other deduction
-        tax = safe_inc( tax, a_pens[p, :ptamt ])
+        private_pension = safe_inc(private_pension, a_pens[p, :penpay])
+        private_pension = safe_inc(private_pension, a_pens[p, :ptamt]) # tax
+        private_pension = safe_inc(private_pension, a_pens[p, :penpd2]) # other deduction
+        tax = safe_inc(tax, a_pens[p, :ptamt])
     end
-    return ( pension = private_pension, tax=tax )
+    return (pension = private_pension, tax = tax)
 end
 
-function map_investment_income( person_model :: DataFrameRow, accounts :: DataFrame )
-    naccts =  size( accounts )[1]
+function map_investment_income(person_model::DataFrameRow, accounts::DataFrame)
+    naccts = size(accounts)[1]
 
     person_model.income_national_savings = 0.0
     person_model.income_bank_interest = 0.0
-    person_model.income_building_society = 0.0
     person_model.income_stocks_shares = 0.0
     person_model.income_peps = 0.0
     person_model.income_isa = 0.0
-    person_model.income_dividends = 0.0
     person_model.income_property = 0.0
     person_model.income_royalties = 0.0
     person_model.income_bonds_and_gilts = 0.0
@@ -295,14 +284,19 @@ function map_investment_income( person_model :: DataFrameRow, accounts :: DataFr
 
 
     for i in 1:naccts
-        v = accounts[i,:accint]
-        if accounts[i,:invtax] == 1
+        v = accounts[i, :accint]
+        if accounts[i, :invtax] == 1
             # FIXME is this right for dividends anymore?
             v /= 0.8
         end
         # FIXME building society - check with other models
-        atype = Account_Type( accounts[i,:account])
-        if atype in [ Current_account, Basic_Account, NSB_Investment_account, NSB_Direct_Saver ]
+        atype = Account_Type(accounts[i, :account])
+        if atype in [
+            Current_account,
+            Basic_Account,
+            NSB_Investment_account,
+            NSB_Direct_Saver
+        ]
             person_model.income_bank_interest += v
         elseif atype in [
             National_Savings_capital_bonds,
@@ -312,9 +306,10 @@ function map_investment_income( person_model :: DataFrameRow, accounts :: DataFr
             First_Option_bonds,
             National_Savings_income_bonds,
             National_Savings_deposit_bonds,
-            Pensioners_Guaranteed_Bonds ]
+            Pensioners_Guaranteed_Bonds
+        ]
             person_model.income_national_savings += v
-        elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club ]
+        elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club]
             person_model.income_stocks_shares += v
         elseif atype in [PEP]
             person_model.income_peps += v
@@ -330,9 +325,10 @@ function map_investment_income( person_model :: DataFrameRow, accounts :: DataFr
             Yearly_Plan,
             Premium_bonds,
             Company_Share_Option_Plans,
-            Post_Office_Card_Account ]
+            Post_Office_Card_Account
+        ]
             person_model.income_other_investment_income += v
-        elseif atype in [Guaranteed_Equity_Bond,  Government_Gilt_Edged_Stock ]
+        elseif atype in [Guaranteed_Equity_Bond, Government_Gilt_Edged_Stock]
             person_model.income_bonds_and_gilts += v
         else
             @assert false "failed to map $atype"
@@ -342,14 +338,14 @@ end # map_investment_income
 
 
 
-function process_job_rec( person_model :: DataFrameRow,  a_job :: DataFrame )
-    njobs = size( a_job )[1]
+function process_job_rec(person_model::DataFrameRow, a_job::DataFrame)
+    njobs = size(a_job)[1]
 
     earnings = 0.0
     actual_hours = 0.0
     usual_hours = 0.0
-    health_insurance  = 0.0
-    alimony_and_child_support_paid  = 0.0
+    health_insurance = 0.0
+    alimony_and_child_support_paid = 0.0
     # care_insurance  = 0.0
     trade_unions_etc = 0.0
     friendly_societies = 0.0
@@ -367,65 +363,65 @@ function process_job_rec( person_model :: DataFrameRow,  a_job :: DataFrame )
     public_or_private = -1
     for j in 1:njobs
         if j == 1 # take 1st record job for all of these
-            principal_employment_type =  safe_assign(a_job[j,:etype])
-            public_or_private =  safe_assign(a_job[j,:jobsect])
+            principal_employment_type = safe_assign(a_job[j, :etype])
+            public_or_private = safe_assign(a_job[j, :jobsect])
         end
-        usual_hours = safe_inc( usual_hours, a_job[j,:dvushr])
-        actual_hours = safe_inc( actual_hours, a_job[j,:jobhours])
+        usual_hours = safe_inc(usual_hours, a_job[j, :dvushr])
+        actual_hours = safe_inc(actual_hours, a_job[j, :jobhours])
 
         # alimony_and_child_support_paid  = safe_inc( alimony_and_child_support_paid , a_job[j,udeduc0X])
         # care_insurance  = safe_inc( care_insurance , a_job[j,:othded0X]
 
-        pension_contributions = safe_inc( pension_contributions, a_job[j,:udeduc1])
-        avcs = safe_inc( avcs, a_job[j,:udeduc2])
-        trade_unions_etc = safe_inc( trade_unions_etc, a_job[j,:udeduc3])
-        friendly_societies = safe_inc( friendly_societies, a_job[j,:udeduc4])
-        other_deductions= safe_inc( other_deductions, a_job[j,:udeduc5])
-        loan_repayments = safe_inc( loan_repayments, a_job[j,:udeduc6])
-        health_insurance  = safe_inc( health_insurance , a_job[j,:udeduc7])
-        other_deductions= safe_inc( other_deductions, a_job[j,:udeduc8])
-        student_loan_repayments = safe_inc( student_loan_repayments, a_job[j,:udeduc9])
-        work_expenses = safe_inc( work_expenses, a_job[j,:umotamt]) ## CARS FIXME add to this
+        pension_contributions = safe_inc(pension_contributions, a_job[j, :udeduc1])
+        avcs = safe_inc(avcs, a_job[j, :udeduc2])
+        trade_unions_etc = safe_inc(trade_unions_etc, a_job[j, :udeduc3])
+        friendly_societies = safe_inc(friendly_societies, a_job[j, :udeduc4])
+        other_deductions = safe_inc(other_deductions, a_job[j, :udeduc5])
+        loan_repayments = safe_inc(loan_repayments, a_job[j, :udeduc6])
+        health_insurance = safe_inc(health_insurance, a_job[j, :udeduc7])
+        other_deductions = safe_inc(other_deductions, a_job[j, :udeduc8])
+        student_loan_repayments = safe_inc(student_loan_repayments, a_job[j, :udeduc9])
+        work_expenses = safe_inc(work_expenses, a_job[j, :umotamt])# CARS FIXME add to this
 
         # self employment
-        if a_job[j,:prbefore] > 0.0
-            self_employment_income += a_job[j,:prbefore]
-        elseif a_job[j,:profit1] > 0.0
-            @assert a_job[j,:profit2] in [1,2]
-            if a_job[j,:profit2] == 1
-                self_employment_income += a_job[j,:profit1]
+        if a_job[j, :prbefore] > 0.0
+            self_employment_income += a_job[j, :prbefore]
+        elseif a_job[j, :profit1] > 0.0
+            @assert a_job[j, :profit2] in [1, 2]
+            if a_job[j, :profit2] == 1
+                self_employment_income += a_job[j, :profit1]
             else
-                self_employment_losses += a_job[j,:profit1]
+                self_employment_losses += a_job[j, :profit1]
             end
         elseif a_job[j, :seincamt] > 0.0
-            self_employment_income += a_job[j,:seincamt]
+            self_employment_income += a_job[j, :seincamt]
         end
-        setax = safe_inc( 0.0, a_job[j,:setaxamt] )
-        tax += setax/52.0
+        setax = safe_inc(0.0, a_job[j, :setaxamt])
+        tax += setax / 52.0
 
         # earnings
         addBonus = false
-        if a_job[j,:ugross] > 0.0 # take usual when last not usual
-                earnings += a_job[j,:ugross]
-                addBonus = true
-        elseif a_job[j,:grwage] > 0.0 # then take last
-                earnings += a_job[j,:grwage]
-                addBonus = true
-        elseif a_job[j,:ugrspay] > 0.0 # then take total pay, but don't add bonuses
-                earnings += a_job[j,:ugrspay]
+        if a_job[j, :ugross] > 0.0 # take usual when last not usual
+            earnings += a_job[j, :ugross]
+            addBonus = true
+        elseif a_job[j, :grwage] > 0.0 # then take last
+            earnings += a_job[j, :grwage]
+            addBonus = true
+        elseif a_job[j, :ugrspay] > 0.0 # then take total pay, but don't add bonuses
+            earnings += a_job[j, :ugrspay]
         end
         if addBonus
-                for i in 1:6
-                        bon = Symbol( string("bonamt",i))
-                        tax = Symbol( string("bontax",i))
-                        if a_job[j,bon] > 0.0
-                                bon = a_job[j,bon]
-                                if  a_job[j,tax] == 2
-                                        bon /= (1-0.22) # fixme hack basic rate
-                                end
-                                earnings += bon/52.0 # fixwme weeks per year
-                        end
-                end # bonuses loop
+            for i in 1:6
+                bon = Symbol(string("bonamt", i))
+                tax = Symbol(string("bontax", i))
+                if a_job[j, bon] > 0.0
+                    bon = a_job[j, bon]
+                    if a_job[j, tax] == 2
+                        bon /= (1 - 0.22) # fixme hack basic rate
+                    end
+                    earnings += bon / 52.0 # fixwme weeks per year
+                end
+            end # bonuses loop
         end # add bonuses
     end # jobs loop
 
@@ -435,14 +431,14 @@ function process_job_rec( person_model :: DataFrameRow,  a_job :: DataFrame )
     person_model.principal_employment_type = principal_employment_type
     person_model.public_or_private = public_or_private
     ## FIXME look at this mapping again: pcodes
-    person_model.income_health_insurance  = health_insurance
+    person_model.income_health_insurance = health_insurance
     # person_model.income_# care_insurance  = # care_insurance
-    person_model.income_trade_unions_etc  = trade_unions_etc
+    person_model.income_trade_unions_etc = trade_unions_etc
     person_model.income_friendly_societies = friendly_societies
     person_model.income_work_expenses = work_expenses
     person_model.income_pension_contributions = pension_contributions
     person_model.income_avcs = avcs
-    person_model.income_other_deductions  = other_deductions
+    person_model.income_other_deductions = other_deductions
     person_model.income_student_loan_repayments = student_loan_repayments # fixme maybe "slrepamt" or "slreppd"
     person_model.income_loan_repayments = loan_repayments # fixme maybe "slrepamt" or "slreppd"
 
@@ -476,15 +472,14 @@ function create_adults(
     benefits::DataFrame,
     endowmnt::DataFrame,
     job::DataFrame,
-    hbai_adults :: DataFrame
-
-) :: DataFrame
+    hbai_adults::DataFrame
+)::DataFrame
 
     num_adults = size(frs_adults)[1]
     adult_model = initialise_person(num_adults)
     adno = 0
     hbai_year = year - 1993
-    println( "hbai_year $hbai_year")
+    println("hbai_year $hbai_year")
     for pn in 1:num_adults
         if pn % 1000 == 0
             println("on year $year, hid $pn")
@@ -492,66 +487,57 @@ function create_adults(
 
         frs_person = frs_adults[pn, :]
         sernum = frs_person.sernum
-        ad_hbai = hbai_adults[(
-            (hbai_adults.year .== hbai_year) .&
-            (hbai_adults.sernum .== sernum) .&
-            (hbai_adults.person .== frs_person.person) .&
-            (hbai_adults.benunit .== frs_person.benunit)),  :]
+        ad_hbai = hbai_adults[((hbai_adults.year.==hbai_year).&(hbai_adults.sernum.==sernum).&(hbai_adults.person.==frs_person.person).&(hbai_adults.benunit.==frs_person.benunit)), :]
         nhbai = size(ad_hbai)[1]
-        @assert nhbai in [0,1]
+        @assert nhbai in [0, 1]
 
         if nhbai == 1 # only non-missing in HBAI
             adno += 1
                 ## also for children
-            adult_model[adno,:pno] = frs_person.person
-            adult_model[adno,:hid] = frs_person.sernum
-            adult_model[adno,:pid] = get_pid( FRS, year, frs_person.sernum, frs_person.person )
-            adult_model[adno,:frs_year] = year
-            adult_model[adno,:default_benefit_unit] = frs_person.benunit
-            adult_model[adno,:age] = frs_person.age80
-            adult_model[adno,:sex] = safe_assign(  frs_person.sex )
-            adult_model[adno,:ethnic_group] = safe_assign(  frs_person.ethgr3 )
+            adult_model[adno, :pno] = frs_person.person
+            adult_model[adno, :hid] = frs_person.sernum
+            adult_model[adno, :pid] = get_pid(
+                FRS,
+                year,
+                frs_person.sernum,
+                frs_person.person
+            )
+            adult_model[adno, :frs_year] = year
+            adult_model[adno, :default_benefit_unit] = frs_person.benunit
+            adult_model[adno, :age] = frs_person.age80
+            adult_model[adno, :sex] = safe_assign(frs_person.sex)
+            adult_model[adno, :ethnic_group] = safe_assign(frs_person.ethgr3)
 
             ## adult only
-            a_job = job[(( job.sernum .== frs_person.sernum ) .&
-                        ( job.benunit .== frs_person.benunit ) .&
-                        ( job.person .== frs_person.person )),:]
+            a_job = job[((job.sernum.==frs_person.sernum).&(job.benunit.==frs_person.benunit).&(job.person.==frs_person.person)), :]
 
-            a_pension = pension[(( pension.sernum .== frs_person.sernum ) .&
-                            ( pension.benunit .== frs_person.benunit ) .&
-                            ( pension.person .== frs_person.person )),:]
-            a_penprov = penprov[(( penprov.sernum .== frs_person.sernum ) .&
-                            ( penprov.benunit .== frs_person.benunit ) .&
-                            ( penprov.person .== frs_person.person )),:]
-            an_asset = assets[(( assets.sernum .== frs_person.sernum ) .&
-                            ( assets.benunit .== frs_person.benunit ) .&
-                            ( assets.person .== frs_person.person )),:]
-            an_account = accounts[(( accounts.sernum .== frs_person.sernum ) .&
-                            ( accounts.benunit .== frs_person.benunit ) .&
-                            ( accounts.person .== frs_person.person )),:]
-            npens = size( a_pension )[1]
-            nassets = size( an_asset )[1]
-            naaccounts = size( an_account )[1]
+            a_pension = pension[((pension.sernum.==frs_person.sernum).&(pension.benunit.==frs_person.benunit).&(pension.person.==frs_person.person)), :]
+            a_penprov = penprov[((penprov.sernum.==frs_person.sernum).&(penprov.benunit.==frs_person.benunit).&(penprov.person.==frs_person.person)), :]
+            an_asset = assets[((assets.sernum.==frs_person.sernum).&(assets.benunit.==frs_person.benunit).&(assets.person.==frs_person.person)), :]
+            an_account = accounts[((accounts.sernum.==frs_person.sernum).&(accounts.benunit.==frs_person.benunit).&(accounts.person.==frs_person.person)), :]
+            npens = size(a_pension)[1]
+            nassets = size(an_asset)[1]
+            naaccounts = size(an_account)[1]
 
-            adult_model[adno,:marital_status] = safe_assign( frs_person.marital )
-            adult_model[adno,:highest_qualification] = safe_assign( frs_person.dvhiqual )
-            adult_model[adno,:sic] = safe_assign( frs_person.sic )
+            adult_model[adno, :marital_status] = safe_assign(frs_person.marital)
+            adult_model[adno, :highest_qualification] = safe_assign(frs_person.dvhiqual)
+            adult_model[adno, :sic] = safe_assign(frs_person.sic)
 
-            adult_model[adno,:socio_economic_grouping]= safe_assign( Integer(trunc(frs_person.nssec )))
-            adult_model[adno,:age_completed_full_time_education] = safe_assign( frs_person.tea )
-            adult_model[adno,:years_in_full_time_work] = safe_assign( frs_person.ftwk )
-            adult_model[adno,:employment_status] = safe_assign( frs_person.empstati )
-            adult_model[adno,:occupational_classification] = safe_assign( frs_person.soc2010 )
+            adult_model[adno, :socio_economic_grouping] = safe_assign(Integer(trunc(frs_person.nssec)))
+            adult_model[adno, :age_completed_full_time_education] = safe_assign(frs_person.tea)
+            adult_model[adno, :years_in_full_time_work] = safe_assign(frs_person.ftwk)
+            adult_model[adno, :employment_status] = safe_assign(frs_person.empstati)
+            adult_model[adno, :occupational_classification] = safe_assign(frs_person.soc2010)
 
-            process_job_rec( adult_model[adno,:], a_job )
+            process_job_rec(adult_model[adno, :], a_job)
 
-            penstuff = process_pensions( a_pension )
-            adult_model[adno,:income_private_pensions] = penstuff.pension
-            adult_model[adno,:income_income_tax] += penstuff.tax
+            penstuff = process_pensions(a_pension)
+            adult_model[adno, :income_private_pensions] = penstuff.pension
+            adult_model[adno, :income_income_tax] += penstuff.tax
 
-            adult_model[adno,:income_pension_contributions] = process_penprovs( a_penprov )
+            adult_model[adno, :income_pension_contributions] = process_penprovs(a_penprov)
 
-            map_investment_income( adult_model[adno,:], an_account )
+            map_investment_income(adult_model[adno, :], an_account)
 
             # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
 
@@ -616,16 +602,11 @@ function create_adults(
 
         end # if in HBAI
     end # adult loop
-    println( "final adno $adno")
-    adult_model[1:adno,:]
+    println("final adno $adno")
+    adult_model[1:adno, :]
 end # proc create_adult
 
-function create_child(
-    year :: Integer,
-    child :: DataFrame ) :: DataFrame
-
-
-end
+function create_child(year::Integer, child::DataFrame)::DataFrame end
 
 function create_household(
     year::Integer,
@@ -634,7 +615,8 @@ function create_household(
     mortgage::DataFrame,
     mortcont::DataFrame,
     owner::DataFrame,
-    hbai_adults::DataFrame ) :: DataFrame
+    hbai_adults::DataFrame
+)::DataFrame
 
     num_households = size(frs_household)[1]
     hh_model = initialise_household(num_households)
@@ -722,26 +704,26 @@ function create_household(
             # people::People_Dict
         end
     end
-    hh_model[1:hhno,:]
+    hh_model[1:hhno, :]
 end
 
 
 global HBAIS = Dict(
-        2017=>"i1718.tab",
-        2016=>"hbai1617_g4.tab",
-        2015=>"hbai1516_g4.tab",
-        2014=>"hbai1415_g4.tab",
-        2013=>"hbai1314_g4.tab",
-        2012=>"hbai1213_g4.tab",
-        2011=>"hbai1112_g4.tab",
-        2010=>"hbai1011_g4.tab",
-        2009=>"hbai0910_g4.tab",
-        2008=>"hbai0809_g4.tab",
-        2007=>"hbai0708_g4.tab",
-        2006=>"hbai0607_g4.tab",
-        2005=>"hbai0506_g4.tab",
-        2004=>"hbai0405_g4.tab",
-        2003=>"hbai0304_g4.tab"
+    2017 => "i1718.tab",
+    2016 => "hbai1617_g4.tab",
+    2015 => "hbai1516_g4.tab",
+    2014 => "hbai1415_g4.tab",
+    2013 => "hbai1314_g4.tab",
+    2012 => "hbai1213_g4.tab",
+    2011 => "hbai1112_g4.tab",
+    2010 => "hbai1011_g4.tab",
+    2009 => "hbai0910_g4.tab",
+    2008 => "hbai0809_g4.tab",
+    2007 => "hbai0708_g4.tab",
+    2006 => "hbai0607_g4.tab",
+    2005 => "hbai0506_g4.tab",
+    2004 => "hbai0405_g4.tab",
+    2003 => "hbai0304_g4.tab"
 )
 
 
@@ -770,7 +752,7 @@ for year in 2017:2017
 
     print("on year $year ")
 
-    hbf =  HBAIS[year]
+    hbf = HBAIS[year]
     hbai_adults = loadtoframe("$(HBAI_DIR)/tab/$hbf")
 
     accounts = loadfrs("accounts", year)
