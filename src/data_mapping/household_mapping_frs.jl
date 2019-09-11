@@ -303,7 +303,7 @@ function process_pensions(a_pens::DataFrame)::NamedTuple
     return (pension = private_pension, tax = tax)
 end
 
-function map_investment_income(person_model::DataFrameRow, accounts::DataFrame)
+function map_investment_income!(person_model::DataFrameRow, accounts::DataFrame)
     naccts = size(accounts)[1]
 
     person_model.income_national_savings = 0.0
@@ -372,18 +372,18 @@ function map_alimony( frs_person::DataFrameRow, a_maint::DataFrame ) :: Real
     alimony = 0.0 # note: not including children
     if frs_person.alimny == 1 # receives alimony
         if frs_person.alius == 2 # not usual
-            alimony = safe_add(0.0, frs_person.aluamt )
+            alimony = safe_inc(0.0, frs_person.aluamt )
         else
-            alimony = safe_add(0.0, frs_person.alamt )
+            alimony = safe_inc(0.0, frs_person.aliamt )
         end
     end
     for c in 1:nmaints
-        alimony = safe_inc( alimony, a_maint[i,:mramt])
+        alimony = safe_inc( alimony, a_maint[c,:mramt])
     end
     alimony
 end
 
-function process_job_rec(person_model::DataFrameRow, a_job::DataFrame)
+function process_job_rec!( person_model::DataFrameRow, a_job::DataFrame )
     njobs = size(a_job)[1]
 
     earnings = 0.0
@@ -491,10 +491,17 @@ function process_job_rec(person_model::DataFrameRow, a_job::DataFrame)
     person_model.income_self_employment_expenses = self_employment_expenses
     person_model.income_self_employment_losses = self_employment_losses
 
-
 end
 
-
+function process_benefits!( person_model::DataFrameRow, a_benefits::DataFrame )
+    nbens = size(a_benefits)[1]
+    for b in 1:nbens
+        btype = Benefit_Type(a_benefits[i, :benefit])
+        if btype <= social_fund_loan_uc
+            ikey = Symbol("income_"*String( Symbol(btype)))
+        end
+    end
+end
 
 
 function create_adults(
@@ -564,6 +571,7 @@ function create_adults(
             an_account = accounts[((accounts.sernum.==frs_person.sernum).&(accounts.benunit.==frs_person.benunit).&(accounts.person.==frs_person.person)), :]
             a_maint = maint[((maint.sernum.==frs_person.sernum).&(maint.benunit.==frs_person.benunit).&(maint.person.==frs_person.person)), :]
             a_oddjob = oddjob[((oddjob.sernum.==frs_person.sernum).&(oddjob.benunit.==frs_person.benunit).&(oddjob.person.==frs_person.person)), :]
+            a_benefits = benefits[((benefits.sernum.==frs_person.sernum).&(benefits.benunit.==frs_person.benunit).&(benefits.person.==frs_person.person)), :]
             npens = size(a_pension)[1]
             nassets = size(an_asset)[1]
             naaccounts = size(an_account)[1]
@@ -579,7 +587,7 @@ function create_adults(
             model_adult.employment_status = safe_assign(frs_person.empstati)
             model_adult.occupational_classification = safe_assign(frs_person.soc2010)
 
-            process_job_rec( model_adult, a_job )
+            process_job_rec!( model_adult, a_job )
 
             penstuff = process_pensions(a_pension)
             model_adult.income_private_pensions = penstuff.pension
@@ -587,7 +595,7 @@ function create_adults(
 
             model_adult.income_pension_contributions = process_penprovs(a_penprov)
 
-            map_investment_income(model_adult, an_account)
+            map_investment_income!(model_adult, an_account)
             model_adult.income_property = safe_inc( 0.0, frs_person.royyr1 )
             if frs_person.rentprof == 2 # it's a loss
                 model_adult.income_property *= -1 # a loss
@@ -597,11 +605,11 @@ function create_adults(
             model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.royyr4 ) # overseas pensions
             # payments from charities, bbysitting ..
             # model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.[x]
-            model_adult.alimony_and_child_support_received = map_alimony( frs_person, a_maint )
+            model_adult.income_alimony_and_child_support_received = map_alimony( frs_person, a_maint )
 
             model_adult.income_odd_jobs = 0.0
             for o in 1:nojs
-                model_adult.income_odd_jobs = safe_inc(model_adult.income_odd_jobs, a_oddjob[o,:obamt])
+                model_adult.income_odd_jobs = safe_inc(model_adult.income_odd_jobs, a_oddjob[o,:ojamt])
             end
             model_adult.income_odd_jobs /= 4.0 # since it's monthly
 
@@ -609,7 +617,7 @@ function create_adults(
             ## TODO alimony and childcare PAID ??
             ## TODO allowances from absent spouses
 
-
+            process_benefits!( person_model, a_benefits )
 
 
 
