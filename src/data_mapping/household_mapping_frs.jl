@@ -252,6 +252,19 @@ function initialise_household(n::Integer)::DataFrame
     hh
 end
 
+function process_penprovs( a_pens :: DataFrame ) :: Real
+    npens =  size( a_pens )[1]
+    penconts = 0.0
+    for p in 1:npens
+        pc = safe_add( 0.0, a_pens[p,:penamt] )
+        if a_pens[p,:penamtpd] == 95
+            pc/=52.0
+        end
+        penconts += pc
+    end
+    # FIXME something about SERPS
+    penconts
+end
 
 function process_pensions( a_pens :: DataFrame ) :: NamedTuple
     npens =  size( a_pens )[1]
@@ -266,8 +279,73 @@ function process_pensions( a_pens :: DataFrame ) :: NamedTuple
     return ( pension = private_pension, tax=tax )
 end
 
+function map_investment_income( person_model :: DataFrameRow, accounts :: DataFrame )
+    naccts =  size( accounts )[1]
 
-function process_job_rec( a_job :: DataFrame ) :: NamedTuple
+    person_model.income_national_savings = 0.0
+    person_model.income_bank_interest = 0.0
+    person_model.income_building_society = 0.0
+    person_model.income_stocks_shares = 0.0
+    person_model.income_peps = 0.0
+    person_model.income_isa = 0.0
+    person_model.income_dividends = 0.0
+    person_model.income_property = 0.0
+    person_model.income_royalties = 0.0
+    person_model.income_bonds_and_gilts = 0.0
+    person_model.income_other_investment_income = 0.0
+
+
+    for i in 1:naccts
+        v = accounts[i,:accint]
+        if accounts[i,:invtax] == 1
+            # FIXME is this right for dividends anymore?
+            v /= 0.8
+        end
+        # FIXME building society - check with other models
+        atype = Account_Type( accounts[i,:account])
+        if atype in [ Current_account, Basic_Account, NSB_Investment_account, NSB_Direct_Saver ]
+            person_model.income_bank_interest += v
+        elseif atype in [
+            National_Savings_capital_bonds,
+            Index_Linked_National_Savings_Certificates,
+            Fixed_Interest_National_Savings_Certificates,
+            Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds,
+            First_Option_bonds,
+            National_Savings_income_bonds,
+            National_Savings_deposit_bonds,
+            Pensioners_Guaranteed_Bonds ]
+            person_model.income_national_savings += v
+        elseif atype in []
+            person_model.income_building_society += v
+        elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club ]
+            person_model.income_stocks_shares += v
+        elseif atype in [PEP]
+            person_model.income_peps += v
+        elseif atype in [ISA]
+            person_model.income_isa += v
+        elseif atype in [
+            SAYE,
+            Savings_investments_etc,
+            Unit_or_Investment_Trusts,
+            Endowment_Policy_Not_Linked,
+            Profit_sharing,
+            Credit_Unions,
+            Yearly_Plan,
+            Premium_bonds,
+            Company_Share_Option_Plans,
+            Post_Office_Card_Account ]
+            person_model.income_other_investment_income += v
+        elseif atype in [Guaranteed_Equity_Bond,  Government_Gilt_Edged_Stock ]
+            person_model.income_bonds_and_gilts += v
+        else
+            @assert false "failed to map $atype"
+        end
+    end # accounts loop
+end # map_investment_income
+
+
+
+function process_job_rec( person_model :: DataFrameRow,  a_job :: DataFrame )
     njobs = size( a_job )[1]
 
     earnings = 0.0
@@ -287,6 +365,7 @@ function process_job_rec( a_job :: DataFrame ) :: NamedTuple
     self_employment_income = 0.0
     self_employment_expenses = 0.0
     self_employment_losses = 0.0
+    tax = 0.0
     principal_employment_type = -1
     public_or_private = -1
     for j in 1:njobs
@@ -324,6 +403,9 @@ function process_job_rec( a_job :: DataFrame ) :: NamedTuple
         elseif a_job[j, :seincamt] > 0.0
             self_employment_income += a_job[j,:seincamt]
         end
+        setax = safe_inc( 0.0, a_job[j,:setaxamt] )
+        tax += setax/52.0
+
         # earnings
         addBonus = false
         if a_job[j,:ugross] > 0.0 # take usual when last not usual
@@ -349,28 +431,32 @@ function process_job_rec( a_job :: DataFrame ) :: NamedTuple
                 end # bonuses loop
         end # add bonuses
     end # jobs loop
-    return (
-        principal_employment_type = principal_employment_type,
-        public_or_private = public_or_private,
-        earnings = earnings,
-        usual_hours = usual_hours,
-        actual_hours = actual_hours,
-        health_insurance = health_insurance ,
-        alimony_and_child_support_paid = alimony_and_child_support_paid ,
-        # care_insurance =   # care_insurance ,
-        trade_unions_etc = trade_unions_etc,
-        friendly_societies = friendly_societies,
-        work_expenses = work_expenses,
-        pension_contributions = pension_contributions,
-        avcs = avcs,
-        other_deductions = other_deductions,
-        student_loan_repayments = student_loan_repayments,
-        loan_repayments = loan_repayments,
-        self_employment_income = self_employment_income,
-        self_employment_expenses = self_employment_expenses,
-        self_employment_losses = self_employment_losses
-     )
+
+    person_model.usual_hours_worked = usual_hours
+    person_model.actual_hours_worked = actual_hours
+    person_model.income_wages = earnings
+    person_model.principal_employment_type = principal_employment_type
+    person_model.public_or_private = public_or_private
+    ## FIXME look at this mapping again: pcodes
+    person_model.income_health_insurance  = health_insurance
+    # person_model.income_# care_insurance  = # care_insurance
+    person_model.income_trade_unions_etc  = trade_unions_etc
+    person_model.income_friendly_societies = friendly_societies
+    person_model.income_work_expenses = work_expenses
+    person_model.income_pension_contributions = pension_contributions
+    person_model.income_avcs = avcs
+    person_model.income_other_deductions  = other_deductions
+    person_model.income_student_loan_repayments = student_loan_repayments # fixme maybe "slrepamt" or "slreppd"
+    person_model.income_loan_repayments = loan_repayments # fixme maybe "slrepamt" or "slreppd"
+
+    person_model.income_self_employment_income = self_employment_income
+    person_model.income_self_employment_expenses = self_employment_expenses
+    person_model.income_self_employment_losses = self_employment_losses
+
 end
+
+
+
 
 function create_adults(
     year::Integer,
@@ -459,32 +545,16 @@ function create_adults(
             adult_model[adno,:years_in_full_time_work] = safe_assign( frs_person.ftwk )
             adult_model[adno,:employment_status] = safe_assign( frs_person.empstati )
             adult_model[adno,:occupational_classification] = safe_assign( frs_person.soc2010 )
-            wkstuff = process_job_rec( a_job )
-            adult_model[adno,:usual_hours_worked] = wkstuff.usual_hours
-            adult_model[adno,:actual_hours_worked] = wkstuff.actual_hours
-            adult_model[adno,:income_wages] = wkstuff.earnings
-            adult_model[adno,:principal_employment_type] = wkstuff.principal_employment_type
-            adult_model[adno,:public_or_private] = wkstuff.public_or_private
-            ## FIXME look at this mapping again: pcodes
-            adult_model[adno,:income_health_insurance ] = wkstuff.health_insurance
-            # adult_model[adno,:income_# care_insurance ] = wkstuff.# care_insurance
-            adult_model[adno,:income_trade_unions_etc ] = wkstuff.trade_unions_etc
-            adult_model[adno,:income_friendly_societies] = wkstuff.friendly_societies
-            adult_model[adno,:income_work_expenses] = wkstuff.work_expenses
-            adult_model[adno,:income_pension_contributions] = wkstuff.pension_contributions
-            adult_model[adno,:income_avcs] = wkstuff.avcs
-            adult_model[adno,:income_other_deductions ] = wkstuff.other_deductions
-            adult_model[adno,:income_student_loan_repayments] = wkstuff.student_loan_repayments # fixme maybe "slrepamt" or "slreppd"
-            adult_model[adno,:income_loan_repayments] = wkstuff.loan_repayments # fixme maybe "slrepamt" or "slreppd"
 
-            adult_model[adno,:income_self_employment_income] = wkstuff.self_employment_income
-            adult_model[adno,:income_self_employment_expenses] = wkstuff.self_employment_expenses
-            adult_model[adno,:income_self_employment_losses] = wkstuff.self_employment_losses
+            process_job_rec( adult_model[adno,:], a_job )
 
             penstuff = process_pensions( a_pension )
             adult_model[adno,:income_private_pensions] = penstuff.pension
             adult_model[adno,:income_income_tax] += penstuff.tax
 
+            adult_model[adno,:income_pension_contributions] = process_penprovs( a_penprov )
+
+            map_investment_income( adult_model[adno,:], an_account )
 
             # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
 

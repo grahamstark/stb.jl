@@ -960,6 +960,84 @@ export Missing_Employment_Sector
    Public = 2
 end
 
+export Account_Type  # mapped from account
+export Current_account,
+       NSB_Direct_Saver,
+       NSB_Investment_account,
+       Not_Used,
+       Savings_investments_etc,
+       Government_Gilt_Edged_Stock,
+       Unit_or_Investment_Trusts,
+       Stocks_Shares_Bonds_etc,
+       PEP,
+       National_Savings_capital_bonds,
+       Index_Linked_National_Savings_Certificates,
+       Fixed_Interest_National_Savings_Certificates,
+       Pensioners_Guaranteed_Bonds,
+       SAYE,
+       Premium_bonds,
+       National_Savings_income_bonds,
+       National_Savings_deposit_bonds,
+       First_Option_bonds,
+       Yearly_Plan,
+       ISA,
+       Profit_sharing,
+       Company_Share_Option_Plans,
+       Member_of_Share_Club,
+       Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds,
+       Guaranteed_Equity_Bond, # label is actually 'GEB'
+       Basic_Account,
+       Credit_Unions,
+       Endowment_Policy_Not_Linked,
+       Post_Office_Card_Account
+export Missing_Account_Type
+
+@enum Account_Type begin  # mapped from account
+   Missing_Account_Type = -1
+   Current_account = 1
+   NSB_Direct_Saver = 2
+   NSB_Investment_account = 3
+   Not_Used = 4
+   Savings_investments_etc = 5
+   Government_Gilt_Edged_Stock = 6
+   Unit_or_Investment_Trusts = 7
+   Stocks_Shares_Bonds_etc = 8
+   PEP = 9
+   National_Savings_capital_bonds = 10
+   Index_Linked_National_Savings_Certificates = 11
+   Fixed_Interest_National_Savings_Certificates = 12
+   Pensioners_Guaranteed_Bonds = 13
+   SAYE = 14
+   Premium_bonds = 15
+   National_Savings_income_bonds = 16
+   National_Savings_deposit_bonds = 17
+   First_Option_bonds = 18
+   Yearly_Plan = 19
+   ISA = 21
+   Profit_sharing = 22
+   Company_Share_Option_Plans = 23
+   Member_of_Share_Club = 24
+   Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds = 25
+   Guaranteed_Equity_Bond = 26 ## Guaranteed/Fixed rate E bond
+   Basic_Account = 27
+   Credit_Unions = 28
+   Endowment_Policy_Not_Linked = 29
+   Post_Office_Card_Account = 30
+end
+
+
+export Account_Tax_Status  # mapped from invtax
+export After_tax, Before_tax
+export Missing_Account_Tax_Status
+
+@enum Account_Tax_Status begin  # mapped from invtax
+   Missing_Account_Tax_Status = -1
+   After_tax = 1
+   Before_tax = 2
+end
+
+
+
 
 
 export BIG_NOTHING
