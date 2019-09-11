@@ -567,6 +567,7 @@ function create_adults(
             npens = size(a_pension)[1]
             nassets = size(an_asset)[1]
             naaccounts = size(an_account)[1]
+            nojs = size( a_oddjob )[1]
 
             model_adult.marital_status = safe_assign(frs_person.marital)
             model_adult.highest_qualification = safe_assign(frs_person.dvhiqual)
@@ -594,10 +595,11 @@ function create_adults(
             model_adult.income_royalties = safe_inc( 0.0, frs_person.royyr2 )
             model_adult.income_other_income = safe_inc( 0.0, frs_person.royyr3 ) # sleeping partners
             model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.royyr4 ) # overseas pensions
-            model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.
+            # payments from charities, bbysitting ..
+            # model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.[x]
             model_adult.alimony_and_child_support_received = map_alimony( frs_person, a_maint )
 
-            model_adult.income_odd_jobs = 0.0;
+            model_adult.income_odd_jobs = 0.0
             for o in 1:nojs
                 model_adult.income_odd_jobs = safe_inc(model_adult.income_odd_jobs, a_oddjob[o,:obamt])
             end
