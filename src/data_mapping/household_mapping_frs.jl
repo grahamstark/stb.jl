@@ -102,7 +102,6 @@ function initialise_person(n::Integer)::DataFrame
         income_private_pensions = Vector{Union{Real,Missing}}(missing, n),
         income_national_savings = Vector{Union{Real,Missing}}(missing, n),
         income_bank_interest = Vector{Union{Real,Missing}}(missing, n),
-        income_building_society = Vector{Union{Real,Missing}}(missing, n),
         income_stocks_shares = Vector{Union{Real,Missing}}(missing, n),
         income_peps = Vector{Union{Real,Missing}}(missing, n),
         income_isa = Vector{Union{Real,Missing}}(missing, n),
@@ -315,8 +314,6 @@ function map_investment_income( person_model :: DataFrameRow, accounts :: DataFr
             National_Savings_deposit_bonds,
             Pensioners_Guaranteed_Bonds ]
             person_model.income_national_savings += v
-        elseif atype in []
-            person_model.income_building_society += v
         elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club ]
             person_model.income_stocks_shares += v
         elseif atype in [PEP]

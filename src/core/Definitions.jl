@@ -770,7 +770,6 @@ export wages,
    private_pensions
    national_savings
    bank_interest
-   building_society
    stocks_shares
    peps
    isa
