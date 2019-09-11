@@ -246,7 +246,7 @@ function process_penprovs(a_pens::DataFrame)::Real
     npens = size(a_pens)[1]
     penconts = 0.0
     for p in 1:npens
-        pc = safe_add(0.0, a_pens[p, :penamt])
+        pc = safe_inc(0.0, a_pens[p, :penamt])
         if a_pens[p, :penamtpd] == 95
             pc /= 52.0
         end
@@ -396,8 +396,8 @@ function process_job_rec(person_model::DataFrameRow, a_job::DataFrame)
         elseif a_job[j, :seincamt] > 0.0
             self_employment_income += a_job[j, :seincamt]
         end
-        setax = safe_inc(0.0, a_job[j, :setaxamt])
-        tax += setax / 52.0
+        # setax = safe_inc(0.0, a_job[j, :setaxamt])
+        # tax += setax / 52.0
 
         # earnings
         addBonus = false
@@ -529,7 +529,7 @@ function create_adults(
             adult_model[adno, :employment_status] = safe_assign(frs_person.empstati)
             adult_model[adno, :occupational_classification] = safe_assign(frs_person.soc2010)
 
-            process_job_rec(adult_model[adno, :], a_job)
+            process_job_rec( adult_model[adno, :], a_job )
 
             penstuff = process_pensions(a_pension)
             adult_model[adno, :income_private_pensions] = penstuff.pension
@@ -748,7 +748,7 @@ gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 model_households = initialise_household(0)
 model_people = initialise_person(0)
 
-for year in 2017:2017
+for year in 2015:2017
 
     print("on year $year ")
 
