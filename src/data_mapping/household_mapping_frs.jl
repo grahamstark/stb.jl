@@ -495,10 +495,12 @@ end
 
 function process_benefits!( person_model::DataFrameRow, a_benefits::DataFrame )
     nbens = size(a_benefits)[1]
+    for b in 
     for b in 1:nbens
         btype = Benefit_Type(a_benefits[i, :benefit])
         if btype <= social_fund_loan_uc
-            ikey = Symbol("income_"*String( Symbol(btype)))
+            ikey = Symbol(lowercase("income_"*String( Symbol(btype))))
+
         end
     end
 end
