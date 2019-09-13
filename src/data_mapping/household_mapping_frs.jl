@@ -232,9 +232,9 @@ function initialise_person(n::Integer)::DataFrame
         #
         # Childcare fields; assigned to children
         #
-        hours_of_childcare = Vector{Union{Real,Missing}}(missing, n)
-        cost_of_childcare = Vector{Union{Real,Missing}}(missing, n)
-        childcare_type = Vector{Union{Integer,Missing}}(missing, n)
+        hours_of_childcare = Vector{Union{Real,Missing}}(missing, n),
+        cost_of_childcare = Vector{Union{Real,Missing}}(missing, n),
+        childcare_type = Vector{Union{Integer,Missing}}(missing, n),
         employer_provides_child_care = Vector{Union{Integer,Missing}}(missing, n)
 
     )
@@ -575,19 +575,19 @@ end
 
 function infer_hours_of_care( hourtot :: Integer ) :: Real
     hrs = Dict(
-             0 = 0.0,
-             1 = 2.0,
-             2 = 7.0,
-             3 = 14.0,
-             4 = 27.5,
-             5 = 42.5,
-             6 = 75.0,
-             7 = 100.0,
-             8 = 10.0,
-             9 = 27.5,
-             10 = 50.0
+             0 => 0.0,
+             1 => 2.0,
+             2 => 7.0,
+             3 => 14.0,
+             4 => 27.5,
+             5 => 42.5,
+             6 => 75.0,
+             7 => 100.0,
+             8 => 10.0,
+             9 => 27.5,
+             10 => 50.0
           )
-  h = 0
+  h = 0.0
   if hourtot in keys( hrs )
       h = hrs[hourtot]
   end
@@ -736,10 +736,10 @@ function create_adults(
             model_adult.disability_socially =( frs_person.disd09 == 1 ? 1 : 0 )
             # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
             model_adult.health_status = safe_assign(frs_person.heathad)
-            model_adult.hours_of_care_received := safe_inc( 0.0, frs_person.hourcare, 0.0 )
-            model_adult.hours_of_care_given := infer_hours_of_care( adult_r.hourtot ) # also kid
+            model_adult.hours_of_care_received = safe_inc( 0.0, frs_person.hourcare )
+            model_adult.hours_of_care_given = infer_hours_of_care( frs_person.hourtot ) # also kid
 
-            model_adult.is_informal_carer = ( adult_r.carefl  == 1 ? 1 : 0 ) # also kid
+            model_adult.is_informal_carer = ( frs_person.carefl  == 1 ? 1 : 0 ) # also kid
 
             # model_adult.receives_informal_care_from_non_householder =
 
