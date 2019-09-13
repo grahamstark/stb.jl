@@ -861,15 +861,16 @@ function create_children(
         model_child.disability_socially = (frs_person.cdisd09 == 1 ? 1 : 0)
         # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
         model_child.health_status = safe_assign(frs_person.heathch)
-        model_child.income_wages = safe_add( 0.0, frs_person.chearn)
-        model_child.income_other_income = safe_add( 0.0, frs_person.chrinc )
+        model_child.income_wages = safe_inc( 0.0, frs_person.chearns )
+        model_child.income_other_investment_income = safe_inc( 0.0, frs_person.chsave )
+        model_child.income_other_income = safe_inc( 0.0, frs_person.chrinc )
         model_child.income_free_school_meals = 0.0
         for t in [:fsbval,:fsfvval,:fsmlkval,:fsmval]!()
-            model_child.income_free_school_meals = safe_add( model_child.income_free_school_meals, frs_person[t] )
+            model_child.income_free_school_meals = safe_inc( model_child.income_free_school_meals, frs_person[t] )
         end
         model_child.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
         process_relationsips!( model_adult, frs_person )
-        # TODO education grants, all the other good child stuff
+        # TODO education grants, all the other good child stuff EMA
 
         model_child.cost_of_childcare = 0.0
         model_child.hours_of_childcare = 0.0
