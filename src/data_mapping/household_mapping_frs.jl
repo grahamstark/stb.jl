@@ -208,7 +208,6 @@ function initialise_person(n::Integer)::DataFrame
         registered_blind = Vector{Union{Integer,Missing}}(missing, n),
         registered_partially_sighted = Vector{Union{Integer,Missing}}(missing, n),
         registered_deaf = Vector{Union{Integer,Missing}}(missing, n),
-        has_learning_difficulty = Vector{Union{Integer,Missing}}(missing, n),
         disability_vision = Vector{Union{Integer,Missing}}(missing, n),
         disability_hearing = Vector{Union{Integer,Missing}}(missing, n),
         disability_mobility = Vector{Union{Integer,Missing}}(missing, n),
@@ -723,7 +722,6 @@ function create_adults(
             model_adult.registered_partially_sighted = ( frs_person.spcreg2 == 1 ? 1 : 0 )
             model_adult.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
             model_adult.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
-            model_adult.has_learning_difficulty = ( frs_person.disd05 == 1 ? 1 : 0 ) # cdisd05 for kids
 
             model_adult.disability_vision = ( frs_person.disd01 == 1 ? 1 : 0 ) # cdisd kids ..
             model_adult.disability_hearing = ( frs_person.disd02 == 1 ? 1 : 0 )
@@ -741,18 +739,68 @@ function create_adults(
 
             model_adult.is_informal_carer = ( frs_person.carefl  == 1 ? 1 : 0 ) # also kid
 
-            # model_adult.receives_informal_care_from_non_householder =
-
-
-
-
         end # if in HBAI
     end # adult loop
     println("final adno $adno")
     adult_model[1:adno, :]
 end # proc create_adult
 
-function create_child(year::Integer, child::DataFrame)::DataFrame end
+function create_children(
+    year::Integer,
+    frs_children::DataFrame,
+    childcare :: DataFrame )::DataFrame
+    # I don;t care if the child is in HBAI or not - we'll sort that out when we match with the
+    # live benefit units
+    num_children = size(frs_children)[1]
+    child_model = initialise_person(num_children)
+    adno = 0
+    for chno in 1:num_children
+        if chno % 1000 == 0
+            println("on year $year, chno $chno")
+        end
+
+        frs_person = frs_children[chno, :]
+        sernum = frs_person.sernum
+        adno += 1
+            ## also for children
+        model_child = child_model[chno,:]
+        model_child.pno = frs_person.person
+        model_child.hid = frs_person.sernum
+        model_child.pid = get_pid(
+            FRS,
+            year,
+            frs_person.sernum,
+            frs_person.person
+        )
+        model_child.frs_year = year
+        model_child.default_benefit_unit = frs_person.benunit
+        model_child.age = frs_person.age80
+        model_child.sex = safe_assign(frs_person.sex)
+        model_child.ethnic_group = safe_assign(frs_person.ethgr3)
+
+        ## also for child
+        model_child.registered_blind = ( frs_person.spcreg1 == 1 ? 1 : 0 )
+        model_child.registered_partially_sighted = ( frs_person.spcreg2 == 1 ? 1 : 0 )
+        model_child.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
+        model_child.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
+
+        model_child.disability_vision = ( frs_person.cdisd01 == 1 ? 1 : 0 ) # cdisd kids ..
+        model_child.disability_hearing = ( frs_person.cdisd02 == 1 ? 1 : 0 )
+        model_child.disability_mobility = ( frs_person.cdisd03 == 1 ? 1 : 0 )
+        model_child.disability_dexterity = ( frs_person.cdisd04 == 1 ? 1 : 0 )
+        model_child.disability_learning =( frs_person.cdisd05 == 1 ? 1 : 0 )
+        model_child.disability_memory = ( frs_person.cdisd06 == 1 ? 1 : 0 )
+        model_child.disability_mental_disability = ( frs_person.cdisd07 == 1 ? 1 : 0 )
+        model_child.disability_stamina = ( frs_person.cdisd08 == 1 ? 1 : 0 )
+        model_child.disability_socially =( frs_person.cdisd09 == 1 ? 1 : 0 )
+        # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
+        model_child.health_status = safe_assign(frs_person.heathad)
+
+        model_child.is_informal_carer = ( frs_person.carefl  == 1 ? 1 : 0 ) # also kid
+
+    end # chno loop
+    child_model # send them all back ...
+end
 
 function create_household(
     year::Integer,
@@ -956,6 +1004,8 @@ for year in 2015:2017
     )
     append!(model_people, model_adults_yr)
 
+    model_children_yr = create_children( child, chldcare )
+    append!(model_people, model_children_yr)
 
     model_households_yr = create_household(
         year,

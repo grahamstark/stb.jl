@@ -34,9 +34,7 @@ mutable struct Person
     registered_blind::Bool
     registered_partially_sighted::Bool
     registered_deaf::Bool
-    has_learning_difficulty::Bool
-    has_dementia::Bool
-
+    
     disabilities::Disability_Dict
     health_status::Health_Status
     relationships::Relationship_Dict
