@@ -883,32 +883,31 @@ Incomes_Dict = Dict{Incomes_Type,Real}
 
 export Asset_Type, Asset_Dict
 
-export
-      A_Current_account
-      A_NSB_Ordinary_account
-      A_NSB_Investment_account
-      A_Not_Used
-      A_Savings_investments_etc
-      A_Government_Gilt_Edged_Stock
-      A_Unit_or_Investment_Trusts
-      A_Stocks_Shares_Bonds_etc
-      A_PEP
-      A_National_Savings_capital_bonds
-      A_Index_Linked_National_Savings_Certificates
-      A_Fixed_Interest_National_Savings_Certificates
-      A_Pensioners_Guaranteed_Bonds
-      A_SAYE
-      A_Premium_bonds
-      A_National_Savings_income_bonds
-      A_National_Savings_deposit_bonds
-      A_A_First_Option_bonds
-      A_Yearly_Plan
-      A_ISA
-      A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds
-      A_GEB
-      A_Basic_Account
-      A_Credit_Unions
-      A_Endowment_Policy_Not_Linked
+export A_Current_account,
+       A_NSB_Ordinary_account,
+       A_NSB_Investment_account,
+       A_Not_Used,
+       A_Savings_investments_etc,
+       A_Government_Gilt_Edged_Stock,
+       A_Unit_or_Investment_Trusts,
+       A_Stocks_Shares_Bonds_etc,
+       A_PEP,
+       A_National_Savings_capital_bonds,
+       A_Index_Linked_National_Savings_Certificates,
+       A_Fixed_Interest_National_Savings_Certificates,
+       A_Pensioners_Guaranteed_Bonds,
+       A_SAYE,
+       A_Premium_bonds,
+       A_National_Savings_income_bonds,
+       A_National_Savings_deposit_bonds,
+       A_A_First_Option_bonds,
+       A_Yearly_Plan,
+       A_ISA,
+       A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds,
+       A_GEB,
+       A_Basic_Account,
+       A_Credit_Unions,
+       A_Endowment_Policy_Not_Linked
 export Missing_Asset_Type
 
 @enum Asset_Type begin  # mapped from assetype
@@ -930,7 +929,7 @@ export Missing_Asset_Type
    A_Premium_bonds = 15
    A_National_Savings_income_bonds = 16
    A_National_Savings_deposit_bonds = 17
-   A_A_First_Option_bonds = 18
+   A_First_Option_bonds = 18
    A_Yearly_Plan = 19
    A_ISA = 21
    A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds = 25

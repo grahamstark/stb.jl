@@ -29,7 +29,6 @@ mutable struct Person
 
     income::Incomes_Dict
     assets::Asset_Dict
-    pension_contributions::Real
     contracted_out_of_serps::Bool
 
     registered_blind::Bool
