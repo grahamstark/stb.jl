@@ -742,6 +742,7 @@ export wages,
        income_tax,
        national_insurance,
        local_taxes,
+       free_school_meals,
        dlaself_care,
        dlamobility,
        child_benefit,
@@ -826,6 +827,7 @@ export wages,
    income_tax = 33
    national_insurance = 34
    local_taxes = 35
+   free_school_meals = 36
 
    dlaself_care = 2001
    dlamobility = 2002

@@ -34,10 +34,11 @@ mutable struct Person
     registered_blind::Bool
     registered_partially_sighted::Bool
     registered_deaf::Bool
-    
+
     disabilities::Disability_Dict
     health_status::Health_Status
     relationships::Relationship_Dict
+    relationship_to_hoh :: Relationsip;
     is_informal_carer::Bool
     receives_informal_care_from_non_householder::Bool
     hours_of_care_received::Real

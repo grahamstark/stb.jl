@@ -125,6 +125,7 @@ function initialise_person(n::Integer)::DataFrame
         income_income_tax = Vector{Union{Real,Missing}}(missing, n),
         income_national_insurance = Vector{Union{Real,Missing}}(missing, n),
         income_local_taxes = Vector{Union{Real,Missing}}(missing, n),
+        income_free_school_meals = Vector{Union{Real,Missing}}(missing, n),
         income_dlaself_care = Vector{Union{Real,Missing}}(missing, n),
         income_dlamobility = Vector{Union{Real,Missing}}(missing, n),
         income_child_benefit = Vector{Union{Real,Missing}}(missing, n),
@@ -267,7 +268,26 @@ function initialise_person(n::Integer)::DataFrame
         hours_of_childcare = Vector{Union{Real,Missing}}(missing, n),
         cost_of_childcare = Vector{Union{Real,Missing}}(missing, n),
         childcare_type = Vector{Union{Integer,Missing}}(missing, n),
-        employer_provides_child_care = Vector{Union{Integer,Missing}}(missing, n)
+        employer_provides_child_care = Vector{Union{Integer,Missing}}(missing, n),
+
+
+        relationship_to_hoh = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_1 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_2 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_3 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_4 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_5 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_6 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_7 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_8 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_9 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_10 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_11 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_12 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_13 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_14 = Vector{Union{Integer,Missing}}(missing, n),
+        relationship_15 = Vector{Union{Integer,Missing}}(missing, n)
+
     )
 
 end
@@ -416,6 +436,16 @@ function map_alimony(frs_person::DataFrameRow, a_maint::DataFrame)::Real
         alimony = safe_inc(alimony, a_maint[c, :mramt])
     end
     alimony
+end
+
+function process_relationsips!( model_person :: DataFrame, frs_person :: DataFrame )
+    model_person.relationship_to_hoh = safe_assign( frs_person.relhrp )
+    for i in 1:14
+        rel = i < 10 ? "r0" : "r"
+        relfrs = Symbol( "$(rel)$i" ) # :r10 or :r02 and so on
+        relmod = Symbol( "relationship_$(i)") # :relationship_10 or :relationship_2
+        model_person[relmod] = safe_assign(frs_person[relfrs])
+    end
 end
 
 function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
@@ -774,7 +804,7 @@ function create_adults(
             model_adult.hours_of_care_given = infer_hours_of_care(frs_person.hourtot) # also kid
 
             model_adult.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
-
+            process_relationsips!( model_adult, frs_person )
         end # if in HBAI
     end # adult loop
     println("final adno $adno")
@@ -815,7 +845,6 @@ function create_children(
         model_child.age = frs_person.age
         model_child.sex = safe_assign(frs_person.sex)
         # model_child.ethnic_group = safe_assign(frs_person.ethgr3)
-
         ## also for child
         model_child.registered_blind = (frs_person.spcreg1 == 1 ? 1 : 0)
         model_child.registered_partially_sighted = (frs_person.spcreg2 == 1 ? 1 : 0)
@@ -832,13 +861,16 @@ function create_children(
         model_child.disability_socially = (frs_person.cdisd09 == 1 ? 1 : 0)
         # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
         model_child.health_status = safe_assign(frs_person.heathch)
-
+        model_child.income_wages = safe_add( 0.0, frs_person.chearn)
+        model_child.income_other_income = safe_add( 0.0, frs_person.chrinc )
+        model_child.income_free_school_meals = 0.0
+        for t in [:fsbval,:fsfvval,:fsmlkval,:fsmval]!()
+            model_child.income_free_school_meals = safe_add( model_child.income_free_school_meals, frs_person[t] )
+        end
         model_child.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
-        # TODO CHILD EARNINGS, INCOME FROM TRUSTS, FREE SCHOOL MEALS
-        # "chearns"
-        # "chincdv"
-        # "chrinc"
-        # "fsmva
+        process_relationsips!( model_adult, frs_person )
+        # TODO education grants, all the other good child stuff
+
         model_child.cost_of_childcare = 0.0
         model_child.hours_of_childcare = 0.0
         for c in 1:nchildcares
