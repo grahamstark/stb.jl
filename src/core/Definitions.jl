@@ -882,57 +882,63 @@ end
 Incomes_Dict = Dict{Incomes_Type,Real}
 
 export Asset_Type, Asset_Dict
-export current_account,
-       nsb_ordinary_account,
-       nsb_investment_account,
-       not_used,
-       savings_investments_etc,
-       government_gilt_edged_stock,
-       unit_or_investment_trusts,
-       stocks_shares_bonds_etc,
-       national_savings_capital_bonds,
-       index_linked_national_savings_certificates,
-       fixed_interest_national_savings_certificates,
-       pensioners_guaranteed_bonds,
-       saye,
-       premium_bonds,
-       national_savings_income_bonds,
-       national_savings_deposit_bonds,
-       first_option_bonds,
-       yearly_plan,
-       isas,
-       fixd_rate_svngs_bonds,
-       geb,
-       basic_account,
-       credit_unions,
-       endowment_policy_not_linked
 
-@enum Asset_Type begin
-   current_account
-   nsb_ordinary_account
-   nsb_investment_account
-   not_used
-   savings_investments_etc
-   government_gilt_edged_stock
-   unit_or_investment_trusts
-   stocks_shares_bonds_etc
-   national_savings_capital_bonds
-   index_linked_national_savings_certificates
-   fixed_interest_national_savings_certificates
-   pensioners_guaranteed_bonds
-   saye
-   premium_bonds
-   national_savings_income_bonds
-   national_savings_deposit_bonds
-   first_option_bonds
-   yearly_plan
-   isas
-   fixd_rate_svngs_bonds
-   geb
-   basic_account
-   credit_unions
-   endowment_policy_not_linked
+export Current_account,
+       NSB_Ordinary_account,
+       NSB_Investment_account,
+       Not_Used,
+       Savings_investments_etc,
+       Government_Gilt_Edged_Stock,
+       Unit_or_Investment_Trusts,
+       Stocks_Shares_Bonds_etc,
+       PEP,
+       National_Savings_capital_bonds,
+       Index_Linked_National_Savings_Certificates,
+       Fixed_Interest_National_Savings_Certificates,
+       Pensioners_Guaranteed_Bonds,
+       SAYE,
+       Premium_bonds,
+       National_Savings_income_bonds,
+       National_Savings_deposit_bonds,
+       First_Option_bonds,
+       Yearly_Plan,
+       ISA,
+       Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds,
+       GEB,
+       Basic_Account,
+       Credit_Unions,
+       Endowment_Policy_Not_Linked
+export Missing_Asset_Type
+
+@enum Asset_Type begin  # mapped from assetype
+   Missing_Asset_Type = -1
+   Current_account = 1
+   NSB_Ordinary_account = 2
+   NSB_Investment_account = 3
+   Not_Used = 4
+   Savings_investments_etc = 5
+   Government_Gilt_Edged_Stock = 6
+   Unit_or_Investment_Trusts = 7
+   Stocks_Shares_Bonds_etc = 8
+   PEP = 9
+   National_Savings_capital_bonds = 10
+   Index_Linked_National_Savings_Certificates = 11
+   Fixed_Interest_National_Savings_Certificates = 12
+   Pensioners_Guaranteed_Bonds = 13
+   SAYE = 14
+   Premium_bonds = 15
+   National_Savings_income_bonds = 16
+   National_Savings_deposit_bonds = 17
+   First_Option_bonds = 18
+   Yearly_Plan = 19
+   ISA = 21
+   Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds = 25
+   GEB = 26
+   Basic_Account = 27
+   Credit_Unions = 28
+   Endowment_Policy_Not_Linked = 29
 end
+
 
 Asset_Dict = Dict{Asset_Type,Real}
 
@@ -1266,20 +1272,20 @@ export make_sym_for_frame, make_sym_from_frame
 """
 "income", :fred => :income_fred
 """
-function make_sym_for_frame( prefix :: AbstractString, enum :: Enum ) :: Symbol
-   sym = Symbol( enum )
-   Symbol(lowercase( prefix * "_" * String( Symbol( sym ))))
+function make_sym_for_frame(prefix::AbstractString, enum::Enum)::Symbol
+   sym = Symbol(enum)
+   Symbol(lowercase(prefix * "_" * String(Symbol(sym))))
 end
 
 """
 "income", :income_fred" => :fred
 """
-function make_sym_from_frame( prefix :: AbstractString, sym :: Symbol ) :: Symbol
+function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
    # FIXME got to be a simpler way
    matchstr = "$(prefix)(.*)"
    re = Regex(matchstr)
-   rm = match( re, String( sym ))
-   Symbol( rm[1] )
+   rm = match(re, String(sym))
+   Symbol(rm[1])
 end
 
 end # module

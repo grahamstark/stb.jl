@@ -177,8 +177,6 @@ function initialise_person(n::Integer)::DataFrame
         income_social_fund_loan_uc = Vector{Union{Real,Missing}}(missing, n),
         income_other_benefits = Vector{Union{Real,Missing}}(missing, n),
 
-
-        assets = Vector{Union{Asset_Dict,Missing}}(missing, n),
         asset_current_account = Vector{Union{Real,Missing}}(missing, n),
         asset_nsb_ordinary_account = Vector{Union{Real,Missing}}(missing, n),
         asset_nsb_investment_account = Vector{Union{Real,Missing}}(missing, n),
@@ -209,6 +207,7 @@ function initialise_person(n::Integer)::DataFrame
         asset_basic_account = Vector{Union{Real,Missing}}(missing, n),
         asset_credit_unions = Vector{Union{Real,Missing}}(missing, n),
         asset_endowment_policy_not_linked = Vector{Union{Real,Missing}}(missing, n),
+
         pension_contributions = Vector{Union{Real,Missing}}(missing, n),
         contracted_out_of_serps = Vector{Union{Bool,Missing}}(missing, n),
         registered_blind = Vector{Union{Bool,Missing}}(missing, n),
@@ -494,6 +493,11 @@ function process_job_rec!( person_model::DataFrameRow, a_job::DataFrame )
 
 end
 
+"""
+Convoluted - take the benefit enum, make ...
+FIXME: some represent one-off payments (winter fuel..) so maybe weeklyise, but all that
+really matters is whether they are present
+"""
 function process_benefits!( person_model::DataFrameRow, a_benefits::DataFrame )
     nbens = size(a_benefits)[1]
     for i in instances( Incomes_Type )
@@ -503,14 +507,39 @@ function process_benefits!( person_model::DataFrameRow, a_benefits::DataFrame )
          end
     end
     for b in 1:nbens
-        btype = Benefit_Type(a_benefits[b, :benefit])
-        if btype <= Personal_Independence_Payment_Mobility
-            ikey = make_sym_for_frame( "income", btype )
-            person_model[ikey] = safe_inc( person_model[ikey], a_benefits[b,:benamt])
+        bno = a_benefits[b, :benefit]
+        if ! (bno in [46,47]) # 2015 receipt in last 6 months of tax credits
+            btype = Benefit_Type( bno)
+            if btype <= Personal_Independence_Payment_Mobility
+                ikey = make_sym_for_frame( "income", btype )
+                person_model[ikey] = safe_inc( person_model[ikey], a_benefits[b,:benamt])
+            end
         end
     end
 end
 
+"""
+Convoluted - take the benefit enum, make ...
+"""
+function process_assets!( person_model::DataFrameRow, an_asset::DataFrame )
+    nbens = size(a_asset)[1]
+    for i in instances( Incomes_Type )
+         if i >= dlaself_care && i <= personal_independence_payment_mobility
+             ikey = make_sym_for_frame( "income", i )
+             person_model[ikey] = 0.0
+         end
+    end
+    for b in 1:nbens
+        bno = a_asset[b, :benefit]
+        if ! (bno in [46,47]) # 2015 receipt in last 6 months of tax credits
+            btype = Benefit_Type( bno)
+            if btype <= Personal_Independence_Payment_Mobility
+                ikey = make_sym_for_frame( "income", btype )
+                person_model[ikey] = safe_inc( person_model[ikey], a_asset[b,:benamt])
+            end
+        end
+    end
+end
 
 function create_adults(
     year::Integer,
@@ -624,6 +653,14 @@ function create_adults(
             ## TODO babysitting,chartities (secure version only??)
             ## TODO alimony and childcare PAID ??
             ## TODO allowances from absent spouses
+
+            ## TODO income_education_allowances
+            ## TODO income_foster_care_payments
+            ## TODO income_student_grants
+            ## TODO income_student_loans
+            ## TODO income_income_tax
+            ## TODO income_national_insurance
+            ## TODO income_local_taxes
 
             process_benefits!( model_adult, a_benefits )
 
