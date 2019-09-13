@@ -865,11 +865,11 @@ function create_children(
         model_child.income_other_investment_income = safe_inc( 0.0, frs_person.chsave )
         model_child.income_other_income = safe_inc( 0.0, frs_person.chrinc )
         model_child.income_free_school_meals = 0.0
-        for t in [:fsbval,:fsfvval,:fsmlkval,:fsmval]!()
+        for t in [:fsbval,:fsfvval,:fsmlkval,:fsmval]
             model_child.income_free_school_meals = safe_inc( model_child.income_free_school_meals, frs_person[t] )
         end
         model_child.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
-        process_relationsips!( model_adult, frs_person )
+        process_relationsips!( model_child, frs_person )
         # TODO education grants, all the other good child stuff EMA
 
         model_child.cost_of_childcare = 0.0
