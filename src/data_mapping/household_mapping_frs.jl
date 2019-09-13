@@ -185,15 +185,10 @@ function initialise_person(n::Integer)::DataFrame
         asset_government_gilt_edged_stock = Vector{Union{Real,Missing}}(missing, n),
         asset_unit_or_investment_trusts = Vector{Union{Real,Missing}}(missing, n),
         asset_stocks_shares_bonds_etc = Vector{Union{Real,Missing}}(missing, n),
+        asset_pep = Vector{Union{Real,Missing}}(missing, n),
         asset_national_savings_capital_bonds = Vector{Union{Real,Missing}}(missing, n),
-        asset_index_linked_national_savings_certificates = Vector{Union{Real,Missing}}(
-            missing,
-            n
-        ),
-        asset_fixed_interest_national_savings_certificates = Vector{Union{Real,Missing}}(
-            missing,
-            n
-        ),
+        asset_index_linked_national_savings_certificates = Vector{Union{Real,Missing}}(missing, n),
+        asset_fixed_interest_national_savings_certificates = Vector{Union{Real,Missing}}(missing, n),
         asset_pensioners_guaranteed_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_saye = Vector{Union{Real,Missing}}(missing, n),
         asset_premium_bonds = Vector{Union{Real,Missing}}(missing, n),
@@ -201,8 +196,8 @@ function initialise_person(n::Integer)::DataFrame
         asset_national_savings_deposit_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_first_option_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_yearly_plan = Vector{Union{Real,Missing}}(missing, n),
-        asset_isas = Vector{Union{Real,Missing}}(missing, n),
-        asset_fixd_rate_svngs_bonds = Vector{Union{Real,Missing}}(missing, n),
+        asset_isa = Vector{Union{Real,Missing}}(missing, n),
+        asset_fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_geb = Vector{Union{Real,Missing}}(missing, n),
         asset_basic_account = Vector{Union{Real,Missing}}(missing, n),
         asset_credit_unions = Vector{Union{Real,Missing}}(missing, n),
@@ -522,22 +517,16 @@ end
 Convoluted - take the benefit enum, make ...
 """
 function process_assets!( person_model::DataFrameRow, an_asset::DataFrame )
-    nbens = size(a_asset)[1]
-    for i in instances( Incomes_Type )
-         if i >= dlaself_care && i <= personal_independence_payment_mobility
-             ikey = make_sym_for_frame( "income", i )
-             person_model[ikey] = 0.0
-         end
+    nassets = size(a_asset)[1]
+    for i in instances( Asset_Type )
+         ikey = make_sym_for_frame( "asset", i )
+         person_model[ikey] = 0.0
     end
-    for b in 1:nbens
-        bno = a_asset[b, :benefit]
-        if ! (bno in [46,47]) # 2015 receipt in last 6 months of tax credits
+    for a in 1:nassets
+        ano = a_asset[b, :benefit]
             btype = Benefit_Type( bno)
-            if btype <= Personal_Independence_Payment_Mobility
-                ikey = make_sym_for_frame( "income", btype )
-                person_model[ikey] = safe_inc( person_model[ikey], a_asset[b,:benamt])
-            end
-        end
+            ikey = make_sym_for_frame( "asset", btype )
+            person_model[ikey] = safe_inc( person_model[ikey], a_asset[b,:benamt])
     end
 end
 
