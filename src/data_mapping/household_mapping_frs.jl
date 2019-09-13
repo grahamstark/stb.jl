@@ -796,10 +796,11 @@ function create_children(
             println("on year $year, chno $chno")
         end
 
-        a_childcare = childcare[((childcare.sernum.==frs_person.sernum).&(childcare.benunit.==frs_person.benunit).&(childcare.person.==frs_person.person)), :]
-        nchildcares = size(an_childcare)[1]
-
         frs_person = frs_children[chno, :]
+
+        a_childcare = childcare[((childcare.sernum.==frs_person.sernum).&(childcare.benunit.==frs_person.benunit).&(childcare.person.==frs_person.person)), :]
+        nchildcares = size(a_childcare)[1]
+
         sernum = frs_person.sernum
         adno += 1
             ## also for children
