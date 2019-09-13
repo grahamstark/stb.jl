@@ -788,9 +788,6 @@ export wages,
        universal_credit,
        personal_independence_payment_daily_living,
        personal_independence_payment_mobility,
-       a_loan_from_the_dwp_and_dfc,
-       a_loan_or_grant_from_local_authority,
-       social_fund_loan_uc,
        other_benefits
 
 @enum Incomes_Type begin
@@ -876,9 +873,6 @@ export wages,
    universal_credit = 2095
    personal_independence_payment_daily_living = 2096
    personal_independence_payment_mobility = 2097
-   a_loan_from_the_dwp_and_dfc = 2098
-   a_loan_or_grant_from_local_authority = 2099
-   social_fund_loan_uc = 2111
 
    other_benefits = 3000
 
@@ -1247,6 +1241,9 @@ export DEFAULT_MISSING_VALUES, safe_inc
 
 const DEFAULT_MISSING_VALUES = [-9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0]
 
+"""
+a = a+b if b is not missing or (-9 to -1), else a
+"""
 function safe_inc(a::Real, b::Union{Real,Missing})::Real
    if ismissing(b) || (b in DEFAULT_MISSING_VALUES)
       return a
@@ -1254,6 +1251,10 @@ function safe_inc(a::Real, b::Union{Real,Missing})::Real
    a + b
 end
 
+"""
+map missing values or (-9 to -2) to -1, else a
+used for mapping values to enums, where we add a missing enum with value -1
+"""
 function safe_assign(a::Union{Number,Missing})
    if ismissing(a) || a < -1
       return -1
@@ -1261,10 +1262,24 @@ function safe_assign(a::Union{Number,Missing})
    a
 end
 
+export make_sym_for_frame, make_sym_from_frame
 """
 "income", :fred => :income_fred
 """
-function make_sym_for_frame( prefix :: AbstractString, s :: Symbol ) :: Symbol
-   Symbol(lowercase( prefix * "_" * String( Symbol( s ))))
+function make_sym_for_frame( prefix :: AbstractString, enum :: Enum ) :: Symbol
+   sym = Symbol( enum )
+   Symbol(lowercase( prefix * "_" * String( Symbol( sym ))))
+end
+
+"""
+"income", :income_fred" => :fred
+"""
+function make_sym_from_frame( prefix :: AbstractString, sym :: Symbol ) :: Symbol
+   # FIXME got to be a simpler way
+   matchstr = "$(prefix)(.*)"
+   re = Regex(matchstr)
+   rm = match( re, String( sym ))
+   Symbol( rm[1] )
+end
 
 end # module

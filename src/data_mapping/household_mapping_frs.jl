@@ -11,6 +11,7 @@ using Definitions
 
 global FRS_DIR = "/mnt/data/frs/"
 global HBAI_DIR = "/mnt/data/hbai/"
+global OUTPUT_DIR = "/home/graham_s/tmp/"
 
 global MONTHS = Dict(
     "JAN" => 1,
@@ -495,14 +496,16 @@ end
 
 function process_benefits!( person_model::DataFrameRow, a_benefits::DataFrame )
     nbens = size(a_benefits)[1]
-    for i in dlaself_care:social_fund_loan_uc
-         ikey = make_sym_for_frame( "income", i )
-         person_model[ikey] = 0.0
+    for i in instances( Incomes_Type )
+         if i >= dlaself_care && i <= personal_independence_payment_mobility
+             ikey = make_sym_for_frame( "income", i )
+             person_model[ikey] = 0.0
+         end
     end
     for b in 1:nbens
-        btype = Benefit_Type(a_benefits[i, :benefit])
-        if btype <= social_fund_loan_uc
-            ikey = make_income_sym( "income", btype )
+        btype = Benefit_Type(a_benefits[b, :benefit])
+        if btype <= Personal_Independence_Payment_Mobility
+            ikey = make_sym_for_frame( "income", btype )
             person_model[ikey] = safe_inc( person_model[ikey], a_benefits[b,:benamt])
         end
     end
@@ -622,8 +625,8 @@ function create_adults(
             ## TODO alimony and childcare PAID ??
             ## TODO allowances from absent spouses
 
-            process_benefits!( person_model, a_benefits )
-            
+            process_benefits!( model_adult, a_benefits )
+
 
 
 
@@ -911,5 +914,5 @@ for year in 2015:2017
 
 end
 
-CSV.write("model_households.tab", model_households, delim = "\t")
-CSV.write("model_people.tab", model_people, delim = "\t")
+CSV.write("$(OUTPUT_DIR)model_households.tab", model_households, delim = "\t")
+CSV.write("$(OUTPUT_DIR)model_people.tab", model_people, delim = "\t")
