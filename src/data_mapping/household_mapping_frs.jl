@@ -489,6 +489,34 @@ function process_job_rec!( person_model::DataFrameRow, a_job::DataFrame )
 end
 
 """
+"income", :fred => :income_fred
+"""
+function make_sym_for_frame(prefix::AbstractString, enum::Enum)::Symbol
+   sym = Symbol(enum)
+   Symbol(lowercase(prefix * "_" * String(Symbol(sym))))
+end
+
+"""
+"income", :a_fred => :income_fred
+"""
+function make_sym_for_asset(enum::Enum)::Symbol
+   s = String(Symbol(enum))[3:end]
+   prefix="asset"
+   Symbol(lowercase(prefix * "_" * s ))
+end
+
+"""
+"income", :income_fred" => :fred
+"""
+function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
+   # FIXME got to be a simpler way
+   matchstr = "$(prefix)(.*)"
+   re = Regex(matchstr)
+   rm = match(re, String(sym))
+   Symbol(rm[1])
+end
+
+"""
 Convoluted - take the benefit enum, make ...
 FIXME: some represent one-off payments (winter fuel..) so maybe weeklyise, but all that
 really matters is whether they are present
@@ -519,14 +547,18 @@ Convoluted - take the benefit enum, make ...
 function process_assets!( person_model::DataFrameRow, an_asset::DataFrame )
     nassets = size(a_asset)[1]
     for i in instances( Asset_Type )
-         ikey = make_sym_for_frame( "asset", i )
+         ikey = make_sym_for_asset( i )
          person_model[ikey] = 0.0
     end
     for a in 1:nassets
-        ano = a_asset[b, :benefit]
-            btype = Benefit_Type( bno)
-            ikey = make_sym_for_frame( "asset", btype )
-            person_model[ikey] = safe_inc( person_model[ikey], a_asset[b,:benamt])
+        ano = a_asset[a, :assetype]
+        atype = Benefit_Type( ano )
+        ikey = make_sym_for_asset( atype )
+        v = a_asset[a, :howmuch]
+        if a_asset[a, :howmuche] > 0
+            v = a_asset[a, :howmuche]
+        end
+        person_model[ikey] = safe_inc( person_model[ikey], v)
     end
 end
 

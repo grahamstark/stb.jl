@@ -883,60 +883,61 @@ Incomes_Dict = Dict{Incomes_Type,Real}
 
 export Asset_Type, Asset_Dict
 
-export Current_account,
-       NSB_Ordinary_account,
-       NSB_Investment_account,
-       Not_Used,
-       Savings_investments_etc,
-       Government_Gilt_Edged_Stock,
-       Unit_or_Investment_Trusts,
-       Stocks_Shares_Bonds_etc,
-       PEP,
-       National_Savings_capital_bonds,
-       Index_Linked_National_Savings_Certificates,
-       Fixed_Interest_National_Savings_Certificates,
-       Pensioners_Guaranteed_Bonds,
-       SAYE,
-       Premium_bonds,
-       National_Savings_income_bonds,
-       National_Savings_deposit_bonds,
-       First_Option_bonds,
-       Yearly_Plan,
-       ISA,
-       Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds,
-       GEB,
-       Basic_Account,
-       Credit_Unions,
-       Endowment_Policy_Not_Linked
+export
+      A_Current_account
+      A_NSB_Ordinary_account
+      A_NSB_Investment_account
+      A_Not_Used
+      A_Savings_investments_etc
+      A_Government_Gilt_Edged_Stock
+      A_Unit_or_Investment_Trusts
+      A_Stocks_Shares_Bonds_etc
+      A_PEP
+      A_National_Savings_capital_bonds
+      A_Index_Linked_National_Savings_Certificates
+      A_Fixed_Interest_National_Savings_Certificates
+      A_Pensioners_Guaranteed_Bonds
+      A_SAYE
+      A_Premium_bonds
+      A_National_Savings_income_bonds
+      A_National_Savings_deposit_bonds
+      A_A_First_Option_bonds
+      A_Yearly_Plan
+      A_ISA
+      A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds
+      A_GEB
+      A_Basic_Account
+      A_Credit_Unions
+      A_Endowment_Policy_Not_Linked
 export Missing_Asset_Type
 
 @enum Asset_Type begin  # mapped from assetype
    Missing_Asset_Type = -1
-   Current_account = 1
-   NSB_Ordinary_account = 2
-   NSB_Investment_account = 3
-   Not_Used = 4
-   Savings_investments_etc = 5
-   Government_Gilt_Edged_Stock = 6
-   Unit_or_Investment_Trusts = 7
-   Stocks_Shares_Bonds_etc = 8
-   PEP = 9
-   National_Savings_capital_bonds = 10
-   Index_Linked_National_Savings_Certificates = 11
-   Fixed_Interest_National_Savings_Certificates = 12
-   Pensioners_Guaranteed_Bonds = 13
-   SAYE = 14
-   Premium_bonds = 15
-   National_Savings_income_bonds = 16
-   National_Savings_deposit_bonds = 17
-   First_Option_bonds = 18
-   Yearly_Plan = 19
-   ISA = 21
-   Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds = 25
-   GEB = 26
-   Basic_Account = 27
-   Credit_Unions = 28
-   Endowment_Policy_Not_Linked = 29
+   A_Current_account = 1
+   A_NSB_Ordinary_account = 2
+   A_NSB_Investment_account = 3
+   A_Not_Used = 4
+   A_Savings_investments_etc = 5
+   A_Government_Gilt_Edged_Stock = 6
+   A_Unit_or_Investment_Trusts = 7
+   A_Stocks_Shares_Bonds_etc = 8
+   A_PEP = 9
+   A_National_Savings_capital_bonds = 10
+   A_Index_Linked_National_Savings_Certificates = 11
+   A_Fixed_Interest_National_Savings_Certificates = 12
+   A_Pensioners_Guaranteed_Bonds = 13
+   A_SAYE = 14
+   A_Premium_bonds = 15
+   A_National_Savings_income_bonds = 16
+   A_National_Savings_deposit_bonds = 17
+   A_A_First_Option_bonds = 18
+   A_Yearly_Plan = 19
+   A_ISA = 21
+   A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds = 25
+   A_GEB = 26
+   A_Basic_Account = 27
+   A_Credit_Unions = 28
+   A_Endowment_Policy_Not_Linked = 29
 end
 
 
@@ -1268,24 +1269,6 @@ function safe_assign(a::Union{Number,Missing})
    a
 end
 
-export make_sym_for_frame, make_sym_from_frame
-"""
-"income", :fred => :income_fred
-"""
-function make_sym_for_frame(prefix::AbstractString, enum::Enum)::Symbol
-   sym = Symbol(enum)
-   Symbol(lowercase(prefix * "_" * String(Symbol(sym))))
-end
 
-"""
-"income", :income_fred" => :fred
-"""
-function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
-   # FIXME got to be a simpler way
-   matchstr = "$(prefix)(.*)"
-   re = Regex(matchstr)
-   rm = match(re, String(sym))
-   Symbol(rm[1])
-end
 
 end # module
