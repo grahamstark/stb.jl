@@ -73,6 +73,7 @@ function initialise_person(n::Integer)::DataFrame
         hid = Vector{Union{BigInt,Missing}}(missing, n),
         pid = Vector{Union{BigInt,Missing}}(missing, n),
         pno = Vector{Union{Integer,Missing}}(missing, n),
+        from_child_record = Vector{Union{Integer,Missing}}(missing, n),
         default_benefit_unit = Vector{Union{Integer,Missing}}(missing, n),
         age = Vector{Union{Integer,Missing}}(missing, n),
         sex = Vector{Union{Integer,Missing}}(missing, n),
@@ -89,7 +90,6 @@ function initialise_person(n::Integer)::DataFrame
         employment_status = Vector{Union{Integer,Missing}}(missing, n),
         usual_hours_worked = Vector{Union{Real,Missing}}(missing, n),
         actual_hours_worked = Vector{Union{Real,Missing}}(missing, n),
-
         income_wages = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_income = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_expenses = Vector{Union{Real,Missing}}(missing, n),
@@ -125,20 +125,28 @@ function initialise_person(n::Integer)::DataFrame
         income_income_tax = Vector{Union{Real,Missing}}(missing, n),
         income_national_insurance = Vector{Union{Real,Missing}}(missing, n),
         income_local_taxes = Vector{Union{Real,Missing}}(missing, n),
-
         income_dlaself_care = Vector{Union{Real,Missing}}(missing, n),
         income_dlamobility = Vector{Union{Real,Missing}}(missing, n),
         income_child_benefit = Vector{Union{Real,Missing}}(missing, n),
         income_pension_credit = Vector{Union{Real,Missing}}(missing, n),
         income_state_pension = Vector{Union{Real,Missing}}(missing, n),
-        income_bereavement_allowance_or_widowed_parents_allowance_or_bereavement = Vector{Union{Real,Missing}}(missing, n),
+        income_bereavement_allowance_or_widowed_parents_allowance_or_bereavement = Vector{Union{
+            Real,
+            Missing
+        }}(
+            missing,
+            n
+        ),
         income_armed_forces_compensation_scheme = Vector{Union{Real,Missing}}(missing, n),
         income_war_widows_or_widowers_pension = Vector{Union{Real,Missing}}(missing, n),
         income_severe_disability_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_attendence_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_carers_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_jobseekers_allowance = Vector{Union{Real,Missing}}(missing, n),
-        income_industrial_injury_disablement_benefit = Vector{Union{Real,Missing}}(missing, n),
+        income_industrial_injury_disablement_benefit = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
         income_employment_and_support_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_incapacity_benefit = Vector{Union{Real,Missing}}(missing, n),
         income_income_support = Vector{Union{Real,Missing}}(missing, n),
@@ -154,12 +162,24 @@ function initialise_person(n::Integer)::DataFrame
         income_government_training_allowances = Vector{Union{Real,Missing}}(missing, n),
         income_guardians_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_widows_payment = Vector{Union{Real,Missing}}(missing, n),
-        income_unemployment_or_redundancy_insurance = Vector{Union{Real,Missing}}(missing, n),
+        income_unemployment_or_redundancy_insurance = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
         income_winter_fuel_payments = Vector{Union{Real,Missing}}(missing, n),
         income_dwp_third_party_payments_is_or_pc = Vector{Union{Real,Missing}}(missing, n),
-        income_dwp_third_party_payments_jsa_or_esa = Vector{Union{Real,Missing}}(missing, n),
-        income_social_fund_loan_repayment_from_is_or_pc = Vector{Union{Real,Missing}}(missing, n),
-        income_social_fund_loan_repayment_from_jsa_or_esa = Vector{Union{Real,Missing}}(missing, n),
+        income_dwp_third_party_payments_jsa_or_esa = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
+        income_social_fund_loan_repayment_from_is_or_pc = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
+        income_social_fund_loan_repayment_from_jsa_or_esa = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
         income_extended_hb = Vector{Union{Real,Missing}}(missing, n),
         income_permanent_health_insurance = Vector{Union{Real,Missing}}(missing, n),
         income_any_other_sickness_insurance = Vector{Union{Real,Missing}}(missing, n),
@@ -170,13 +190,21 @@ function initialise_person(n::Integer)::DataFrame
         income_child_tax_credit_lump_sum = Vector{Union{Real,Missing}}(missing, n),
         income_housing_benefit = Vector{Union{Real,Missing}}(missing, n),
         income_universal_credit = Vector{Union{Real,Missing}}(missing, n),
-        income_personal_independence_payment_daily_living = Vector{Union{Real,Missing}}(missing, n),
-        income_personal_independence_payment_mobility = Vector{Union{Real,Missing}}(missing, n),
+        income_personal_independence_payment_daily_living = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
+        income_personal_independence_payment_mobility = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
         income_a_loan_from_the_dwp_and_dfc = Vector{Union{Real,Missing}}(missing, n),
-        income_a_loan_or_grant_from_local_authority = Vector{Union{Real,Missing}}(missing, n),
+        income_a_loan_or_grant_from_local_authority = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
         income_social_fund_loan_uc = Vector{Union{Real,Missing}}(missing, n),
         income_other_benefits = Vector{Union{Real,Missing}}(missing, n),
-
         asset_current_account = Vector{Union{Real,Missing}}(missing, n),
         asset_nsb_ordinary_account = Vector{Union{Real,Missing}}(missing, n),
         asset_nsb_investment_account = Vector{Union{Real,Missing}}(missing, n),
@@ -187,8 +215,14 @@ function initialise_person(n::Integer)::DataFrame
         asset_stocks_shares_bonds_etc = Vector{Union{Real,Missing}}(missing, n),
         asset_pep = Vector{Union{Real,Missing}}(missing, n),
         asset_national_savings_capital_bonds = Vector{Union{Real,Missing}}(missing, n),
-        asset_index_linked_national_savings_certificates = Vector{Union{Real,Missing}}(missing, n),
-        asset_fixed_interest_national_savings_certificates = Vector{Union{Real,Missing}}(missing, n),
+        asset_index_linked_national_savings_certificates = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
+        asset_fixed_interest_national_savings_certificates = Vector{Union{Real,Missing}}(
+            missing,
+            n
+        ),
         asset_pensioners_guaranteed_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_saye = Vector{Union{Real,Missing}}(missing, n),
         asset_premium_bonds = Vector{Union{Real,Missing}}(missing, n),
@@ -197,14 +231,18 @@ function initialise_person(n::Integer)::DataFrame
         asset_first_option_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_yearly_plan = Vector{Union{Real,Missing}}(missing, n),
         asset_isa = Vector{Union{Real,Missing}}(missing, n),
-        asset_fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds = Vector{Union{Real,Missing}}(missing, n),
+        asset_fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds = Vector{Union{
+            Real,
+            Missing
+        }}(
+            missing,
+            n
+        ),
         asset_geb = Vector{Union{Real,Missing}}(missing, n),
         asset_basic_account = Vector{Union{Real,Missing}}(missing, n),
         asset_credit_unions = Vector{Union{Real,Missing}}(missing, n),
         asset_endowment_policy_not_linked = Vector{Union{Real,Missing}}(missing, n),
-
         contracted_out_of_serps = Vector{Union{Integer,Missing}}(missing, n),
-
         registered_blind = Vector{Union{Integer,Missing}}(missing, n),
         registered_partially_sighted = Vector{Union{Integer,Missing}}(missing, n),
         registered_deaf = Vector{Union{Integer,Missing}}(missing, n),
@@ -226,16 +264,10 @@ function initialise_person(n::Integer)::DataFrame
         ),
         hours_of_care_received = Vector{Union{Real,Missing}}(missing, n),
         hours_of_care_given = Vector{Union{Real,Missing}}(missing, n),
-
-
-        #
-        # Childcare fields; assigned to children
-        #
         hours_of_childcare = Vector{Union{Real,Missing}}(missing, n),
         cost_of_childcare = Vector{Union{Real,Missing}}(missing, n),
         childcare_type = Vector{Union{Integer,Missing}}(missing, n),
         employer_provides_child_care = Vector{Union{Integer,Missing}}(missing, n)
-
     )
 
 end
@@ -344,7 +376,7 @@ function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
             National_Savings_deposit_bonds,
             Pensioners_Guaranteed_Bonds
         ]
-            model_adult.income_national_savings += v ## FIXME appears to be all zero!
+            model_adult.income_national_savings += v# FIXME appears to be all zero!
         elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club]
             model_adult.income_stocks_shares += v
         elseif atype in [ISA]
@@ -370,23 +402,23 @@ function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
     end # accounts loop
 end # map_investment_income
 
-function map_alimony( frs_person::DataFrameRow, a_maint::DataFrame ) :: Real
+function map_alimony(frs_person::DataFrameRow, a_maint::DataFrame)::Real
     nmaints = size(a_maint)[1]
     alimony = 0.0 # note: not including children
     if frs_person.alimny == 1 # receives alimony
         if frs_person.alius == 2 # not usual
-            alimony = safe_inc(0.0, frs_person.aluamt )
+            alimony = safe_inc(0.0, frs_person.aluamt)
         else
-            alimony = safe_inc(0.0, frs_person.aliamt )
+            alimony = safe_inc(0.0, frs_person.aliamt)
         end
     end
     for c in 1:nmaints
-        alimony = safe_inc( alimony, a_maint[c,:mramt])
+        alimony = safe_inc(alimony, a_maint[c, :mramt])
     end
     alimony
 end
 
-function process_job_rec!( model_adult::DataFrameRow, a_job::DataFrame )
+function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
     njobs = size(a_job)[1]
 
     earnings = 0.0
@@ -500,17 +532,17 @@ end
 "income", :fred => :income_fred
 """
 function make_sym_for_frame(prefix::AbstractString, enum::Enum)::Symbol
-   sym = Symbol(enum)
-   Symbol(lowercase(prefix * "_" * String(Symbol(sym))))
+    sym = Symbol(enum)
+    Symbol(lowercase(prefix * "_" * String(Symbol(sym))))
 end
 
 """
 "income", :a_fred => :income_fred
 """
 function make_sym_for_asset(enum::Enum)::Symbol
-   s = String(Symbol(enum))[3:end]
+    s = String(Symbol(enum))[3:end]
    # println( "s=$s")
-   Symbol(lowercase( "asset_" * s ))
+    Symbol(lowercase("asset_" * s))
 end
 
 """
@@ -518,10 +550,10 @@ end
 """
 function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
    # FIXME got to be a simpler way
-   matchstr = "$(prefix)(.*)"
-   re = Regex(matchstr)
-   rm = match(re, String(sym))
-   Symbol(rm[1])
+    matchstr = "$(prefix)(.*)"
+    re = Regex(matchstr)
+    rm = match(re, String(sym))
+    Symbol(rm[1])
 end
 
 """
@@ -529,21 +561,21 @@ Convoluted - take the benefit enum, make ...
 FIXME: some represent one-off payments (winter fuel..) so maybe weeklyise, but all that
 really matters is whether they are present
 """
-function process_benefits!( model_adult::DataFrameRow, a_benefits::DataFrame )
+function process_benefits!(model_adult::DataFrameRow, a_benefits::DataFrame)
     nbens = size(a_benefits)[1]
-    for i in instances( Incomes_Type )
-         if i >= dlaself_care && i <= personal_independence_payment_mobility
-             ikey = make_sym_for_frame( "income", i )
-             model_adult[ikey] = 0.0
-         end
+    for i in instances(Incomes_Type)
+        if i >= dlaself_care && i <= personal_independence_payment_mobility
+            ikey = make_sym_for_frame("income", i)
+            model_adult[ikey] = 0.0
+        end
     end
     for b in 1:nbens
         bno = a_benefits[b, :benefit]
-        if ! (bno in [46,47]) # 2015 receipt in last 6 months of tax credits
-            btype = Benefit_Type( bno)
+        if !(bno in [46, 47]) # 2015 receipt in last 6 months of tax credits
+            btype = Benefit_Type(bno)
             if btype <= Personal_Independence_Payment_Mobility
-                ikey = make_sym_for_frame( "income", btype )
-                model_adult[ikey] = safe_inc( model_adult[ikey], a_benefits[b,:benamt])
+                ikey = make_sym_for_frame("income", btype)
+                model_adult[ikey] = safe_inc(model_adult[ikey], a_benefits[b, :benamt])
             end
         end
     end
@@ -552,45 +584,45 @@ end
 """
 Convoluted - take the benefit enum, make ...
 """
-function process_assets!( model_adult::DataFrameRow, an_asset::DataFrame )
+function process_assets!(model_adult::DataFrameRow, an_asset::DataFrame)
     nassets = size(an_asset)[1]
-    for i in instances( Asset_Type )
-        if( i > Missing_Asset_Type )
-             ikey = make_sym_for_asset( i )
-             model_adult[ikey] = 0.0
+    for i in instances(Asset_Type)
+        if (i > Missing_Asset_Type)
+            ikey = make_sym_for_asset(i)
+            model_adult[ikey] = 0.0
         end
     end
     for a in 1:nassets
         ano = an_asset[a, :assetype]
-        atype = Asset_Type( ano )
-        ikey = make_sym_for_asset( atype )
+        atype = Asset_Type(ano)
+        ikey = make_sym_for_asset(atype)
         v = an_asset[a, :howmuch]
         if an_asset[a, :howmuche] > 0
             v = an_asset[a, :howmuche]
         end
-        model_adult[ikey] = safe_inc( model_adult[ikey], v)
+        model_adult[ikey] = safe_inc(model_adult[ikey], v)
     end
 end
 
-function infer_hours_of_care( hourtot :: Integer ) :: Real
+function infer_hours_of_care(hourtot::Integer)::Real
     hrs = Dict(
-             0 => 0.0,
-             1 => 2.0,
-             2 => 7.0,
-             3 => 14.0,
-             4 => 27.5,
-             5 => 42.5,
-             6 => 75.0,
-             7 => 100.0,
-             8 => 10.0,
-             9 => 27.5,
-             10 => 50.0
-          )
-  h = 0.0
-  if hourtot in keys( hrs )
-      h = hrs[hourtot]
-  end
-  h;
+        0 => 0.0,
+        1 => 2.0,
+        2 => 7.0,
+        3 => 14.0,
+        4 => 27.5,
+        5 => 42.5,
+        6 => 75.0,
+        7 => 100.0,
+        8 => 10.0,
+        9 => 27.5,
+        10 => 50.0
+    )
+    h = 0.0
+    if hourtot in keys(hrs)
+        h = hrs[hourtot]
+    end
+    h
 end
 
 function create_adults(
@@ -624,7 +656,7 @@ function create_adults(
     println("hbai_year $hbai_year")
     for pn in 1:num_adults
         if pn % 1000 == 0
-            println("on year $year, hid $pn")
+            println("adults: on year $year, pno $pn")
         end
 
         frs_person = frs_adults[pn, :]
@@ -636,15 +668,11 @@ function create_adults(
         if nhbai == 1 # only non-missing in HBAI
             adno += 1
                 ## also for children
-            model_adult = adult_model[adno,:]
+            model_adult = adult_model[adno, :]
             model_adult.pno = frs_person.person
             model_adult.hid = frs_person.sernum
-            model_adult.pid = get_pid(
-                FRS,
-                year,
-                frs_person.sernum,
-                frs_person.person
-            )
+            model_adult.pid = get_pid(FRS, year, frs_person.sernum, frs_person.person)
+            model_adult.from_child_record = 0
             model_adult.frs_year = year
             model_adult.default_benefit_unit = frs_person.benunit
             model_adult.age = frs_person.age80
@@ -664,7 +692,7 @@ function create_adults(
             npens = size(a_pension)[1]
             nassets = size(an_asset)[1]
             naaccounts = size(an_account)[1]
-            nojs = size( a_oddjob )[1]
+            nojs = size(a_oddjob)[1]
 
             model_adult.marital_status = safe_assign(frs_person.marital)
             model_adult.highest_qualification = safe_assign(frs_person.dvhiqual)
@@ -676,7 +704,7 @@ function create_adults(
             model_adult.employment_status = safe_assign(frs_person.empstati)
             model_adult.occupational_classification = safe_assign(frs_person.soc2010)
 
-            process_job_rec!( model_adult, a_job )
+            process_job_rec!(model_adult, a_job)
 
             penstuff = process_pensions(a_pension)
             model_adult.income_private_pensions = penstuff.pension
@@ -685,20 +713,29 @@ function create_adults(
             model_adult.income_pension_contributions = process_penprovs(a_penprov)
 
             map_investment_income!(model_adult, an_account)
-            model_adult.income_property = safe_inc( 0.0, frs_person.royyr1 )
+            model_adult.income_property = safe_inc(0.0, frs_person.royyr1)
             if frs_person.rentprof == 2 # it's a loss
                 model_adult.income_property *= -1 # a loss
             end
-            model_adult.income_royalties = safe_inc( 0.0, frs_person.royyr2 )
-            model_adult.income_other_income = safe_inc( 0.0, frs_person.royyr3 ) # sleeping partners
-            model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.royyr4 ) # overseas pensions
+            model_adult.income_royalties = safe_inc(0.0, frs_person.royyr2)
+            model_adult.income_other_income = safe_inc(0.0, frs_person.royyr3) # sleeping partners
+            model_adult.income_other_income = safe_inc(
+                model_adult.income_other_income,
+                frs_person.royyr4
+            ) # overseas pensions
             # payments from charities, bbysitting ..
             # model_adult.income_other_income = safe_inc( model_adult.income_other_income, frs_person.[x]
-            model_adult.income_alimony_and_child_support_received = map_alimony( frs_person, a_maint )
+            model_adult.income_alimony_and_child_support_received = map_alimony(
+                frs_person,
+                a_maint
+            )
 
             model_adult.income_odd_jobs = 0.0
             for o in 1:nojs
-                model_adult.income_odd_jobs = safe_inc(model_adult.income_odd_jobs, a_oddjob[o,:ojamt])
+                model_adult.income_odd_jobs = safe_inc(
+                    model_adult.income_odd_jobs,
+                    a_oddjob[o, :ojamt]
+                )
             end
             model_adult.income_odd_jobs /= 4.0 # since it's monthly
 
@@ -714,30 +751,29 @@ function create_adults(
             ## TODO income_national_insurance
             ## TODO income_local_taxes
 
-            process_benefits!( model_adult, a_benefits )
-            process_assets!( model_adult, an_asset )
+            process_benefits!(model_adult, a_benefits)
+            process_assets!(model_adult, an_asset)
 
             ## also for child
-            model_adult.registered_blind = ( frs_person.spcreg1 == 1 ? 1 : 0 )
-            model_adult.registered_partially_sighted = ( frs_person.spcreg2 == 1 ? 1 : 0 )
-            model_adult.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
-            model_adult.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
+            model_adult.registered_blind = (frs_person.spcreg1 == 1 ? 1 : 0)
+            model_adult.registered_partially_sighted = (frs_person.spcreg2 == 1 ? 1 : 0)
+            model_adult.registered_deaf = (frs_person.spcreg3 == 1 ? 1 : 0)
 
-            model_adult.disability_vision = ( frs_person.disd01 == 1 ? 1 : 0 ) # cdisd kids ..
-            model_adult.disability_hearing = ( frs_person.disd02 == 1 ? 1 : 0 )
-            model_adult.disability_mobility = ( frs_person.disd03 == 1 ? 1 : 0 )
-            model_adult.disability_dexterity = ( frs_person.disd04 == 1 ? 1 : 0 )
-            model_adult.disability_learning =( frs_person.disd05 == 1 ? 1 : 0 )
-            model_adult.disability_memory = ( frs_person.disd06 == 1 ? 1 : 0 )
-            model_adult.disability_mental_disability = ( frs_person.disd07 == 1 ? 1 : 0 )
-            model_adult.disability_stamina = ( frs_person.disd08 == 1 ? 1 : 0 )
-            model_adult.disability_socially =( frs_person.disd09 == 1 ? 1 : 0 )
+            model_adult.disability_vision = (frs_person.disd01 == 1 ? 1 : 0) # cdisd kids ..
+            model_adult.disability_hearing = (frs_person.disd02 == 1 ? 1 : 0)
+            model_adult.disability_mobility = (frs_person.disd03 == 1 ? 1 : 0)
+            model_adult.disability_dexterity = (frs_person.disd04 == 1 ? 1 : 0)
+            model_adult.disability_learning = (frs_person.disd05 == 1 ? 1 : 0)
+            model_adult.disability_memory = (frs_person.disd06 == 1 ? 1 : 0)
+            model_adult.disability_mental_disability = (frs_person.disd07 == 1 ? 1 : 0)
+            model_adult.disability_stamina = (frs_person.disd08 == 1 ? 1 : 0)
+            model_adult.disability_socially = (frs_person.disd09 == 1 ? 1 : 0)
             # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
             model_adult.health_status = safe_assign(frs_person.heathad)
-            model_adult.hours_of_care_received = safe_inc( 0.0, frs_person.hourcare )
-            model_adult.hours_of_care_given = infer_hours_of_care( frs_person.hourtot ) # also kid
+            model_adult.hours_of_care_received = safe_inc(0.0, frs_person.hourcare)
+            model_adult.hours_of_care_given = infer_hours_of_care(frs_person.hourtot) # also kid
 
-            model_adult.is_informal_carer = ( frs_person.carefl  == 1 ? 1 : 0 ) # also kid
+            model_adult.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
 
         end # if in HBAI
     end # adult loop
@@ -748,7 +784,8 @@ end # proc create_adult
 function create_children(
     year::Integer,
     frs_children::DataFrame,
-    childcare :: DataFrame )::DataFrame
+    childcare::DataFrame
+)::DataFrame
     # I don;t care if the child is in HBAI or not - we'll sort that out when we match with the
     # live benefit units
     num_children = size(frs_children)[1]
@@ -759,45 +796,65 @@ function create_children(
             println("on year $year, chno $chno")
         end
 
+        a_childcare = childcare[((childcare.sernum.==frs_person.sernum).&(childcare.benunit.==frs_person.benunit).&(childcare.person.==frs_person.person)), :]
+        nchildcares = size(an_childcare)[1]
+
         frs_person = frs_children[chno, :]
         sernum = frs_person.sernum
         adno += 1
             ## also for children
-        model_child = child_model[chno,:]
+        model_child = child_model[chno, :]
         model_child.pno = frs_person.person
         model_child.hid = frs_person.sernum
-        model_child.pid = get_pid(
-            FRS,
-            year,
-            frs_person.sernum,
-            frs_person.person
-        )
+        model_child.pid = get_pid(FRS, year, frs_person.sernum, frs_person.person)
+        model_child.from_child_record = 1
+
         model_child.frs_year = year
         model_child.default_benefit_unit = frs_person.benunit
-        model_child.age = frs_person.age80
+        model_child.age = frs_person.age
         model_child.sex = safe_assign(frs_person.sex)
-        model_child.ethnic_group = safe_assign(frs_person.ethgr3)
+        # model_child.ethnic_group = safe_assign(frs_person.ethgr3)
 
         ## also for child
-        model_child.registered_blind = ( frs_person.spcreg1 == 1 ? 1 : 0 )
-        model_child.registered_partially_sighted = ( frs_person.spcreg2 == 1 ? 1 : 0 )
-        model_child.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
-        model_child.registered_deaf = ( frs_person.spcreg3 == 1 ? 1 : 0 )
+        model_child.registered_blind = (frs_person.spcreg1 == 1 ? 1 : 0)
+        model_child.registered_partially_sighted = (frs_person.spcreg2 == 1 ? 1 : 0)
+        model_child.registered_deaf = (frs_person.spcreg3 == 1 ? 1 : 0)
 
-        model_child.disability_vision = ( frs_person.cdisd01 == 1 ? 1 : 0 ) # cdisd kids ..
-        model_child.disability_hearing = ( frs_person.cdisd02 == 1 ? 1 : 0 )
-        model_child.disability_mobility = ( frs_person.cdisd03 == 1 ? 1 : 0 )
-        model_child.disability_dexterity = ( frs_person.cdisd04 == 1 ? 1 : 0 )
-        model_child.disability_learning =( frs_person.cdisd05 == 1 ? 1 : 0 )
-        model_child.disability_memory = ( frs_person.cdisd06 == 1 ? 1 : 0 )
-        model_child.disability_mental_disability = ( frs_person.cdisd07 == 1 ? 1 : 0 )
-        model_child.disability_stamina = ( frs_person.cdisd08 == 1 ? 1 : 0 )
-        model_child.disability_socially =( frs_person.cdisd09 == 1 ? 1 : 0 )
+        model_child.disability_vision = (frs_person.cdisd01 == 1 ? 1 : 0) # cdisd kids ..
+        model_child.disability_hearing = (frs_person.cdisd02 == 1 ? 1 : 0)
+        model_child.disability_mobility = (frs_person.cdisd03 == 1 ? 1 : 0)
+        model_child.disability_dexterity = (frs_person.cdisd04 == 1 ? 1 : 0)
+        model_child.disability_learning = (frs_person.cdisd05 == 1 ? 1 : 0)
+        model_child.disability_memory = (frs_person.cdisd06 == 1 ? 1 : 0)
+        model_child.disability_mental_disability = (frs_person.cdisd07 == 1 ? 1 : 0)
+        model_child.disability_stamina = (frs_person.cdisd08 == 1 ? 1 : 0)
+        model_child.disability_socially = (frs_person.cdisd09 == 1 ? 1 : 0)
         # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
-        model_child.health_status = safe_assign(frs_person.heathad)
+        model_child.health_status = safe_assign(frs_person.heathch)
 
-        model_child.is_informal_carer = ( frs_person.carefl  == 1 ? 1 : 0 ) # also kid
-
+        model_child.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
+        # TODO CHILD EARNINGS, INCOME FROM TRUSTS, FREE SCHOOL MEALS
+        # "chearns"
+        # "chincdv"
+        # "chrinc"
+        # "fsmva
+        model_child.cost_of_childcare = 0.0
+        model_child.hours_of_childcare = 0.0
+        for c in 1:nchildcares
+            if c == 1 # type of care from 1st instance
+                model_child.childcare_type = safe_assign(a_childcare[c, :chlook])
+                model_child.employer_provides_child_care = (a_childcare[c, :emplprov] == 2 ?
+                                                            1 : 0)
+            end
+            model_child.cost_of_childcare = safe_inc(
+                model_child.cost_of_childcare,
+                a_childcare[c, :chamt]
+            )
+            model_child.hours_of_childcare = safe_inc(
+                model_child.hours_of_childcare,
+                a_childcare[c, :chhr]
+            )
+        end # child care loop
     end # chno loop
     child_model # send them all back ...
 end
@@ -979,6 +1036,9 @@ for year in 2015:2017
     owner = loadfrs("owner", year)
     renter = loadfrs("renter", year)
 
+    model_children_yr = create_children(year, child, chldcare)
+    append!(model_people, model_children_yr)
+
     model_adults_yr = create_adults(
         year,
         adult,
@@ -1004,8 +1064,6 @@ for year in 2015:2017
     )
     append!(model_people, model_adults_yr)
 
-    model_children_yr = create_children( child, chldcare )
-    append!(model_people, model_children_yr)
 
     model_households_yr = create_household(
         year,
