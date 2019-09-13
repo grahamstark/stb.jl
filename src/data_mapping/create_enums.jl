@@ -25,6 +25,9 @@ function make_from_frs()
     assets :: VariableList = loadvariablelist( conn, "frs", "assets", 2017 )
     @assert length( assets )[1] > 0
 
+    chldcare :: VariableList = loadvariablelist( conn, "frs", "chldcare", 2017 )
+    @assert length( assets )[1] > 0
+
     allv = merge( hhv, adv )
     println( make_enumerated_type( "Employment_Status", allv[:empstat], true, true ))
 
@@ -67,6 +70,7 @@ function make_from_frs()
     println( make_enumerated_type( "Account_Tax_Status", accounts[:invtax], true, true )) #
     println( make_enumerated_type( "Benefit_Type", benefits[:benefit], true, true )) #
     println( make_enumerated_type( "Asset_Type", assets[:assetype], true, true )) #
+    println( make_enumerated_type( "Child_Care_Type", chldcare[:chlook],true, true )) #
 end
 
 make_from_frs()

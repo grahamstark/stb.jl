@@ -563,6 +563,27 @@ function process_assets!( model_adult::DataFrameRow, an_asset::DataFrame )
     end
 end
 
+function infer_hours_of_care( hourtot :: Integer ) :: Real
+    hrs = Dict(
+             0 = 0.0,
+             1 = 2.0,
+             2 = 7.0,
+             3 = 14.0,
+             4 = 27.5,
+             5 = 42.5,
+             6 = 75.0,
+             7 = 100.0,
+             8 = 10.0,
+             9 = 27.5,
+             10 = 50.0
+          )
+  h = 0
+  if hourtot in keys( hrs )
+      h = hrs[hourtot]
+  end
+  h;
+end
+
 function create_adults(
     year::Integer,
     frs_adults::DataFrame,
@@ -705,65 +726,15 @@ function create_adults(
             model_adult.disability_socially =( frs_person.disd09 == 1 ? 1 : 0 )
             # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
             model_adult.health_status = safe_assign(frs_person.heathad)
+            model_adult.hours_of_care_received := safe_inc( 0.0, frs_person.hourcare, 0.0 )
+            model_adult.hours_of_care_given := infer_hours_of_care( adult_r.hourtot ) # also kid
 
-            # adult_model[adno,:income_alimony_and_child_support_paid ] = wkstuff.alimony_and_child_support_paid
+            model_adult.is_informal_carer = ( adult_r.carefl  == 1 ? 1 : 0 ) # also kid
 
-# wages,   X
-# self_employment_income, X
-# self_employment_expenses, X
-# self_employment_losses,X
+            # model_adult.receives_informal_care_from_non_householder =
 
-# private_pensions,x
-# national_savings,x
-# bank_interest,x
-# building_society,x
-# stocks_shares, x
-# isa, x
-# property, x
-# royalties,x
-# bonds_and_gilts,x
-# other_investment_income,x
-# other_income,x
+            
 
-# alimony_and_child_support_received, X
-# health_insurance, X
-# alimony_and_child_support_paid,
-# care_insurance, X
-# trade_unions_etc, X
-# friendly_societies, X
-# work_expenses, X
-# loan_repayments, X
-# student_loan_repayments, X
-# pension_contributions,
-# avcs, X
-
-# education_allowances,
-# foster_care_payments,
-# student_grants,
-# student_loans,
-# other_deductions,
-# income_tax,
-# national_insurance,
-# local_taxes,
-# child_benefit,
-# pension_credit,
-# retirement_pension,
-# other_pensions,
-# disabled_living_allowance,
-# severe_disablement_allowance,
-# pip,
-# attendance_allowance,
-# invalid_care_allowance,
-# incapacity_benefit,
-# jobseekers_allowance,
-# income_support_jsa,
-# maternity_allowance,
-# other_benefits,
-# winter_fuel_payments,
-# housing_benefit,
-# council_tax_benefit,
-# tax_credits,
-# sickness_benefits
 
         end # if in HBAI
     end # adult loop

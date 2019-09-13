@@ -1223,6 +1223,49 @@ export Missing_Benefit_Type
 end
 
 
+export Child_Care_Type  # mapped from chlook
+export Playgroup_or_pre_school,
+       Day_nursery_or_crèche,
+       Nursery_school,
+       Nursery_class_attached_to_Primary_or_Infants_School,
+       Reception_class_at_Primary_or_Infants_School,
+       Breakfast_club,
+       After_school_club_or_activities,
+       Holiday_scheme_or_club,
+       Special_day_school_or_nursery_unit_for_children_with_special_ed,
+       Other_formal,
+       Grand_parents,
+       Non_resident_parent_or_ex_spouse_or_ex_partner,
+       Childd_brother_or_sister,
+       Other_relatives,
+       Childminder,
+       Nanny_or_Au_Pair,
+       Friends_or_neighbours,
+       Other_non_relatives_includes_babysitters
+export Missing_Child_Care_Type
+
+@enum Child_Care_Type begin  # mapped from chlook
+   Missing_Child_Care_Type = -1
+   Playgroup_or_pre_school = 1
+   Day_nursery_or_crèche = 2
+   Nursery_school = 3
+   Nursery_class_attached_to_Primary_or_Infants_School = 4
+   Reception_class_at_Primary_or_Infants_School = 5
+   Breakfast_club = 6
+   After_school_club_or_activities = 7
+   Holiday_scheme_or_club = 8
+   Special_day_school_or_nursery_unit_for_children_with_special_ed = 9
+   Other_formal = 10
+   Grand_parents = 11
+   Non_resident_parent_or_ex_spouse_or_ex_partner = 12
+   Childd_brother_or_sister = 13
+   Other_relatives = 14
+   Childminder = 15
+   Nanny_or_Au_Pair = 16
+   Friends_or_neighbours = 17
+   Other_non_relatives_includes_babysitters = 18
+end
+
 
 
 export BIG_NOTHING
