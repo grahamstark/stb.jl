@@ -1261,4 +1261,10 @@ function safe_assign(a::Union{Number,Missing})
    a
 end
 
+"""
+"income", :fred => :income_fred
+"""
+function make_sym_for_frame( prefix :: AbstractString, s :: Symbol ) :: Symbol
+   Symbol(lowercase( prefix * "_" * String( Symbol( s ))))
+
 end # module

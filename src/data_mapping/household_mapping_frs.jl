@@ -495,12 +495,15 @@ end
 
 function process_benefits!( person_model::DataFrameRow, a_benefits::DataFrame )
     nbens = size(a_benefits)[1]
-    for b in 
+    for i in dlaself_care:social_fund_loan_uc
+         ikey = make_sym_for_frame( "income", i )
+         person_model[ikey] = 0.0
+    end
     for b in 1:nbens
         btype = Benefit_Type(a_benefits[i, :benefit])
         if btype <= social_fund_loan_uc
-            ikey = Symbol(lowercase("income_"*String( Symbol(btype))))
-
+            ikey = make_income_sym( "income", btype )
+            person_model[ikey] = safe_inc( person_model[ikey], a_benefits[b,:benamt])
         end
     end
 end
@@ -620,7 +623,7 @@ function create_adults(
             ## TODO allowances from absent spouses
 
             process_benefits!( person_model, a_benefits )
-
+            
 
 
 
