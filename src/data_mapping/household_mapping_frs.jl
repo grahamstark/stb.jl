@@ -438,7 +438,7 @@ function map_alimony(frs_person::DataFrameRow, a_maint::DataFrame)::Real
     alimony
 end
 
-function process_relationsips!( model_person :: DataFrame, frs_person :: DataFrame )
+function process_relationships!( model_person :: DataFrameRow, frs_person :: DataFrameRow )
     model_person.relationship_to_hoh = safe_assign( frs_person.relhrp )
     for i in 1:14
         rel = i < 10 ? "r0" : "r"
@@ -804,7 +804,7 @@ function create_adults(
             model_adult.hours_of_care_given = infer_hours_of_care(frs_person.hourtot) # also kid
 
             model_adult.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
-            process_relationsips!( model_adult, frs_person )
+            process_relationships!( model_adult, frs_person )
         end # if in HBAI
     end # adult loop
     println("final adno $adno")
@@ -869,7 +869,7 @@ function create_children(
             model_child.income_free_school_meals = safe_inc( model_child.income_free_school_meals, frs_person[t] )
         end
         model_child.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
-        process_relationsips!( model_child, frs_person )
+        process_relationships!( model_child, frs_person )
         # TODO education grants, all the other good child stuff EMA
 
         model_child.cost_of_childcare = 0.0
