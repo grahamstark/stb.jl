@@ -226,7 +226,17 @@ function initialise_person(n::Integer)::DataFrame
             n
         ),
         hours_of_care_received = Vector{Union{Real,Missing}}(missing, n),
-        hours_of_care_given = Vector{Union{Real,Missing}}(missing, n)
+        hours_of_care_given = Vector{Union{Real,Missing}}(missing, n),
+
+
+        #
+        # Childcare fields; assigned to children
+        #
+        hours_of_childcare = Vector{Union{Real,Missing}}(missing, n)
+        cost_of_childcare = Vector{Union{Real,Missing}}(missing, n)
+        childcare_type = Vector{Union{Integer,Missing}}(missing, n)
+        employer_provides_child_care = Vector{Union{Integer,Missing}}(missing, n)
+
     )
 
 end
@@ -733,7 +743,7 @@ function create_adults(
 
             # model_adult.receives_informal_care_from_non_householder =
 
-            
+
 
 
         end # if in HBAI

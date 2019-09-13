@@ -44,6 +44,13 @@ mutable struct Person
     receives_informal_care_from_non_householder::Bool
     hours_of_care_received::Real
     hours_of_care_given::Real
+    #
+    # Childcare fields; assigned to children
+    #
+    hours_of_childcare :: Real
+    cost_of_childcare :: Real
+    childcare_type :: Child_Care_Type
+    employer_provides_child_care :: Bool
 end
 
 People_Dict = Dict{BigInt,Person}
