@@ -1,3 +1,8 @@
+using Definitions
+using DataFrames
+using CSV
+using Household
+
 
 function map_person( model_person :: DataFrameRow )
 
@@ -29,13 +34,12 @@ function map_person( model_person :: DataFrameRow )
     for i in 1:14
         relmod = Symbol( "relationship_$(i)") # :relationship_10 or :relationship_2
         if ! missing( model_person[relmod] )
-
             pid = get_pid(
                 frs,
                 model_person.year,
                 model_person.hid,
                 model_person.pno )
-            relationships( i, Relationship(model_person[relmod]))
+            relationships( pid, Relationship(model_person[relmod]))
         end
     end
 

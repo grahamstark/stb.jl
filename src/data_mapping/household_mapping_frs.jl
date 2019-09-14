@@ -1,10 +1,6 @@
 #
 #
 using DataFrames
-using StatFiles
-using IterableTables
-using IteratorInterfaceExtensions
-using TableTraits
 using CSV
 
 using Definitions
