@@ -38,7 +38,7 @@ mutable struct Person
     disabilities::Disability_Dict
     health_status::Health_Status
     relationships::Relationship_Dict
-    relationship_to_hoh :: Relationsip;
+    relationship_to_hoh :: Relationship;
     is_informal_carer::Bool
     receives_informal_care_from_non_householder::Bool
     hours_of_care_received::Real
