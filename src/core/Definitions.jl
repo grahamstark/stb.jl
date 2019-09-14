@@ -1332,7 +1332,7 @@ function make_sym_for_asset(enum::Enum)::Symbol
 end
 
 """
-"income", :income_fred" => :fred
+"income", :income_fred => :fred
 """
 function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
    # FIXME got to be a simpler way
@@ -1352,7 +1352,7 @@ function safe_to_bool( thing ) :: Bool
       return false
    end
    if ty <: Number
-         return thing == 1
+      return thing == 1
    end
    return false
 end

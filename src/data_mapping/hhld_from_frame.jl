@@ -70,6 +70,9 @@ function map_person( frs_person :: DataFrameRow )
 end
 
 function map_hhld( frs_hh :: DataFrameRow )
+
+    people = People_Dict()
+
     Household(
         frs_hh.hid,
         frs_hh.interview_year,
@@ -93,7 +96,7 @@ function map_hhld( frs_hh :: DataFrameRow )
         frs_hh.total_wealth,
         frs_hh.house_value,
         frs_hh.weight,
-        People_Dict())
+        people )
 end
 
 function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
