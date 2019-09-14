@@ -36,7 +36,7 @@ function map_person( model_person :: DataFrameRow )
         if ! missing( model_person[relmod] )
             pid = get_pid(
                 frs,
-                model_person.year,
+                model_person.data_year,
                 model_person.hid,
                 model_person.pno )
             relationships( pid, Relationship(model_person[relmod]))

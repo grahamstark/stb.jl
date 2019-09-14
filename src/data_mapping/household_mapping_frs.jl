@@ -65,7 +65,7 @@ end
 
 function initialise_person(n::Integer)::DataFrame
     pers = DataFrame(
-        frs_year = Vector{Union{Int64,Missing}}(missing, n),
+        data_year = Vector{Union{Int64,Missing}}(missing, n),
         hid = Vector{Union{BigInt,Missing}}(missing, n),
         pid = Vector{Union{BigInt,Missing}}(missing, n),
         pno = Vector{Union{Integer,Missing}}(missing, n),
@@ -672,7 +672,7 @@ function create_adults(
             model_adult.hid = frs_person.sernum
             model_adult.pid = get_pid(FRS, year, frs_person.sernum, frs_person.person)
             model_adult.from_child_record = 0
-            model_adult.frs_year = year
+            model_adult.data_year = year
             model_adult.default_benefit_unit = frs_person.benunit
             model_adult.age = frs_person.age80
             model_adult.sex = safe_assign(frs_person.sex)
@@ -809,7 +809,7 @@ function create_children(
         model_child.pid = get_pid(FRS, year, frs_person.sernum, frs_person.person)
         model_child.from_child_record = 1
 
-        model_child.frs_year = year
+        model_child.data_year = year
         model_child.default_benefit_unit = frs_person.benunit
         model_child.age = frs_person.age
         model_child.sex = safe_assign(frs_person.sex)
