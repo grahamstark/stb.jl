@@ -558,33 +558,6 @@ function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
 
 end
 
-"""
-"income", :fred => :income_fred
-"""
-function make_sym_for_frame(prefix::AbstractString, enum::Enum)::Symbol
-    sym = Symbol(enum)
-    Symbol(lowercase(prefix * "_" * String(Symbol(sym))))
-end
-
-"""
-"income", :a_fred => :income_fred
-"""
-function make_sym_for_asset(enum::Enum)::Symbol
-    s = String(Symbol(enum))[3:end]
-   # println( "s=$s")
-    Symbol(lowercase("asset_" * s))
-end
-
-"""
-"income", :income_fred" => :fred
-"""
-function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
-   # FIXME got to be a simpler way
-    matchstr = "$(prefix)(.*)"
-    re = Regex(matchstr)
-    rm = match(re, String(sym))
-    Symbol(rm[1])
-end
 
 """
 Convoluted - take the benefit enum, make ...

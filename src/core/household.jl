@@ -29,7 +29,7 @@ mutable struct Person
 
     income::Incomes_Dict
     assets::Asset_Dict
-    contracted_out_of_serps::Bool
+    # contracted_out_of_serps::Bool
 
     registered_blind::Bool
     registered_partially_sighted::Bool
