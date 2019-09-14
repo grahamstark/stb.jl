@@ -1,4 +1,4 @@
-module Household
+module Model_Household
 
   include( "household.jl" )
 
