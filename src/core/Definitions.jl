@@ -1343,5 +1343,18 @@ function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
 end
 
 
+function safe_to_bool( thing ) :: Bool
+   ty = typeof( thing )
+   if ty == Bool
+      return thing
+   end
+   if ismissing( thing )
+      return false
+   end
+   if ty <: Number
+         return thing == 1
+   end
+   return false
+end
 
 end # module

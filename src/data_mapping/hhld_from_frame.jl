@@ -51,20 +51,20 @@ function map_person( frs_person :: DataFrameRow )
         safe_assign(frs_person.usual_hours_worked),  # Real
         income,
         assets,
-        Bool(frs_person.registered_blind),
-        Bool(frs_person.registered_partially_sighted),
-        Bool(frs_person.registered_deaf),
+        safe_to_bool(frs_person.registered_blind),
+        safe_to_bool(frs_person.registered_partially_sighted),
+        safe_to_bool(frs_person.registered_deaf),
         Health_Status(safe_assign(frs_person.health_status)),
         relationships,
         Relationsip(frs_person.relationship_to_hoh),
-        Bool(frs_person.is_informal_care),
-        Bool(frs_person.receives_informal_care_from_non_householder),
+        safe_to_bool(frs_person.is_informal_care),
+        safe_to_bool(frs_person.receives_informal_care_from_non_householder),
         frs_person.hours_of_care_received,
         frs_person.hours_of_care_given,
         safe_assign(frs_person.hours_of_childcare),
         safe_assign(frs_person.cost_of_childcare),
-        Child_Care_Type( frs_person.childcare_type ),
-        Bool( frs_person.employer_provides_child_care )
+        Child_Care_Type(safe_assign(frs_person.childcare_type )),
+        safe_to_bool( frs_person.employer_provides_child_care )
     )
 
 end
