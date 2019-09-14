@@ -1357,4 +1357,11 @@ function safe_to_bool( thing ) :: Bool
    return false
 end
 
+function m2z( s )
+   if missing( s )
+      return 0
+   end
+   s
+end
+
 end # module
