@@ -439,8 +439,8 @@ process the "r01..r014 and relhrp codes. Note we're adding 'this person' (=0) ra
 """
 function process_relationships!( model_person :: DataFrameRow, frs_person :: DataFrameRow )
     relhh = safe_assign( frs_person.relhrp )
-    if (frs_person.person == 1) & (relhh == -1 )
-        relhh = 0 # map 'this person'
+    if (relhh == -1 )
+        relhh = 0 # map 'this person'; note hrp/head no longer needs to be 1
     end
     model_person.relationship_to_hoh = relhh
     for i in 1:14
@@ -448,7 +448,7 @@ function process_relationships!( model_person :: DataFrameRow, frs_person :: Dat
         relfrs = Symbol( "$(rel)$i" ) # :r10 or :r02 and so on
         relmod = Symbol( "relationship_$(i)") # :relationship_10 or :relationship_2
         relp = safe_assign(frs_person[relfrs])
-        if (frs_person.person == i) & (relp == -1 ) # again "this person = 0; makes mapping code (and just reading output) easier
+        if (frs_person.person == i) & (relp == -1) # again "this person = 0; makes mapping code (and just reading output) easier
             relp = 0
         end
         model_person[relmod] = relp
