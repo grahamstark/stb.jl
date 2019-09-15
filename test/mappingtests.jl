@@ -24,7 +24,7 @@ include( "../src/data_mapping/hhld_from_frame.jl" )
     end
 
     @time for p in 1:npeople
-        ## p1 = hhpeople[p,:]
+        p1 = hhpeople[p,:]
         mp = map_person( p1 )
         if p % 1_000 == 0
             println( "$mp")
@@ -33,7 +33,7 @@ include( "../src/data_mapping/hhld_from_frame.jl" )
 
     @time for h in 1:nhhlds
         hh1 = hhdata[h,:]
-        mhh = map_hhld( hh1, hhpeople )
+        mhh = load_hhld_from_frs( hh1, hhpeople )
         hhlds_a[h] = mhh
         if h % 10_000 == 0
             println( "$mhh")
