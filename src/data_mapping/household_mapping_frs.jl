@@ -749,7 +749,7 @@ function create_adults(
 
             model_adult.socio_economic_grouping = safe_assign(Integer(trunc(frs_person.nssec)))
             model_adult.age_completed_full_time_education = safe_assign(frs_person.tea)
-            model_adult.years_in_full_time_work = safe_assign(frs_person.ftwk)
+            model_adult.years_in_full_time_work = safe_inc(0, frs_person.ftwk)
             model_adult.employment_status = safe_assign(frs_person.empstati)
             model_adult.occupational_classification = safe_assign(frs_person.soc2010)
 

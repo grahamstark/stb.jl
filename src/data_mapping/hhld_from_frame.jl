@@ -41,13 +41,14 @@ function map_person( model_person :: DataFrameRow )
     relationships = Relationship_Dict()
     for i in 1:14
         relmod = Symbol( "relationship_$(i)") # :relationship_10 or :relationship_2
-        if ! ismissing( model_person[relmod] )
+        irel = model_person[relmod]
+        if (! ismissing( irel )) & ( irel >= 0 )
             pid = get_pid(
                 FRS,
                 model_person.data_year,
                 model_person.hid,
-                model_person.pno )
-            relationships[pid] = Relationship(model_person[relmod])
+                i )
+            relationships[pid] = Relationship( irel )
         end
     end
 
