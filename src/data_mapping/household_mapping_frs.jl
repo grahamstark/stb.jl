@@ -624,6 +624,9 @@ function infer_hours_of_care(hourtot::Integer)::Real
     h
 end
 
+"""
+ remap child care type from pre-2017 version to 2017+
+"""
 function map_child_care( year :: Integer, care ) :: Integer
     if ismissing( care ) || care < -1
         care = -1
