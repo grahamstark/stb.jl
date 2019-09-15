@@ -131,5 +131,23 @@ end
 
 function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
     frs_hh = hhld_fr[((hhld_fr.year .== year).&(hhld_fr.hid .== hid)),:]
-    hh :: Household = map_hhld( frs_hh )
+    nhh = size( frs_hh )[1]
+    @assert nhh in [0,1]
+    if nhh == 1
+        return load_hhld_from_frs( frs_hh[1,:], pers_fr )
+    else
+        return missing
+    end
+end
+
+function load_hhld_from_frs( hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
+    hh = map_hhld( frs_hh[h,:] )
+    frs_pers = pers_fr[((pers_fr.year .== hh.year).&(pers_fr.hid .== hh.hid)),:]
+    npers = size( frs_pers )[1]
+    @assert npers > 0 & npers < 20
+    for p in 1:npers
+        pers = map_person( frs_pers[p,:])
+        hh.people[pers.pid] = pers
+    end
+    hh
 end
