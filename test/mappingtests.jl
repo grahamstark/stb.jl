@@ -26,7 +26,7 @@ include( "../src/data_mapping/hhld_from_frame.jl" )
     @time for p in 1:npeople
         p1 = hhpeople[p,:]
         mp = map_person( p1 )
-        if h % 10_000 == 0
+        if p % 10_000 == 0
             println( "$mp")
         end
     end

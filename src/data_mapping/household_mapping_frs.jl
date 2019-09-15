@@ -624,6 +624,42 @@ function infer_hours_of_care(hourtot::Integer)::Real
     h
 end
 
+function map_child_care( year :: Integer, care ) :: Integer
+    if ismissing( care ) || care < -1
+        care = -1
+    end
+    if year >= 2017
+        return care
+    end
+    if care > 0 # remap to2015/16 care to 2017+
+        m = Dict(
+            1=>1,
+            2=>2,
+            3=>3,
+            4=>5,
+            5=>4,
+            6=>5,
+            7=>4,
+            8=>7,
+            9=>8,
+            10=>9,
+            11=>10,
+            12=>10,
+            13=>11,
+            14=>12,
+            15=>13,
+            16=>14,
+            17=>15,
+            18=>16,
+            19=>17,
+            20=>18
+        )
+        care = m[care]
+    end
+    care
+end
+
+
 function create_adults(
     year::Integer,
     frs_adults::DataFrame,
@@ -845,7 +881,8 @@ function create_children(
         model_child.hours_of_childcare = 0.0
         for c in 1:nchildcares
             if c == 1 # type of care from 1st instance
-                model_child.childcare_type = safe_assign(a_childcare[c, :chlook])
+                model_child.childcare_type =
+                    map_child_care( year, a_childcare[c, :chlook] )
                 model_child.employer_provides_child_care = (a_childcare[c, :emplprov] == 2 ?
                                                             1 : 0)
             end

@@ -1260,7 +1260,7 @@ export Missing_Child_Care_Type
    Other_formal = 10
    Grand_parents = 11
    Non_resident_parent_or_ex_spouse_or_ex_partner = 12
-   Childd_brother_or_sister = 13
+   Childs_brother_or_sister = 13
    Other_relatives = 14
    Childminder = 15
    Nanny_or_Au_Pair = 16

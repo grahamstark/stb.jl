@@ -70,11 +70,11 @@ function map_person( model_person :: DataFrameRow )
         Employment_Type(safe_assign(model_person.principal_employment_type)),  #  Employment_Type
 
         Socio_Economic_Group(safe_assign(model_person.socio_economic_grouping)),  # Socio_Economic_Group
-        model_person.age_completed_full_time_education,  # Integer
-        model_person.years_in_full_time_work,  # Integer
+        m2z(model_person.age_completed_full_time_education),  # Integer
+        m2z(model_person.years_in_full_time_work),  # Integer
         ILO_Employment(safe_assign(model_person.employment_status)),  # ILO_Employment
-        safe_assign(model_person.actual_hours_worked),  # Real
-        safe_assign(model_person.usual_hours_worked),  # Real
+        m2z(model_person.actual_hours_worked),  # Real
+        m2z(model_person.usual_hours_worked),  # Real
 
         income,
         assets,
@@ -83,16 +83,16 @@ function map_person( model_person :: DataFrameRow )
         safe_to_bool(model_person.registered_partially_sighted),
         safe_to_bool(model_person.registered_deaf),
 
-        disabilities
+        disabilities,
         Health_Status(safe_assign(model_person.health_status)),
         relationships,
         Relationship(model_person.relationship_to_hoh),
         safe_to_bool(model_person.is_informal_carer),
         safe_to_bool(model_person.receives_informal_care_from_non_householder),
-        model_person.hours_of_care_received,
-        model_person.hours_of_care_given,
-        safe_assign(model_person.hours_of_childcare),
-        safe_assign(model_person.cost_of_childcare),
+        m2z(model_person.hours_of_care_received),
+        m2z(model_person.hours_of_care_given),
+        m2z(model_person.hours_of_childcare),
+        m2z(model_person.cost_of_childcare),
         Child_Care_Type(safe_assign(model_person.childcare_type )),
         safe_to_bool( model_person.employer_provides_child_care )
     )
