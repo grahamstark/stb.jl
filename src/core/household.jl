@@ -9,14 +9,14 @@ mutable struct Person
     pno::Integer# person number in household
     default_benefit_unit::Integer
     age::Integer
+    
     sex::Sex
-
     ethnic_group::Ethnic_Group
     marital_status::Marital_Status
     highest_qualification::Qualification_Type
+
     sic::SIC_2007
     occupational_classification::Standard_Occupational_Classification
-
     public_or_private :: Employment_Sector
     principal_employment_type :: Employment_Type
 
@@ -56,9 +56,9 @@ People_Dict = Dict{BigInt,Person}
 
 mutable struct Household
     hid::BigInt
-    interview_year::Unsigned
-    interview_month::Unsigned
-    quarter::Unsigned
+    interview_year::Integer
+    interview_month::Integer
+    quarter::Integer
     tenure::Tenure_Type
     region::Standard_Region
     ct_band::CT_Band

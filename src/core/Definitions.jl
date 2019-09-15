@@ -1342,6 +1342,7 @@ function make_sym_from_frame(prefix::AbstractString, sym::Symbol)::Symbol
     Symbol(rm[1])
 end
 
+export safe_to_bool, m2z
 
 function safe_to_bool( thing ) :: Bool
    ty = typeof( thing )
@@ -1358,7 +1359,7 @@ function safe_to_bool( thing ) :: Bool
 end
 
 function m2z( s )
-   if missing( s )
+   if ismissing( s )
       return 0
    end
    s

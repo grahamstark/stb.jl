@@ -249,7 +249,7 @@ function initialise_person(n::Integer)::DataFrame
         disability_dexterity = Vector{Union{Integer,Missing}}(missing, n),
         disability_learning = Vector{Union{Integer,Missing}}(missing, n),
         disability_memory = Vector{Union{Integer,Missing}}(missing, n),
-        disability_mental_disability = Vector{Union{Integer,Missing}}(missing, n),
+        disability_mental_health = Vector{Union{Integer,Missing}}(missing, n),
         disability_stamina = Vector{Union{Integer,Missing}}(missing, n),
         disability_socially = Vector{Union{Integer,Missing}}(missing, n),
         disability_other_difficulty = Vector{Union{Integer,Missing}}(missing, n),
@@ -764,7 +764,7 @@ function create_adults(
             model_adult.disability_dexterity = (frs_person.disd04 == 1 ? 1 : 0)
             model_adult.disability_learning = (frs_person.disd05 == 1 ? 1 : 0)
             model_adult.disability_memory = (frs_person.disd06 == 1 ? 1 : 0)
-            model_adult.disability_mental_disability = (frs_person.disd07 == 1 ? 1 : 0)
+            model_adult.disability_mental_health = (frs_person.disd07 == 1 ? 1 : 0)
             model_adult.disability_stamina = (frs_person.disd08 == 1 ? 1 : 0)
             model_adult.disability_socially = (frs_person.disd09 == 1 ? 1 : 0)
             # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
@@ -825,7 +825,7 @@ function create_children(
         model_child.disability_dexterity = (frs_person.cdisd04 == 1 ? 1 : 0)
         model_child.disability_learning = (frs_person.cdisd05 == 1 ? 1 : 0)
         model_child.disability_memory = (frs_person.cdisd06 == 1 ? 1 : 0)
-        model_child.disability_mental_disability = (frs_person.cdisd07 == 1 ? 1 : 0)
+        model_child.disability_mental_health = (frs_person.cdisd07 == 1 ? 1 : 0)
         model_child.disability_stamina = (frs_person.cdisd08 == 1 ? 1 : 0)
         model_child.disability_socially = (frs_person.cdisd09 == 1 ? 1 : 0)
         # disability_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
