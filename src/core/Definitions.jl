@@ -946,7 +946,9 @@ Asset_Dict = Dict{Asset_Type,Real}
 
 
 export Relationship  # mapped from relhrp
-export Spouse,
+export
+       This_Person,
+       Spouse,
        Cohabitee,
        Son_or_daughter_incl_adopted,
        Step_son_or_daughter,
@@ -969,6 +971,7 @@ export Spouse,
 
 @enum Relationship begin  # mapped from relhrp
    Missing_Relationship = -1
+   This_Person = 0 # GKS added
    Spouse = 1
    Cohabitee = 2
    Son_or_daughter_incl_adopted = 3

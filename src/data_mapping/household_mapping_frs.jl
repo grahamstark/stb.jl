@@ -434,13 +434,24 @@ function map_alimony(frs_person::DataFrameRow, a_maint::DataFrame)::Real
     alimony
 end
 
+"""
+process the "r01..r014 and relhrp codes. Note we're adding 'this person' (=0) rather than missing as in the raw data"
+"""
 function process_relationships!( model_person :: DataFrameRow, frs_person :: DataFrameRow )
-    model_person.relationship_to_hoh = safe_assign( frs_person.relhrp )
+    relhh = safe_assign( frs_person.relhrp )
+    if (frs_person.person == 1) & (relhh == -1 )
+        relhh = 0 # map 'this person'
+    end
+    model_person.relationship_to_hoh = relhh
     for i in 1:14
         rel = i < 10 ? "r0" : "r"
         relfrs = Symbol( "$(rel)$i" ) # :r10 or :r02 and so on
         relmod = Symbol( "relationship_$(i)") # :relationship_10 or :relationship_2
-        model_person[relmod] = safe_assign(frs_person[relfrs])
+        relp = safe_assign(frs_person[relfrs])
+        if (frs_person.person == i) & (relp == -1 ) # again "this person = 0; makes mapping code (and just reading output) easier
+            relp = 0
+        end
+        model_person[relmod] = relp
     end
 end
 
