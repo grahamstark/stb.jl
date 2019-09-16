@@ -162,6 +162,7 @@ function load_dataset()
     for  h in 1:nhhlds
         hh1 = hhdata[h,:]
         hhlds[h] =load_hhld_from_frs( hh1, hhpeople )
+        uprate!( hhlds[h] )
     end
     hhlds
 end
