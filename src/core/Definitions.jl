@@ -6,8 +6,12 @@ export Employment_Status  # mapped from empstat
 export Employee, Self_employed
 export Missing_Employment_Status
 
-export PRICES_DIR
+export PRICES_DIR, MODEL_DATA_DIR
 const PRICES_DIR="/mnt/data/prices/obr/"
+const MODEL_DATA_DIR="/home/graham_s/tmp/"
+const FRS_DIR = "/mnt/data/frs/"
+const HBAI_DIR = "/mnt/data/hbai/"
+
 
 
 @enum Employment_Status begin  # mapped from empstat

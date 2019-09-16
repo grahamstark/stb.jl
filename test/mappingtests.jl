@@ -8,9 +8,9 @@ using Model_Household
 include( "../src/data_mapping/hhld_from_frame.jl" )
 
 @testset begin
-    hhdata = CSV.File("/home/graham_s/tmp/model_households.tab", delim='\t') |> DataFrame
+    hhdata = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
     nhhlds = size( hhdata )[1]
-    hhpeople = CSV.File("/home/graham_s/tmp/model_people.tab", delim='\t') |> DataFrame
+    hhpeople = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
     some_pids = ((hhdata.hid.==1) .& (hhdata.data_year.==2017))
     npeople = size( hhpeople)[1]
     hhlds_a = Vector{Union{Missing,Household}}(missing,nhhlds)

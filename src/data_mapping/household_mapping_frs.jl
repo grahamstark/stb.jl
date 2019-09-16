@@ -5,9 +5,6 @@ using CSV
 
 using Definitions
 
-global FRS_DIR = "/mnt/data/frs/"
-global HBAI_DIR = "/mnt/data/hbai/"
-global OUTPUT_DIR = "/home/graham_s/tmp/"
 
 global MONTHS = Dict(
     "JAN" => 1,
@@ -1093,5 +1090,5 @@ for year in 2015:2017
 
 end
 
-CSV.write("$(OUTPUT_DIR)model_households.tab", model_households, delim = "\t")
-CSV.write("$(OUTPUT_DIR)model_people.tab", model_people, delim = "\t")
+CSV.write("$(MODEL_DATA_DIR)model_households.tab", model_households, delim = "\t")
+CSV.write("$(MODEL_DATA_DIR)model_people.tab", model_people, delim = "\t")

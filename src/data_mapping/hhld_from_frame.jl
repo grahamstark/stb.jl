@@ -145,10 +145,23 @@ function load_hhld_from_frs( hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: 
     hh = map_hhld( hhld_fr )
     pers_fr_in_this_hh = pers_fr[((pers_fr.data_year .== hhld_fr.data_year).&(pers_fr.hid .== hh.hid)),:]
     npers = size( pers_fr_in_this_hh )[1]
-    @assert npers > 0 & npers < 20
+    @assert npers in 1:19
     for p in 1:npers
         pers = map_person( pers_fr_in_this_hh[p,:])
         hh.people[pers.pid] = pers
     end
     hh
+end
+
+function load_dataset()
+    hhdata = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
+    hhpeople = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
+    npeople = size( hhpeople)[1]
+    nhhlds = size( hhdata )[1]
+    hhlds = Vector{Union{Missing,Household}}(missing,nhhlds)
+    for  h in 1:nhhlds
+        hh1 = hhdata[h,:]
+        hhlds[h] =load_hhld_from_frs( hh1, hhpeople )
+    end
+    hhlds
 end
