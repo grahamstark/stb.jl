@@ -4,10 +4,10 @@ using DataFrames
 using Definitions
 using Uprating
 using Model_Household
-
-include( "../src/data_mapping/hhld_from_frame.jl" )
+using FRS_Household_Loader
 
 @testset begin
+
     hhdata = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
     nhhlds = size( hhdata )[1]
     hhpeople = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
