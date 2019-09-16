@@ -6,6 +6,7 @@ Semi-complete indexing routine using OBR quarterly data.
 
 include( "prices.jl" )
 
-export uprate
+export uprate, UPRATE_MAPPINGS
+
 
 end

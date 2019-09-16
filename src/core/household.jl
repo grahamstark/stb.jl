@@ -9,7 +9,7 @@ mutable struct Person
     pno::Integer# person number in household
     default_benefit_unit::Integer
     age::Integer
-    
+
     sex::Sex
     ethnic_group::Ethnic_Group
     marital_status::Marital_Status
@@ -78,5 +78,35 @@ mutable struct Household
     house_value::Real
     weight::Real
     people::People_Dict
+
+end
+
+export uprate!
+
+function uprate!( pid :: BigInt, year::Integer, quarter::Integer, person :: Person )
+    for (t,inc) in pers.incomes
+            person.incomes[t] = uprate( inc, year, quarter, UPRATE_MAPPINGS[t])
+    end
+    for (a,ass) in pers.assets
+            person.assets[a] = uprate( ass, year, quarter, UPRATE_MAPPINGS[a])
+    end
+    person.cost_of_childcare = uprate( person.cost_of_childcare, year, quarter, upr_earnings )
+end
+
+function uprate!( hh :: Household )
+
+    hh.water_and_sewerage  = uprate( hh.water_and_sewerage , hh.interview_year, hh.quarter, upr_housing_rents )
+    hh.mortgage_payment = uprate( hh.mortgage_payment, hh.interview_year, hh.quarter, upr_housing_oo )
+    hh.mortgage_interest = uprate( hh.mortgage_interest, hh.interview_year, hh.quarter, upr_housing_oo )
+    hh.mortgage_outstanding = uprate( hh.mortgage_outstanding, hh.interview_year, hh.quarter, upr_housing_oo )
+    hh.gross_rent = uprate( hh.gross_rent, hh.interview_year, hh.quarter, uprupr_housing_oo )
+    hh.other_housing_charges = uprate( hh.other_housing_charges, hh.interview_year, hh.quarter, upr_xxx )
+    hh.gross_housing_costs = uprate( hh.gross_housing_costs, hh.interview_year, hh.quarter, upr_xxx )
+    hh.total_income = uprate( hh.total_income, hh.interview_year, hh.quarter, upr_nominal_gdp )
+    hh.total_wealth = uprate( hh.total_wealth, hh.interview_year, hh.quarter, upr_nominal_gdp )
+    hh.house_value = uprate( hh.house_value, hh.interview_year, hh.quarter, upr_housing_oo )
+    for (pid,person) in hhld.people
+        uprate!( pid, hh.interview_year, hh.quarter, person )
+    end
 
 end
