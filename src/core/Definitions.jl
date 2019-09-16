@@ -1276,6 +1276,32 @@ export Missing_Child_Care_Type
 end
 
 
+export
+    Uprate_Item_Type,
+    upr_no_uprate,
+    upr_earnings,
+    upr_housing_rents,
+    upr_housing_oo,
+    upr_unearned,
+    upr_costs,
+    upr_cpi,
+    upr_gdp_deflator,
+    upr_nominal_gdp,
+    upr_shares
+
+@enum Uprate_Item_Type begin
+    upr_no_uprate
+    upr_earnings
+    upr_housing_rents
+    upr_housing_oo
+    upr_unearned
+    upr_costs
+    upr_cpi
+    upr_gdp_deflator
+    upr_nominal_gdp
+    upr_shares
+end
+
 
 export BIG_NOTHING
 const BIG_NOTHING = BigInt(0)

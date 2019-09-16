@@ -9,19 +9,6 @@ using Definitions
 const TO_Q = 4
 const TO_Y = 2019
 
-@enum Uprate_Item_Type begin
-    upr_no_uprate
-    upr_earnings
-    upr_housing_rents
-    upr_housing_oo
-    upr_unearned
-    upr_costs
-    upr_cpi
-    upr_gdp_deflator
-    upr_nominal_gdp
-    upr_shares
-end
-
 Uprate_Map = Dict(
     upr_earnings => :average_earnings,
     upr_housing_rents => :actual_rents_for_housing,
