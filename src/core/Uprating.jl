@@ -1,13 +1,18 @@
 module Uprating
 
+"""
+Semi-complete indexing routine using OBR quarterly data.
+"""
+
 include( "prices.jl" )
 
-export uprate!
+export uprate
 
 export
     Uprate_Item_Type,
     upr_earnings,
-    upr_housing,
+    upr_housing_rents,
+    upr_housing_oo,
     upr_unearned,
     upr_costs,
     upr_cpi,

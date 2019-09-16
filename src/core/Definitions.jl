@@ -6,6 +6,10 @@ export Employment_Status  # mapped from empstat
 export Employee, Self_employed
 export Missing_Employment_Status
 
+export PRICES_DIR
+const PRICES_DIR="/mnt/data/prices/obr/"
+
+
 @enum Employment_Status begin  # mapped from empstat
    Missing_Employment_Status = -1
    Employee = 1
