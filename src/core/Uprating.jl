@@ -10,6 +10,7 @@ export uprate
 
 export
     Uprate_Item_Type,
+    upr_no_uprate,
     upr_earnings,
     upr_housing_rents,
     upr_housing_oo,

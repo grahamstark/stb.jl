@@ -10,6 +10,7 @@ const TO_Q = 4
 const TO_Y = 2019
 
 @enum Uprate_Item_Type begin
+    upr_no_uprate
     upr_earnings
     upr_housing_rents
     upr_housing_oo
@@ -25,11 +26,11 @@ Uprate_Map = Dict(
     upr_earnings => :average_earnings,
     upr_housing_rents => :actual_rents_for_housing,
     upr_housing_oo => :mortgage_interest_payments,
-    upr_unearned => :gdp_at_market_prices,
+    upr_unearned => :nominal_gdp,
     upr_costs => :cpi,
     upr_cpi => :cpi,
     upr_gdp_deflator => :gdp_deflator,
-    upr_nominal_gdp => :gdp_at_market_prices,
+    upr_nominal_gdp => :nominal_gdp,
     upr_shares => :equity_prices
 )
 
@@ -58,12 +59,13 @@ function load_prices() :: DataFrame
 
     pnew = findfirst((obr.year.==TO_Y) .& (obr.q.==TO_Q))
     for col in 1:ncols
-        # println( "on col $c $(lcnames[c])")
+        baser = obr[pnew,col]
+        # println( "on col $col $(lcnames[col]); baser=$baser")
         if ! (lcnames[col] in [:q, :year, :date ]) # got to be a better way
-            obr[!,col] ./= obr[pnew,col]
+            obr[!,col] .= baser./obr[!,col]
         end
     end
-
+    # print(obr[1,:nomi])
     obr
 end
 
@@ -71,11 +73,13 @@ OBR_DATA = load_prices()
 
 function uprate( item :: Number, from_y::Integer, from_q::Integer, itype::Uprate_Item_Type)::Number
     # FIXME this is likely much too slow..
+    if itype == upr_no_uprate
+        return item
+    end
     global Uprate_Map
     global OBR_DATA
     global FROM_Y, FROM_Q
     colsym = Uprate_Map[itype]
     p = OBR_DATA[((OBR_DATA.year.==from_y).&(OBR_DATA.q.==from_q)), colsym][1]
-
     return item * p
 end
