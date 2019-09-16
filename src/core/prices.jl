@@ -33,19 +33,20 @@ Uprate_Map = Dict(
     upr_shares => :equity_prices
 )
 
-function load_prices()
+"""
+Load Quarterly OBR data into a dataframe, and recast everything relative to the target date (Y,Q).
+See docs/notes.md on the data. Dataframe is a private global.
+"""
+function load_prices() :: DataFrame
     obr = CSV.File("$(PRICES_DIR)/merged_quarterly.tab"; delim = '\t', comment = "#") |>
           DataFrame
     nrows = size(obr)[1]
     ncols = size(obr)[2]
     lcnames = Symbol.(basiccensor.(string.(names(obr))))
     names!(obr, lcnames)
-    np = size(obr)[1]
-
-
 
     obr[!,:year] = zeros(Int64, nrows)
-    obr[!,:q] = zeros(Int8, np) #zeros(Union{Int64,Missing},np)
+    obr[!,:q] = zeros(Int8, nrows) #zeros(Union{Int64,Missing},np)
     dp = r"([0-9]{4})Q([1-4])"
     for i in 1:nrows
         rc = match(dp, obr[i, :date])
@@ -56,10 +57,10 @@ function load_prices()
     end
 
     pnew = findfirst((obr.year.==TO_Y) .& (obr.q.==TO_Q))
-    for c in 1:ncols
+    for col in 1:ncols
         # println( "on col $c $(lcnames[c])")
-        if ! (lcnames[c] in [:q, :year, :date ]) # got to be a better way
-            obr[!,c] ./= obr[pnew,c]
+        if ! (lcnames[col] in [:q, :year, :date ]) # got to be a better way
+            obr[!,col] ./= obr[pnew,col]
         end
     end
 
