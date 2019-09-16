@@ -77,9 +77,9 @@ function make_uprate_types() :: Dict
     d[A_Premium_bonds] = upr_nominal_gdp
     d[A_National_Savings_income_bonds] = upr_nominal_gdp
     d[A_National_Savings_deposit_bonds] = upr_nominal_gdp
-    d[A_A_First_Option_bonds] = upr_nominal_gdp
+    d[A_First_Option_bonds] = upr_nominal_gdp
     d[A_Yearly_Plan] = upr_nominal_gdp
-    d[A_individual_savings_account] = upr_nominal_gdp
+    d[A_ISA] = upr_nominal_gdp
     d[A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds] = upr_nominal_gdp
     d[A_GEB] = upr_nominal_gdp
     d[A_Basic_Account] = upr_nominal_gdp

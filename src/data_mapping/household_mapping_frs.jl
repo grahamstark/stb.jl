@@ -24,45 +24,6 @@ global MONTHS = Dict(
     "DEC" => 12
 )
 
-
-function loadGDPDeflator(name::AbstractString)::DataFrame
-    prices = CSV.File(name, delim = ',') |> DataFrame
-    np = size(prices)[1]
-    prices[!, :year] = zeros(Int64, np) #Union{Int64,Missing},np)
-    prices[!, :q] = zeros(Int8, np) #zeros(Union{Int64,Missing},np)
-    dp = r"([0-9]{4}) Q([1-4])"
-    for i in 1:np
-        rc = match(dp, prices[i, :CDID])
-        if (rc != nothing)
-            prices[i, :year] = parse(Int64, rc[1])
-            prices[i, :q] = parse(Int8, rc[2])
-                #else
-        #                prices[i,:year] = 0 # missing
-        #                prices[i,:month] = 0 # missing
-        end
-    end
-    prices
-end
-
-function loadPrices(name::AbstractString)::DataFrame
-    prices = CSV.File(name, delim = ',') |> DataFrame
-    np = size(prices)[1]
-    prices[!, :year] = zeros(Int64, np) #Union{Int64,Missing},np)
-    prices[!, :month] = zeros(Int8, np) #zeros(Union{Int64,Missing},np)
-    dp = r"([0-9]{4}) ([A-Z]{3})"
-    for i in 1:np
-        rc = match(dp, prices[i, :CDID])
-        if (rc != nothing)
-            prices[i, :year] = parse(Int64, rc[1])
-            prices[i, :month] = MONTHS[rc[2]]
-                #else
-        #                prices[i,:year] = 0 # missing
-        #                prices[i,:month] = 0 # missing
-        end
-    end
-    prices
-end
-
 function initialise_person(n::Integer)::DataFrame
     pers = DataFrame(
         data_year = Vector{Union{Int64,Missing}}(missing, n),
@@ -395,7 +356,7 @@ function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
             model_adult.income_national_savings += v# FIXME appears to be all zero!
         elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club]
             model_adult.income_stocks_shares += v
-        elseif atype in [individual_savings_account]
+        elseif atype in [ISA]
             model_adult.income_individual_savings_account += v
         elseif atype in [
             SAYE,

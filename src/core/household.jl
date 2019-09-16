@@ -81,8 +81,6 @@ mutable struct Household
 
 end
 
-export uprate!
-
 function uprate!( pid :: BigInt, year::Integer, quarter::Integer, person :: Person )
     for (t,inc) in person.income
             person.income[t] = uprate( inc, year, quarter, UPRATE_MAPPINGS[t])

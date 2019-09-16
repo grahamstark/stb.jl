@@ -2,8 +2,9 @@ using Test
 using CSV
 using DataFrames
 using Definitions
+using Uprating
+using Model_Household
 
-include( "../src/core/household.jl" )
 include( "../src/data_mapping/hhld_from_frame.jl" )
 
 @testset begin

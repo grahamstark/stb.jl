@@ -4,5 +4,7 @@ module Model_Household
 
   export Household
   export Person
+  export People_Dict
+  export uprate!
 
 end

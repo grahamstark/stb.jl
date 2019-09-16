@@ -26,7 +26,7 @@ export Full_time_Employee,
        Retired,
        Student,
        Looking_after_family_or_home,
-       Permanently_sick_or_dindividual_savings_accountbled,
+       Permanently_sick_or_disabled,
        Temporarily_sick_or_injured,
        Other_Inactive
 export Missing_ILO_Employment
@@ -41,7 +41,7 @@ export Missing_ILO_Employment
    Retired = 6
    Student = 7
    Looking_after_family_or_home = 8
-   Permanently_sick_or_dindividual_savings_accountbled = 9
+   Permanently_sick_or_disabled = 9
    Temporarily_sick_or_injured = 10
    Other_Inactive = 11
 end
@@ -369,14 +369,14 @@ end
 
 
 export Socio_Economic_Group  # mapped from nssec
-export Employers_in_large_organindividual_savings_accounttions,
+export Employers_in_large_organisations,
        Higher_managerial_occupations,
        Higher_professional_occupations_New_self_employed,
        Lower_prof_and_higher_technical_Traditional_employee,
        Lower_managerial_occupations,
        Higher_supervisory_occupations,
        Intermediate_clerical_and_administrative,
-       Employers_in_small_organindividual_savings_accounttions_non_professional,
+       Employers_in_small_organisations_non_professional,
        Own_account_workers_non_professional,
        Lower_supervisory_occupations,
        Lower_technical_craft,
@@ -390,14 +390,14 @@ export Missing_Socio_Economic_Group
 
 @enum Socio_Economic_Group begin  # mapped from nssec
    Missing_Socio_Economic_Group = -1
-   Employers_in_large_organindividual_savings_accounttions = 1
+   Employers_in_large_organisations = 1
    Higher_managerial_occupations = 2
    Higher_professional_occupations_New_self_employed = 3
    Lower_prof_and_higher_technical_Traditional_employee = 4
    Lower_managerial_occupations = 5
    Higher_supervisory_occupations = 6
    Intermediate_clerical_and_administrative = 7
-   Employers_in_small_organindividual_savings_accounttions_non_professional = 8
+   Employers_in_small_organisations_non_professional = 8
    Own_account_workers_non_professional = 9
    Lower_supervisory_occupations = 10
    Lower_technical_craft = 11
@@ -494,12 +494,12 @@ export Undefined_SIC,
        Libraries_archives_museums_and_other_cultural_activities,
        Gambling_and_betting_activities,
        Sports_activities_and_amusement_and_recreation_activities,
-       Activities_of_membership_organindividual_savings_accounttions,
+       Activities_of_membership_organisations,
        Repair_of_computers_and_personal_and_household_goods,
        Other_personal_service_activities,
        Activities_of_households_as_employers_of_domestic_personnel,
        Undifferentiated_goods_and_services_producing_activitiesX,
-       Activities_of_extraterritorial_organindividual_savings_accounttions_and_bodies
+       Activities_of_extraterritorial_organisations_and_bodies
 export Missing_SIC_2007
 
 @enum SIC_2007 begin  # mapped from sic
@@ -587,12 +587,12 @@ export Missing_SIC_2007
    Libraries_archives_museums_and_other_cultural_activities = 91
    Gambling_and_betting_activities = 92
    Sports_activities_and_amusement_and_recreation_activities = 93
-   Activities_of_membership_organindividual_savings_accounttions = 94
+   Activities_of_membership_organisations = 94
    Repair_of_computers_and_personal_and_household_goods = 95
    Other_personal_service_activities = 96
    Activities_of_households_as_employers_of_domestic_personnel = 97
    Undifferentiated_goods_and_services_producing_activitiesX = 98
-   Activities_of_extraterritorial_organindividual_savings_accounttions_and_bodies = 99
+   Activities_of_extraterritorial_organisations_and_bodies = 99
 end
 
 
@@ -682,8 +682,8 @@ export Missing_CT_Band
    Household_not_valued_separately = 10
 end
 
-export Dindividual_savings_accountbility_Type,
-       Dindividual_savings_accountbility_Dict,
+export Disability_Type,
+       Disability_Dict,
        vision,
        hearing,
        mobility,
@@ -695,7 +695,7 @@ export Dindividual_savings_accountbility_Type,
        socially,
        other_difficulty
 
-@enum Dindividual_savings_accountbility_Type begin  # mapped from "disd01..10" "cdisd01..10"
+@enum Disability_Type begin  # mapped from "disd01..10" "cdisd01..10"
    vision = 1
    hearing = 2
    mobility = 3
@@ -707,7 +707,7 @@ export Dindividual_savings_accountbility_Type,
    socially = 9
    other_difficulty = 10
 end
-Dindividual_savings_accountbility_Dict = Dict{Dindividual_savings_accountbility_Type,Bool}
+Disability_Dict = Dict{Disability_Type,Bool}
 
 export Incomes_Type, Incomes_Dict
 
@@ -755,11 +755,11 @@ export wages,
        bereavement_allowance_or_widowed_parents_allowance_or_bereavement,
        armed_forces_compensation_scheme,
        war_widows_or_widowers_pension,
-       severe_dindividual_savings_accountbility_allowance,
+       severe_disability_allowance,
        attendence_allowance,
        carers_allowance,
        jobseekers_allowance,
-       industrial_injury_dindividual_savings_accountblement_benefit,
+       industrial_injury_disablement_benefit,
        employment_and_support_allowance,
        incapacity_benefit,
        income_support,
@@ -841,11 +841,11 @@ export wages,
    bereavement_allowance_or_widowed_parents_allowance_or_bereavement = 2006
    armed_forces_compensation_scheme = 2008
    war_widows_or_widowers_pension = 2009
-   severe_dindividual_savings_accountbility_allowance = 2010
+   severe_disability_allowance = 2010
    attendence_allowance = 2012
    carers_allowance = 2013
    jobseekers_allowance = 2014
-   industrial_injury_dindividual_savings_accountblement_benefit = 2015
+   industrial_injury_disablement_benefit = 2015
    employment_and_support_allowance = 2016
    incapacity_benefit = 2017
    income_support = 2019
@@ -881,8 +881,6 @@ export wages,
    personal_independence_payment_mobility = 2097
 
    other_benefits = 3000
-
-
 end
 
 Incomes_Dict = Dict{Incomes_Type,Real}
@@ -906,9 +904,9 @@ export A_Current_account,
        A_Premium_bonds,
        A_National_Savings_income_bonds,
        A_National_Savings_deposit_bonds,
-       A_A_First_Option_bonds,
+       A_First_Option_bonds,
        A_Yearly_Plan,
-       A_individual_savings_account,
+       A_ISA,
        A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds,
        A_GEB,
        A_Basic_Account,
@@ -937,7 +935,7 @@ export Missing_Asset_Type
    A_National_Savings_deposit_bonds = 17
    A_First_Option_bonds = 18
    A_Yearly_Plan = 19
-   A_individual_savings_account = 21
+   A_ISA = 21
    A_Fixd_Rate_Svngs_Bonds_or_Grntd_Incm_Bonds_or_Grntd_Growth_Bonds = 25
    A_GEB = 26
    A_Basic_Account = 27
@@ -1052,7 +1050,7 @@ export Current_account,
        National_Savings_deposit_bonds,
        First_Option_bonds,
        Yearly_Plan,
-       individual_savings_account,
+       ISA,
        Profit_sharing,
        Company_Share_Option_Plans,
        Member_of_Share_Club,
@@ -1085,7 +1083,7 @@ export Missing_Account_Type
    National_Savings_deposit_bonds = 17
    First_Option_bonds = 18
    Yearly_Plan = 19
-   individual_savings_account = 21
+   ISA = 21
    Profit_sharing = 22
    Company_Share_Option_Plans = 23
    Member_of_Share_Club = 24
@@ -1117,11 +1115,11 @@ export DLAself_care,
        Bereavement_Allowance_or_Widowed_Parents_Allowance_or_Bereavement,
        Armed_Forces_Compensation_Scheme,
        War_Widows_or_Widowers_Pension,
-       Severe_Dindividual_savings_accountbility_Allowance,
+       Severe_Disability_Allowance,
        Attendence_Allowance,
        Carers_Allowance,
        Jobseekers_Allowance,
-       Industrial_Injury_Dindividual_savings_accountblement_Benefit,
+       Industrial_Injury_Disablement_Benefit,
        Employment_and_Support_Allowance,
        Incapacity_Benefit,
        Income_Support,
@@ -1179,11 +1177,11 @@ export Missing_Benefit_Type
    Bereavement_Allowance_or_Widowed_Parents_Allowance_or_Bereavement = 6
    Armed_Forces_Compensation_Scheme = 8
    War_Widows_or_Widowers_Pension = 9
-   Severe_Dindividual_savings_accountbility_Allowance = 10
+   Severe_Disability_Allowance = 10
    Attendence_Allowance = 12
    Carers_Allowance = 13
    Jobseekers_Allowance = 14
-   Industrial_Injury_Dindividual_savings_accountblement_Benefit = 15
+   Industrial_Injury_Disablement_Benefit = 15
    Employment_and_Support_Allowance = 16
    Incapacity_Benefit = 17
    Income_Support = 19
@@ -1275,19 +1273,18 @@ export Missing_Child_Care_Type
    Other_non_relatives_includes_babysitters = 18
 end
 
-
 export
-    Uprate_Item_Type,
-    upr_no_uprate,
-    upr_earnings,
-    upr_housing_rents,
-    upr_housing_oo,
-    upr_unearned,
-    upr_costs,
-    upr_cpi,
-    upr_gdp_deflator,
-    upr_nominal_gdp,
-    upr_shares
+   Uprate_Item_Type,
+   upr_no_uprate,
+   upr_earnings,
+   upr_housing_rents,
+   upr_housing_oo,
+   upr_unearned,
+   upr_costs,
+   upr_cpi,
+   upr_gdp_deflator,
+   upr_nominal_gdp,
+   upr_shares
 
 @enum Uprate_Item_Type begin
     upr_no_uprate
