@@ -41,6 +41,7 @@ include( "../src/data_mapping/hhld_from_frame.jl" )
     end
 
     @time for h in 1:nhhlds
+        uprate!( hhlds_a[h])
         if h % 10_000 == 0
             println( hhlds_a[h] )
         end

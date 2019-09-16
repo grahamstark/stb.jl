@@ -8,5 +8,4 @@ include( "prices.jl" )
 
 export uprate, UPRATE_MAPPINGS
 
-
 end
