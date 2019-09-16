@@ -7,6 +7,7 @@ export Employee, Self_employed
 export Missing_Employment_Status
 
 export PRICES_DIR, MODEL_DATA_DIR
+
 const PRICES_DIR="/mnt/data/prices/obr/"
 const MODEL_DATA_DIR="/home/graham_s/tmp/"
 const FRS_DIR = "/mnt/data/frs/"
