@@ -131,7 +131,7 @@ function map_hhld( hno::Integer, frs_hh :: DataFrameRow )
         people )
 end
 
-function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
+function load_hhld_from_frame( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
      frs_hh = hhld_fr[((hhld_fr.data_year .== year).& (hhld_fr.hid .== hid)),:]
      nhh = size( frs_hh )[1]
      @assert nhh in [0,1]
@@ -142,7 +142,7 @@ function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFra
      end
 end
 
-function load_hhld_from_frs( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
+function load_hhld_from_frame( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
      hh = map_hhld( hseq, hhld_fr )
      pers_fr_in_this_hh = pers_fr[((pers_fr.data_year .== hhld_fr.data_year).&(pers_fr.hid .== hh.hid)),:]
      npers = size( pers_fr_in_this_hh )[1]
@@ -153,19 +153,3 @@ function load_hhld_from_frs( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: 
      end
      hh
  end
-
-
-MODEL_HOUSEHOLDS=missing
-
-function load_dataset()
-    global MODEL_HOUSEHOLDS
-    hh_dataset = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
-    people_dataset = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
-    npeople = size( people_dataset)[1]
-    nhhlds = size( hh_dataset )[1]
-    MODEL_HOUSEHOLDS = Vector{Union{Missing,Household}}(missing,nhhlds)
-    for hseq in 1:nhhlds
-        MODEL_HOUSEHOLDS[hseq] = load_hhld_from_frs( hseq, hh_dataset[hseq,:], people_dataset )
-        uprate!( MODEL_HOUSEHOLDS[hseq] )
-    end
-end

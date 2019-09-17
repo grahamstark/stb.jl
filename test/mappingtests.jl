@@ -37,7 +37,7 @@ Low-ish level tests of loading households from frames
 
     @time for h in 1:nhhlds
         hh1 = hhdata[h,:]
-        mhh = load_hhld_from_frs( hh1, hhpeople )
+        mhh = load_hhld_from_frame( hh1, hhpeople )
         hhlds_a[h] = mhh
         if h % 10_000 == 0
             println( "$mhh")

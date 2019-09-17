@@ -2,6 +2,9 @@ results
 *.xlsx
 *.ods
 *.odt
+*.swp
+model*.tab
+example*.tab
 .~lock*
 msc.ini
 etc/tacit/
