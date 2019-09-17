@@ -8,8 +8,12 @@ export Missing_Employment_Status
 
 export PRICES_DIR, MODEL_DATA_DIR
 
+#
+# FIXME move this to some config file
+#
+const PROJECT_DIR="/home/graham_s/VirtualWorlds/projects/ou/stb.jl/"
 const PRICES_DIR="/mnt/data/prices/obr/"
-const MODEL_DATA_DIR="/home/graham_s/tmp/"
+const MODEL_DATA_DIR="$(PROJECT_DIR)/data/"
 const FRS_DIR = "/mnt/data/frs/"
 const HBAI_DIR = "/mnt/data/hbai/"
 
