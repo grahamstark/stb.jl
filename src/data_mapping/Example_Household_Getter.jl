@@ -1,12 +1,16 @@
 module Example_Household_Getter
 
+using Model_Household
+using DataFrames
+using CSV
+
 include( "hhld_from_frame.jl" )
 
 export  initialise, get_household
 
-EXAMPLE_HOUSEHOLDS = Dict{AbstractString,Household}()
+EXAMPLE_HOUSEHOLDS = Dict{String,Household}()
 
-KEYMAP = Vector{AbstractString}()
+KEYMAP = Vector{String}()
 
 """
 return number of households available
@@ -22,9 +26,11 @@ function initialise(
     people_dataset = CSV.File("$(MODEL_DATA_DIR)/$(people_name).tab", delim='\t') |> DataFrame
     npeople = size( people_dataset)[1]
     nhhlds = size( hh_dataset )[1]
-    EXAMPLE_HOUSEHOLDS = Vector{Union{Missing,Household}}(missing,nhhlds)
     for hseq in 1:nhhlds
         hhf = hh_dataset[hseq,:]
+        println( "name $(hhf.name)")
+        println( typeof( hhf.name ))
+        println( typeof( EXAMPLE_HOUSEHOLDS ))
         push!( KEYMAP, hhf.name )
         EXAMPLE_HOUSEHOLDS[hhf.name] = load_hhld_from_frame( hseq, hhf, people_dataset )
     end
