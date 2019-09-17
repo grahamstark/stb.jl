@@ -158,6 +158,7 @@ function load_hhld_from_frs( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: 
 MODEL_HOUSEHOLDS=missing
 
 function load_dataset()
+    global MODEL_HOUSEHOLDS
     hh_dataset = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
     people_dataset = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
     npeople = size( people_dataset)[1]
