@@ -109,3 +109,36 @@ function uprate!( hh :: Household )
     end
 
 end
+
+function oldest_person( people :: People_Dict ) :: NamedTuple
+    oldest = ( age=-999, pid=BigInt(0))
+    for person in people
+        if person.age > oldest.age
+            oldest.age = person.age
+            oldest.pid = person.pid
+        end
+    end
+    oldest
+end
+
+function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Type,Real}
+    np = length(people)
+    eqp = Vector{EQ_Person}()
+    oldest_pid = oldest_person( people )
+    foreach (pid,person) in people
+        eqtype = eq_other_adult
+        if pid == oldest_pid.pid
+            eqtype = eq_head
+        else
+            if (person.age < 16) || (( person.age < 18 ) & ( person.employment_status in [Student,Other_Inactive]))
+                eqtype = eq_dependent_child # needn't actually be dependent, of course
+            elseif person.relationships[ oldest_pid.pid ] in [Spouse,Cohabitee,Civil_Partner]
+                eqtype = eq_spouse_of_head
+            elseif
+                eqtype = eq_other_adult
+            end
+        end
+        push!( eqp, EQ_Person( person.age, eqtype ))
+    end
+    get_equivalence_scales( eqp )
+end
