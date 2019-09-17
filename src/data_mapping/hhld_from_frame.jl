@@ -152,17 +152,19 @@ end
 #         hh.people[pers.pid] = pers
 #     end
 #     hh
-# end 
+# end
+
+
+MODEL_HOUSEHOLDS=missing
 
 function load_dataset()
     hh_dataset = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
     people_dataset = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
     npeople = size( people_dataset)[1]
     nhhlds = size( hh_dataset )[1]
-    hhlds = Vector{Union{Missing,Household}}(missing,nhhlds)
+    MODEL_HOUSEHOLDS = Vector{Union{Missing,Household}}(missing,nhhlds)
     for hseq in 1:nhhlds
-        hhlds[h] = load_hhld_from_frs( hseq, hh_dataset[hseq,:], people_dataset )
-        uprate!( hhlds[hseq] )
+        MODEL_HOUSEHOLDS[hseq] = load_hhld_from_frs( hseq, hh_dataset[hseq,:], people_dataset )
+        uprate!( MODEL_HOUSEHOLDS[hseq] )
     end
-    hhlds
 end
