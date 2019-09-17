@@ -125,7 +125,7 @@ function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Ty
     np = length(people)
     eqp = Vector{EQ_Person}()
     oldest_pid = oldest_person( people )
-    foreach (pid,person) in people
+    for (pid,person) in people
         eqtype = eq_other_adult
         if pid == oldest_pid.pid
             eqtype = eq_head
