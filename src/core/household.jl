@@ -134,7 +134,7 @@ function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Ty
                 eqtype = eq_dependent_child # needn't actually be dependent, of course
             elseif person.relationships[ oldest_pid.pid ] in [Spouse,Cohabitee,Civil_Partner]
                 eqtype = eq_spouse_of_head
-            elseif
+            else
                 eqtype = eq_other_adult
             end
         end

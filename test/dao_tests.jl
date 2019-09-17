@@ -2,9 +2,7 @@ using Test
 using Model_Household
 using FRS_Household_Getter
 
-"""
-Higher level tests of getting households
-"""
+
 @testset begin
 
     @time initialise()

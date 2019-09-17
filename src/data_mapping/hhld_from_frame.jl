@@ -131,28 +131,28 @@ function map_hhld( hno::Integer, frs_hh :: DataFrameRow )
         people )
 end
 
-# function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
-#     frs_hh = hhld_fr[((hhld_fr.data_year .== year).& (hhld_fr.hid .== hid)),:]
-#     nhh = size( frs_hh )[1]
-#     @assert nhh in [0,1]
-#     if nhh == 1
-#         return load_hhld_from_frs( 1, frs_hh[1,:], pers_fr )
-#     else
-#         return missing
-#     end
-# end
-#
-# function load_hhld_from_frs( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
-#     hh = map_hhld( hno, hhld_fr )
-#     pers_fr_in_this_hh = pers_fr[((pers_fr.data_year .== hhld_fr.data_year).&(pers_fr.hid .== hh.hid)),:]
-#     npers = size( pers_fr_in_this_hh )[1]
-#     @assert npers in 1:19
-#     for p in 1:npers
-#         pers = map_person( pers_fr_in_this_hh[p,:])
-#         hh.people[pers.pid] = pers
-#     end
-#     hh
-# end
+function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
+     frs_hh = hhld_fr[((hhld_fr.data_year .== year).& (hhld_fr.hid .== hid)),:]
+     nhh = size( frs_hh )[1]
+     @assert nhh in [0,1]
+     if nhh == 1
+         return load_hhld_from_frs( 1, frs_hh[1,:], pers_fr )
+     else
+        return missing
+     end
+end
+
+function load_hhld_from_frs( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
+     hh = map_hhld( hseq, hhld_fr )
+     pers_fr_in_this_hh = pers_fr[((pers_fr.data_year .== hhld_fr.data_year).&(pers_fr.hid .== hh.hid)),:]
+     npers = size( pers_fr_in_this_hh )[1]
+     @assert npers in 1:19
+     for p in 1:npers
+         pers = map_person( pers_fr_in_this_hh[p,:])
+         hh.people[pers.pid] = pers
+     end
+     hh
+ end
 
 
 MODEL_HOUSEHOLDS=missing
