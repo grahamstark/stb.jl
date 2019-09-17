@@ -1,0 +1,7 @@
+results
+*.xlsx
+*.ods
+*.odt
+.~lock*
+msc.ini
+
