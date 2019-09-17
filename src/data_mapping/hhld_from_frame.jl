@@ -100,11 +100,12 @@ function map_person( model_person :: DataFrameRow )
 
 end
 
-function map_hhld( frs_hh :: DataFrameRow )
+function map_hhld( hno::Integer, frs_hh :: DataFrameRow )
 
     people = People_Dict()
 
     Household(
+        hno,
         frs_hh.hid,
         frs_hh.interview_year,
         frs_hh.interview_month,
@@ -130,39 +131,38 @@ function map_hhld( frs_hh :: DataFrameRow )
         people )
 end
 
-function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
-    frs_hh = hhld_fr[((hhld_fr.data_year .== year).& (hhld_fr.hid .== hid)),:]
-    nhh = size( frs_hh )[1]
-    @assert nhh in [0,1]
-    if nhh == 1
-        return load_hhld_from_frs( frs_hh[1,:], pers_fr )
-    else
-        return missing
-    end
-end
-
-function load_hhld_from_frs( hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
-    hh = map_hhld( hhld_fr )
-    pers_fr_in_this_hh = pers_fr[((pers_fr.data_year .== hhld_fr.data_year).&(pers_fr.hid .== hh.hid)),:]
-    npers = size( pers_fr_in_this_hh )[1]
-    @assert npers in 1:19
-    for p in 1:npers
-        pers = map_person( pers_fr_in_this_hh[p,:])
-        hh.people[pers.pid] = pers
-    end
-    hh
-end
+# function load_hhld_from_frs( year :: Integer, hid :: Integer; hhld_fr :: DataFrame, pers_fr :: DataFrame ) :: Household
+#     frs_hh = hhld_fr[((hhld_fr.data_year .== year).& (hhld_fr.hid .== hid)),:]
+#     nhh = size( frs_hh )[1]
+#     @assert nhh in [0,1]
+#     if nhh == 1
+#         return load_hhld_from_frs( 1, frs_hh[1,:], pers_fr )
+#     else
+#         return missing
+#     end
+# end
+#
+# function load_hhld_from_frs( hseq::Integer, hhld_fr :: DataFrameRow, pers_fr :: DataFrame ) :: Household
+#     hh = map_hhld( hno, hhld_fr )
+#     pers_fr_in_this_hh = pers_fr[((pers_fr.data_year .== hhld_fr.data_year).&(pers_fr.hid .== hh.hid)),:]
+#     npers = size( pers_fr_in_this_hh )[1]
+#     @assert npers in 1:19
+#     for p in 1:npers
+#         pers = map_person( pers_fr_in_this_hh[p,:])
+#         hh.people[pers.pid] = pers
+#     end
+#     hh
+# end 
 
 function load_dataset()
-    hhdata = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
-    hhpeople = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
-    npeople = size( hhpeople)[1]
-    nhhlds = size( hhdata )[1]
+    hh_dataset = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
+    people_dataset = CSV.File("$(MODEL_DATA_DIR)/model_people.tab", delim='\t') |> DataFrame
+    npeople = size( people_dataset)[1]
+    nhhlds = size( hh_dataset )[1]
     hhlds = Vector{Union{Missing,Household}}(missing,nhhlds)
-    for  h in 1:nhhlds
-        hh1 = hhdata[h,:]
-        hhlds[h] =load_hhld_from_frs( hh1, hhpeople )
-        uprate!( hhlds[h] )
+    for hseq in 1:nhhlds
+        hhlds[h] = load_hhld_from_frs( hseq, hh_dataset[hseq,:], people_dataset )
+        uprate!( hhlds[hseq] )
     end
     hhlds
 end

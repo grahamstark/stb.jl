@@ -4,8 +4,8 @@ using Uprating
 using Dates
 
 mutable struct Person
-    hid::BigInt# == sernum
-    pid::BigInt# == unique id (year * 100000)+
+    hid::BigInt # == sernum
+    pid::BigInt # == unique id (year * 100000)+
     pno::Integer# person number in household
     default_benefit_unit::Integer
     age::Integer
@@ -55,6 +55,7 @@ end
 People_Dict = Dict{BigInt,Person}
 
 mutable struct Household
+    sequence::Integer # position in current generated dataset
     hid::BigInt
     interview_year::Integer
     interview_month::Integer

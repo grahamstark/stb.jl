@@ -15,8 +15,8 @@ function get_num_households()
     size(MODEL_HOUSEHOLDS)[1]
 end
 
-function get_household( hno :: Integer ) :: Household
-    MODEL_HOUSEHOLDS[hno]
+function get_household( pos :: Integer ) :: Household
+    MODEL_HOUSEHOLDS[pos]
 end
 
 end
