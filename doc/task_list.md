@@ -2,12 +2,12 @@
 
 ## Household
 
-* definitions as enums
-* structs
+* definitions as enums x
+* structs x
 * benefit unit function
 * uprating
 * simple grossing up targets
-* frs 2015-17 mapping
+* frs 2015-17 mapping x
 
 ## Results struct
 
