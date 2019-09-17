@@ -6,11 +6,11 @@ using Example_Household_Getter
 
 
 @testset "Example Households" begin
-    @time nhhs = Example_Household_Getter.initialise()
-    names = Example_Household_Getter.example_names()
-    @time for hno in 1:nhhs
-        hh = FRS_Household_Getter.get_household( names[hno] )
-        println(names[hno])
+    @time names = Example_Household_Getter.initialise()
+
+    @time for name in names
+        hh = Example_Household_Getter.get_household( name )
+        println(name)
         println( hh )
         println()
     end

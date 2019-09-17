@@ -17,7 +17,7 @@ return number of households available
 """
 function initialise(
     household_name :: AbstractString = "example_households",
-    people_name :: AbstractString = "example_people" ) :: Integer
+    people_name :: AbstractString = "example_people" ) :: Vector{String}
 
     global KEYMAP
     global EXAMPLE_HOUSEHOLDS
@@ -34,7 +34,7 @@ function initialise(
         push!( KEYMAP, hhf.name )
         EXAMPLE_HOUSEHOLDS[hhf.name] = load_hhld_from_frame( hseq, hhf, people_dataset )
     end
-    size(EXAMPLE_HOUSEHOLDS)[1]
+    KEYMAP
 end
 
 function example_names()
