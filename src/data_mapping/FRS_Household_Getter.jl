@@ -4,12 +4,11 @@ include( "hhld_from_frame.jl" )
 
 export  initialise, get_num_households, get_household
 
-function initialise( )
+"""
+return number of households available
+"""
+function initialise() :: Integer
     load_dataset()
-end
-
-function get_num_households()
-    global MODEL_HOUSEHOLDS
     size(MODEL_HOUSEHOLDS)[1]
 end
 

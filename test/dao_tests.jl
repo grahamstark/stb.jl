@@ -5,13 +5,11 @@ using FRS_Household_Getter
 
 @testset begin
 
-    @time initialise()
-    nhhs = get_num_households()
+    @time nhhs = initialise()
     @time for hno in 1:nhhs
         hh = get_household( hno )
-        if hno % 1000
+        if hno % 10_000 == 0
             println( hh )
         end
     end
-
 end
