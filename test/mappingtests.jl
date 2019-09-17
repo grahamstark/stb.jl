@@ -4,8 +4,11 @@ using DataFrames
 using Definitions
 using Uprating
 using Model_Household
-using FRS_Household_Loader
+using FRS_Household_Getter
 
+"""
+Low-ish level tests of loading households from frames
+"""
 @testset begin
 
     hhdata = CSV.File("$(MODEL_DATA_DIR)/model_households.tab", delim='\t') |> DataFrame
