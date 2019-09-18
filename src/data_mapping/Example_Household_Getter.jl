@@ -28,9 +28,6 @@ function initialise(
     nhhlds = size( hh_dataset )[1]
     for hseq in 1:nhhlds
         hhf = hh_dataset[hseq,:]
-        println( "name $(hhf.name)")
-        println( typeof( hhf.name ))
-        println( typeof( EXAMPLE_HOUSEHOLDS ))
         push!( KEYMAP, hhf.name )
         EXAMPLE_HOUSEHOLDS[hhf.name] = load_hhld_from_frame( hseq, hhf, people_dataset )
     end

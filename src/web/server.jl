@@ -8,6 +8,8 @@ using FRS_Household_Getter
 using Example_Household_Getter
 using Model_Household
 using Utils
+using MiniTB
+
 
 println("starting server")
 rc = @timed begin
@@ -17,19 +19,39 @@ end
 mb = trunc(Integer, rc[3] / 1024^2)
 println("loaded data; load time $(rc[2]); memory used $(mb)mb;\nready...")
 
+
+function makebc(pers::Person, params::Parameters)::BudgetConstraint
+
+  function getnet(gross::Float64)::Float64
+    persedit = modifiedcopy(pers, wage = gross)
+        # println( "getnet; made person $persedit")
+    rc = calculate(persedit, params)
+    return rc[:netincome]
+  end
+
+  bc = makebc(getnet)
+
+  return bc
+end
+
+function makebc(req)
+  bc = makebc(DEFAULT_PERSON, DEFAULT_PARAMS)
+  JSON.json(bc)
+end
+
 function get_hh(hdstr::AbstractString)
   hid = parse(Int64, hdstr)
   JSON.json(FRS_Household_Getter.get_household(hid))
 end
 
-function addqstrdict( app, req )
-  req[:parsed_querystring] = qstrtodict( req[:query])
-  return app( req )
+function addqstrdict(app, req)
+  req[:parsed_querystring] = qstrtodict(req[:query])
+  return app(req)
 end
 
-function paramtest( req )
-  JSON.json( req[:query] )
-  JSON.json( req )
+function paramtest(req)
+  JSON.json(req[:query])
+  JSON.json(req)
 end
 
 # Better error handling
@@ -57,7 +79,8 @@ end
 # Mux.splitquery,
   page(respond("<h1>OU DD226 TB Model</h1>")),
   page("/hhld/:hid", req -> get_hh((req[:params][:hid]))),
-  page("/paramtest", req -> paramtest( req ) ),
+  page("/paramtest", req -> paramtest(req)),
+  page("/bc", req -> makebc(req)),
   Mux.notfound(),
 )
 
@@ -65,4 +88,4 @@ port = 8000
 if length(ARGS) > 0
   port = parse(Int64, ARGS[1])
 end
-@sync serve(test,port)
+@sync serve(test, port)
