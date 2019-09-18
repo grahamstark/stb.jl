@@ -19,7 +19,7 @@ println("loaded data; load time $(rc[2]); memory used $(mb)mb;\nready...")
 
 function get_hh(hdstr::AbstractString)
   hid = parse(Int64, hdstr)
-  JSON.json(Example_Household_Getter.get_household(hid))
+  JSON.json(FRS_Household_Getter.get_household(hid))
 end
 
 function addqstrdict( app, req )
