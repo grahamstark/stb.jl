@@ -49,13 +49,12 @@ function errorCatch(app, req)
   end
 end
 
-ourstack = stack(Mux.todict, errorCatch, Mux.splitquery, Mux.toresponse) # from DiffEq
+# ourstack = stack(Mux.todict, errorCatch, Mux.splitquery, Mux.toresponse) # from DiffEq
 
 @app test = (
-  ourstack,
+  Mux.defaults,
   addqstrdict,
-  # Mux.defaults,
-  # Mux.splitquery,
+# Mux.splitquery,
   page(respond("<h1>OU DD226 TB Model</h1>")),
   page("/hhld/:hid", req -> get_hh((req[:params][:hid]))),
   page("/paramtest", req -> paramtest( req ) ),

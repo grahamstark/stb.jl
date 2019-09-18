@@ -2,7 +2,7 @@ module Utils
 
 using Base.Unicode
 
-      export @exported_enum, pretty, basiccensor
+      export @exported_enum, qstrtodict, pretty, basiccensor
 
 
       """
