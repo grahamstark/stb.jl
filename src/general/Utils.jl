@@ -4,6 +4,32 @@ using Base.Unicode
 
       export @exported_enum, pretty, basiccensor
 
+
+      """
+      parse an html query string like "sex=male&joe=22&bill=21342&z=12.20"
+      into a dict. If the value looks like a number, it's parsed into either an Int64 or Float64
+      """
+      function qstrtodict( query_string :: AbstractString ) :: Dict{AbstractString,Any}
+        d = Dict{AbstractString,Any}()
+        as = split( query_string, "&")
+        for a in as
+          aa = split( a, "=")
+          k = aa[1]
+          v = aa[2]
+          try
+            v = parse( Int64, v )
+          catch
+            try
+              v = parse( Float64, v )
+            catch
+            end
+          end
+          d[k] = v
+        end
+        d
+      end
+
+
       """
       returns the string converted to a form suitable to be used as (e.g.) a Symbol,
       with leading/trailing blanks removed, forced to lowercase, and with various

@@ -7,11 +7,12 @@ using JSON
 using FRS_Household_Getter
 using Example_Household_Getter
 using Model_Household
+using Utils
 
 println("starting server")
 rc = @timed begin
   example_names = Example_Household_Getter.initialise()
-  # num_households = FRS_Household_Getter.initialise()
+  num_households = FRS_Household_Getter.initialise()
 end
 mb = trunc(Integer, rc[3] / 1024^2)
 println("loaded data; load time $(rc[2]); memory used $(mb)mb;\nready...")
@@ -19,26 +20,6 @@ println("loaded data; load time $(rc[2]); memory used $(mb)mb;\nready...")
 function get_hh(hdstr::AbstractString)
   hid = parse(Int64, hdstr)
   JSON.json(Example_Household_Getter.get_household(hid))
-end
-
-function qstrtodict( s :: AbstractString ) :: Dict{AbstractString,Any}
-  d = Dict{AbstractString,Any}()
-  as = split( s, "&")
-  for a in as
-    aa = split( a, "=")
-    k = aa[1]
-    v = aa[2]
-    try
-      v = parse( Int64, v )
-    catch
-      try
-        v = parse( Float64, v )
-      catch
-      end
-    end
-    d[k] = v
-  end
-  d
 end
 
 function addqstrdict( app, req )
