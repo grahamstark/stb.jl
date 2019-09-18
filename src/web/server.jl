@@ -17,6 +17,7 @@ end
   Mux.defaults,
   page(respond("<h1>Hello World!</h1>")),
   page("/hhld/:hid", req -> get_hh((req[:params][:hid]))),
+  page( "/paramtest/", req -> get_hh((req[:params][:hid]))),
   Mux.notfound())
 
 serve(test)
