@@ -1,5 +1,44 @@
-const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_l_limit = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
-const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_l_limit=0&ben2_u_limit=0"
+using JSON
+using FRS_Household_Getter
+using Example_Household_Getter
+using Model_Household
+using Utils
+using MiniTB
+using TBComponents
+
+println("starting server")
+rc = @timed begin
+   example_names = Example_Household_Getter.initialise()
+   num_households = FRS_Household_Getter.initialise()
+end
+mb = trunc(Integer, rc[3] / 1024^2)
+println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
+
+
+function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
+   minipers :: MiniTB.person
+   minipers.pid = modelpers.pid
+   minipers.age = modelpers.age
+   minipers.sex = ( minipers.age % 2) == 0 ? male : female;
+   minipers.wage = 0.0
+   for k,v in modelpers.income
+      minipers.wage += v
+   end
+   minipers
+end
+
+function local_getnet(data :: Dict, gross::Real)::Real
+   person = data[:person]
+   person.wage = gross
+   rc = MiniTB.calculate( person, data[:params ] )
+   return rc[:netincome]
+end
+
+function local_makebc( person :: MiniTB.Person, tbparams :: MiniTB.Parameters )
+   data = Dict( :person=>person, :params=>tbparams )
+   pointstoarray( TBComponents.makebc( data, local_getnet ))
+end
+
 
 function map_params( req )
    querydict = req[:parsed_querystring]
@@ -61,3 +100,5 @@ function local_makebc( req )
    bc = local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
+
+const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
