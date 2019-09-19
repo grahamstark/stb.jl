@@ -21,7 +21,7 @@ function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
    for (k,v) in modelpers.income
       inc += v
    end
-   MiniTB.Person( modelpers.pid, inc, modelpers.age, female )
+   MiniTB.Person( modelpers.pid, inc, modelpers.age, Female )
 end
 
 function local_getnet(data :: Dict, gross::Real)::Real
