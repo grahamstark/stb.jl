@@ -74,7 +74,8 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
       for (pid,frsperson) in frshh.people
          pnum += 1
          if pnum >= num_people
-            break
+            # break
+            @goto end_of_calcs
          end
          experson = maptoexample( frsperson )
          rc1 = MiniTB.calculate( experson, DEFAULT_PARAMS )
@@ -89,6 +90,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
          res.benefit2_2 = rc2[:benefit2]
       end # people
    end # hhlds
+   @label end_of_calcs
    ran = rand()
    "Done; people $pnum rand=$ran"
 end
