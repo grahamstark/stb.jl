@@ -66,30 +66,31 @@ function make_results_frame( n :: Integer ) :: DataFrame
      net_income_2 = Vector{Union{Real,Missing}}(missing, n))
 end
 
-function doonerun( params::MiniTB.Parameters, num_people :: Integer )
+function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
    results = make_results_frame( num_people )
    pnum = 0
    for hhno in 1:num_people
       frshh = FRS_Household_Getter.get_household( hhno )
       for (pid,frsperson) in frshh.people
          pnum += 1
+         if pnum >= num_people
+            break
+         end
          experson = maptoexample( frsperson )
          rc1 = MiniTB.calculate( experson, DEFAULT_PARAMS )
          rc2 = MiniTB.calculate( experson, tbparams )
          res = results[pnum,:]
          res.pid = experson.pid
-         res.tax_1 = rc1.tax
-         res.benefit1_1 = rc1.benefit1
-         res.benefit2_1 = rc1.benefit2
-         res.tax_2 = rc2.tax
-         res.benefit1_2 = rc2.benefit1
-         res.benefit2_2 = rc2.benefit2
-         if pnum >= num_people
-            break
-         end
+         res.tax_1 = rc1[:tax]
+         res.benefit1_1 = rc1[:benefit1]
+         res.benefit2_1 = rc1[:benefit2]
+         res.tax_2 = rc2[:tax]
+         res.benefit1_2 = rc2[:benefit1]
+         res.benefit2_2 = rc2[:benefit2]
       end # people
    end # hhlds
-   "Done; people $pnum"
+   ran = rand()
+   "Done; people $pnum rand=$ran"
 end
 
 
