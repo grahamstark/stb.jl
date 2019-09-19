@@ -4,6 +4,7 @@ using Example_Household_Getter
 using Model_Household
 using Utils
 using MiniTB
+using DataFrames
 using TBComponents
 
 println("starting server")
@@ -16,15 +17,11 @@ println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_house
 
 
 function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
-   minipers :: MiniTB.person
-   minipers.pid = modelpers.pid
-   minipers.age = modelpers.age
-   minipers.sex = ( minipers.age % 2) == 0 ? male : female;
-   minipers.wage = 0.0
+   inc = 0.0
    for (k,v) in modelpers.income
-      minipers.wage += v
+      inc += v
    end
-   minipers
+   MiniTB.Person( modelpers.pid, inc, modelpers.age, female )
 end
 
 function local_getnet(data :: Dict, gross::Real)::Real
