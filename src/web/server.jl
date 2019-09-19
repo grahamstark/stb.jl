@@ -17,15 +17,17 @@ const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_l_limit = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_l_limit=0&ben2_u_limit=0"
 
+include( "web_model_libs.jl")
+
 # Headers -- set Access-Control-Allow-Origin for either dev or prod
 # this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
 # not used yet
-function withHeaders(res, req)
+function with_headers(res, req)
     println("Origin: ", get(req[:headers], "Origin", ""))
     headers  = HttpCommon.headers()
     headers["Content-Type"] = "application/json; charset=utf-8"
-    if get(req[:headers], "Origin", "") == "http://localhost:4200"
-        headers["Access-Control-Allow-Origin"] = "http://localhost:4200"
+    if get(req[:headers], "Origin", "") == "http://localhost:$DEFAULT_PORT"
+        headers["Access-Control-Allow-Origin"] = "http://localhost:$DEFAULT_PORT"
     else
         headers["Access-Control-Allow-Origin"] = "http://app.juliadiffeq.org"
     end
@@ -78,6 +80,7 @@ end
    page("/hhld/:hid", req -> get_hh((req[:params][:hid]))),
    page("/paramtest", req -> paramtest(req)),
    page("/bc", req -> local_makebc(req)),
+   page("/run", req -> doonerun(req)),
    Mux.notfound(),
 )
 

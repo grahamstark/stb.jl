@@ -21,7 +21,7 @@ function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
    minipers.age = modelpers.age
    minipers.sex = ( minipers.age % 2) == 0 ? male : female;
    minipers.wage = 0.0
-   for k,v in modelpers.income
+   for (k,v) in modelpers.income
       minipers.wage += v
    end
    minipers
@@ -56,7 +56,7 @@ function map_params( req )
 end
 
 
-makeresults = DataFrame( n :: Integer ) :: DataFrame
+function make_results_frame( n :: Integer ) :: DataFrame
    DataFrame(
      pid = Vector{Union{BigInt,Missing}}(missing, n),
      tax_1 = Vector{Union{Real,Missing}}(missing, n),
@@ -69,14 +69,12 @@ makeresults = DataFrame( n :: Integer ) :: DataFrame
      net_income_2 = Vector{Union{Real,Missing}}(missing, n))
 end
 
-function doonerun( req )
-   num_people = 10_000
-   tbparams = map_params( req )
-   results = makeresults( num_people )
-   pni = 0
+function doonerun( params::MiniTB.Parameters, num_people :: Integer )
+   results = make_results_frame( num_people )
+   pnum = 0
    for hhno in 1:num_people
       frshh = FRS_Household_Getter.get_household( hhno )
-      for pid,frsperson in frshh.people
+      for (pid,frsperson) in frshh.people
          pnum += 1
          experson = maptoexample( frsperson )
          rc1 = MiniTB.calculate( experson, DEFAULT_PARAMS )
@@ -92,8 +90,18 @@ function doonerun( req )
          if pnum >= num_people
             break
          end
-      end
+      end # people
+   end # hhlds
+   "Done; people $pnum"
 end
+
+
+function doonerun( req )
+   num_people = 10_000
+   tbparams = map_params( req )
+   rc = doonerun( tbparams, num_people )
+   JSON.json( rc )
+end # doonerun
 
 function local_makebc( req )
    tbparams = map_params( req )
