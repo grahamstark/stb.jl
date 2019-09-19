@@ -25,9 +25,11 @@ function local_makebc(pers::MiniTB.Person, params::Parameters)::Array{Float64,2}
 end
 
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
+const DEFAULT_PORT=8000
+const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
+const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=500.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_l_limit = 200.03&ben2_taper&ben2_u_limit = 300.20"
+const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_l_limit=0&ben2_u_limit=0"
 
-# it_allow=500.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_l_limit = 200.03&ben2_taper&ben2_u_limit = 300.20
-# it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_l_limit=0&ben2_u_limit=0
 function local_makebc(req)
    querydict = req[:parsed_querystring]
    tbparams = MiniTB.DEFAULT_PARAMS
@@ -35,7 +37,6 @@ function local_makebc(req)
    tbparams.it_rate[1] = get_if_set("it_rate_1", querydict, tbparams.it_rate[1])
    tbparams.it_rate[2] = get_if_set("it_rate_2", querydict, tbparams.it_rate[2])
    tbparams.it_band[1] = get_if_set("it_band", querydict, tbparams.it_band[1])
-
    tbparams.benefit1 = get_if_set("benefit1", querydict, tbparams.benefit1)
    tbparams.benefit2 = get_if_set("benefit2", querydict, tbparams.benefit2)
    tbparams.ben2_l_limit = get_if_set("ben2_l_limit", querydict, tbparams.ben2_l_limit)
