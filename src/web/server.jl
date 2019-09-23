@@ -121,5 +121,7 @@ port = 8000
 if length(ARGS) > 0
    port = parse(Int64, ARGS[1])
 end
-load_data( load_examples = true, load_main = true )
+load_data( load_examples = true, load_main = true, start_year = 2017 )
+const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
+
 @sync serve(dd226, port)

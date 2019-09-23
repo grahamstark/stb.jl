@@ -8,7 +8,7 @@ using DataFrames
 using TBComponents
 
 
-function load_data(; load_examples::Bool, load_main :: Bool )
+function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    example_names = Dict()
    num_households = 0
    if load_examples
@@ -16,10 +16,10 @@ function load_data(; load_examples::Bool, load_main :: Bool )
    end
    if load_main
       rc = @timed begin
-         num_households = FRS_Household_Getter.initialise()
-         mb = trunc(Integer, rc[3] / 1024^2)
-         println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
+         num_households = FRS_Household_Getter.initialise( start_year = start_year )
       end
+      mb = trunc(Integer, rc[3] / 1024^2)
+      println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
    end
    (example_names, num_households )
 end
@@ -96,6 +96,3 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
    ran = rand()
    "Done; people $pnum rand=$ran"
 end
-
-
-const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
