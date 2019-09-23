@@ -3,47 +3,69 @@ using Test
 using TBComponents
 using CSV
 using DataFrames
+using StatsBase
 
 include("../src/web/web_model_libs.jl" )
 
-example_names, num_households = load_data( load_examples = true, load_main = true, start_year = 2017 )
+example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
 
-hhlds_to_do = 15_000 # actually, just people
+hhlds_to_do = num_households # 15_000 # actually, just people
+people_to_do = num_people
 
 params = DEFAULT_PARAMS
 
-@time results = doonerun( params, hhlds_to_do )
+num_repeats = 50
 
-CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
+for i in 1:4
 
-@time begin
+    @time begin
 
-    deciles_1 = TBComponents.binify( results, 10, :weight, :net_income_1 )
-    deciles_2 = TBComponents.binify( results, 10, :weight, :net_income_2 )
+        results = doonerun( params, num_households, num_people, num_repeats )
+        println( "computing $num_households hhlds and $num_people people ")
+        CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
-    poverty_line = deciles_1[5,3]*(2.0/3.0)
-    growth = 0.02
+        deciles_1 = TBComponents.binify( results, 10, :weight, :net_income_1 )
+        deciles_2 = TBComponents.binify( results, 10, :weight, :net_income_2 )
 
-    inequality_1 = TBComponents.makeinequality( results, :weight, :net_income_1 )
-    inequality_2 = TBComponents.makeinequality( results, :weight, :net_income_2 )
+        poverty_line = deciles_1[5,3]*(2.0/3.0)
+        growth = 0.02
 
-    println( "weight " )
-    println( results[!,:weight ])
+        inequality_1 = TBComponents.makeinequality( results, :weight, :net_income_1 )
+        inequality_2 = TBComponents.makeinequality( results, :weight, :net_income_2 )
 
-    poverty_1 = TBComponents.makepoverty( results, poverty_line, growth, :weight, :net_income_1  )
-    poverty_2 = TBComponents.makepoverty( results, poverty_line, growth, :weight, :net_income_2  )
+        # println( "weight " )
+        # println( results[!,:weight ])
 
-    println( "   deciles_1 = $( deciles_1)" )
-    println( "   deciles_2 = $( deciles_2)" )
+        poverty_1 = TBComponents.makepoverty( results, poverty_line, growth, :weight, :net_income_1  )
+        poverty_2 = TBComponents.makepoverty( results, poverty_line, growth, :weight, :net_income_2  )
 
-    println( "   poverty_line = $(poverty_line)" )
-    println( "   growth = $(growth)" )
+        results.gainers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).>=0.01).*results.weight
+        results.losers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).<= -0.01).*results.weight
+        results.nc = ((abs.(results.net_income_2 - results.net_income_1)./results.net_income_1).< 0.01).*results.weight
 
-    println( "   inequality_1 = $(inequality_1)" )
-    println( "   inequality_2 = $(inequality_2)" )
+        gainlose_by_thing = DataFrame(
+            thing=levels( results.thing ),
+            losers = counts(results.thing,fweights( results.losers )),
+            nc= counts(results.thing,fweights( results.nc )),
+            gainers = counts(results.thing,fweights( results.gainers )))
+        gainlose_by_sex = DataFrame(
+            sex=levels( results.sex ),
+            losers = counts(Int.(results.sex),fweights( results.losers )),
+            nc= counts(Int.(results.sex),fweights( results.nc )),
+            gainers = counts(Int.(results.sex),fweights( results.gainers )))
 
-    println( "   poverty_1 = $(poverty_1)" )
-    println( "   poverty_2 = $(poverty_2)" )
+        if i == 1
+            println( "   deciles_1 = $( deciles_1)" )
+            println( "   deciles_2 = $( deciles_2)" )
 
+            println( "   poverty_line = $(poverty_line)" )
+            println( "   growth = $(growth)" )
 
-end
+            println( "   inequality_1 = $(inequality_1)" )
+            println( "   inequality_2 = $(inequality_2)" )
+
+            println( "   poverty_1 = $(poverty_1)" )
+            println( "   poverty_2 = $(poverty_2)" )
+        end # print 1st
+    end # timing block
+end # iteration

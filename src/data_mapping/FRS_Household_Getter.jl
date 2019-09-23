@@ -7,13 +7,13 @@ export  initialise, get_household
 MODEL_HOUSEHOLDS=missing
 
 """
-return number of households available
+return (number of households available, num people loaded inc. kids, num hhls in dataset (should always = item[1]))
 """
 function initialise(
         ;
         household_name :: AbstractString = "model_households",
         people_name :: AbstractString = "model_people",
-        start_year = -1 ) :: Integer
+        start_year = -1 ) :: Tuple
 
     global MODEL_HOUSEHOLDS
     # FIXME this is a hack
@@ -33,7 +33,7 @@ function initialise(
         MODEL_HOUSEHOLDS[hseq] = load_hhld_from_frame( hseq, hh_dataset[hseq,:], people_dataset )
         uprate!( MODEL_HOUSEHOLDS[hseq] )
     end
-    size(MODEL_HOUSEHOLDS)[1]
+    (size(MODEL_HOUSEHOLDS)[1],npeople,nhhlds)
 end
 
 function get_household( pos :: Integer ) :: Household

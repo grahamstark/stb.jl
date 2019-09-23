@@ -17,12 +17,12 @@ function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    end
    if load_main
       rc = @timed begin
-         num_households = FRS_Household_Getter.initialise( start_year = start_year )
+         num_households,num_people,nhh2 = FRS_Household_Getter.initialise( start_year = start_year )
       end
       mb = trunc(Integer, rc[3] / 1024^2)
       println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
    end
-   (example_names, num_households )
+   (example_names, num_households, num_people )
 end
 
 
@@ -73,10 +73,10 @@ function make_results_frame( n :: Integer ) :: DataFrame
      metr_2 = Vector{Union{Real,Missing}}(missing, n))
 end
 
-function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataFrame
+function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_people :: Integer, num_repeats :: Integer ) :: DataFrame
    results = make_results_frame( num_people )
    pnum = 0
-   for hhno in 1:num_people
+   for hhno in 1:num_households
       frshh = FRS_Household_Getter.get_household( hhno )
       for (pid,frsperson) in frshh.people
          pnum += 1
@@ -85,8 +85,12 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataF
             @goto end_of_calcs
          end
          experson = maptoexample( frsperson )
-         rc1 = MiniTB.calculate( experson, DEFAULT_PARAMS )
-         rc2 = MiniTB.calculate( experson, tbparams )
+         rc1 = missing
+         rc2 = missing
+         for i in 1:num_repeats
+            rc1 = MiniTB.calculate( experson, DEFAULT_PARAMS )
+            rc2 = MiniTB.calculate( experson, tbparams )
+         end
          res = results[pnum,:]
          res.pid = experson.pid
          res.sex = experson.sex
@@ -114,5 +118,5 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataF
    @label end_of_calcs
    ran = rand()
    print("Done; people $pnum rand=$ran\n")
-   results;
+   results[1:pnum,:];
 end
