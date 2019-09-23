@@ -51,6 +51,7 @@ end
 function make_results_frame( n :: Integer ) :: DataFrame
    DataFrame(
      pid = Vector{Union{BigInt,Missing}}(missing, n),
+     weight = Vector{Union{Real,Missing}}(missing, n),
      sex = Vector{Union{Gender,Missing}}(missing, n),
      thing = Vector{Union{Integer,Missing}}(missing, n),
      gross_income = Vector{Union{Real,Missing}}(missing, n),
@@ -79,7 +80,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataF
       frshh = FRS_Household_Getter.get_household( hhno )
       for (pid,frsperson) in frshh.people
          pnum += 1
-         if pnum >= num_people
+         if pnum > num_people
             # break
             @goto end_of_calcs
          end
@@ -90,7 +91,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataF
          res.pid = experson.pid
          res.sex = experson.sex
          res.gross_income = experson.wage
-
+         res.weight = frshh.weight
          res.thing = rand(1:10)
          res.tax_1 = rc1[:tax]
          res.benefit1_1 = rc1[:benefit1]
