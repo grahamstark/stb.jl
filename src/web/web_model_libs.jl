@@ -63,7 +63,7 @@ function make_results_frame( n :: Integer ) :: DataFrame
      net_income_2 = Vector{Union{Real,Missing}}(missing, n))
 end
 
-function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
+function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataFrame
    results = make_results_frame( num_people )
    pnum = 0
    for hhno in 1:num_people

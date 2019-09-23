@@ -17,7 +17,7 @@ function initialise(
 
     global MODEL_HOUSEHOLDS
     # FIXME this is a hack
-    Year_Starts = [2015=(2,2), 2016=(19243,43560),2017=(38551,87612)]
+    Year_Starts = Dict(2015=>(2,2), 2016=>(19243,43560),2017=>(38551,87612))
     start_hh_row = 2
     start_pers_row = 2
     if start_year > 2015
