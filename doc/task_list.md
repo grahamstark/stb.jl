@@ -41,3 +41,5 @@
 * gross income
 
 ## Tabulators
+
+gainers/losers by group

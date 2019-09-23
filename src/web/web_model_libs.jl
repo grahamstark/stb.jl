@@ -7,13 +7,22 @@ using MiniTB
 using DataFrames
 using TBComponents
 
-println("starting server")
-rc = @timed begin
-   example_names = Example_Household_Getter.initialise()
-   num_households = FRS_Household_Getter.initialise()
+
+function load_data(; load_examples::Bool, load_main :: Bool )
+   example_names = Dict()
+   num_households = 0
+   if load_examples
+      example_names = Example_Household_Getter.initialise()
+   end
+   if load_main
+      rc = @timed begin
+         num_households = FRS_Household_Getter.initialise()
+         mb = trunc(Integer, rc[3] / 1024^2)
+         println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
+      end
+   end
+   (example_names, num_households )
 end
-mb = trunc(Integer, rc[3] / 1024^2)
-println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
 
 
 function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
@@ -37,29 +46,17 @@ function local_makebc( person :: MiniTB.Person, tbparams :: MiniTB.Parameters )
 end
 
 
-function map_params( req )
-   querydict = req[:parsed_querystring]
-   tbparams = deepcopy(MiniTB.DEFAULT_PARAMS)
-   tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow)
-   tbparams.it_rate[1] = get_if_set("it_rate_1", querydict, tbparams.it_rate[1])
-   tbparams.it_rate[2] = get_if_set("it_rate_2", querydict, tbparams.it_rate[2])
-   tbparams.it_band[1] = get_if_set("it_band", querydict, tbparams.it_band[1])
-   tbparams.benefit1 = get_if_set("benefit1", querydict, tbparams.benefit1)
-   tbparams.benefit2 = get_if_set("benefit2", querydict, tbparams.benefit2)
-   tbparams.ben2_l_limit = get_if_set("ben2_l_limit", querydict, tbparams.ben2_l_limit)
-   tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper)
-   tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
-   tbparams
-end
-
-
 function make_results_frame( n :: Integer ) :: DataFrame
    DataFrame(
      pid = Vector{Union{BigInt,Missing}}(missing, n),
+     total_taxes_1 = Vector{Union{Real,Missing}}(missing, n),
+     total_benefits_1 = Vector{Union{Real,Missing}}(missing, n),
      tax_1 = Vector{Union{Real,Missing}}(missing, n),
      benefit1_1 = Vector{Union{Real,Missing}}(missing, n),
      benefit2_1 = Vector{Union{Real,Missing}}(missing, n),
      net_income_1 = Vector{Union{Real,Missing}}(missing, n),
+     total_taxes_2 = Vector{Union{Real,Missing}}(missing, n),
+     total_benefits_2 = Vector{Union{Real,Missing}}(missing, n),
      tax_2 = Vector{Union{Real,Missing}}(missing, n),
      benefit1_2 = Vector{Union{Real,Missing}}(missing, n),
      benefit2_2 = Vector{Union{Real,Missing}}(missing, n),
@@ -85,9 +82,14 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
          res.tax_1 = rc1[:tax]
          res.benefit1_1 = rc1[:benefit1]
          res.benefit2_1 = rc1[:benefit2]
+         res.total_taxes_1= rc1[:tax]
+         res.total_benefits_1 = rc1[:benefit2]+rc1[:benefit1]
          res.tax_2 = rc2[:tax]
          res.benefit1_2 = rc2[:benefit1]
          res.benefit2_2 = rc2[:benefit2]
+         res.total_taxes_2 = rc1[:tax]
+         res.total_benefits_2 = rc2[:benefit2]+rc2[:benefit1]
+
       end # people
    end # hhlds
    @label end_of_calcs
@@ -95,18 +97,5 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer )
    "Done; people $pnum rand=$ran"
 end
 
-
-function doonerun( req )
-   num_people = 10_000
-   tbparams = map_params( req )
-   rc = doonerun( tbparams, num_people )
-   JSON.json( rc )
-end # doonerun
-
-function local_makebc( req )
-   tbparams = map_params( req )
-   bc = local_makebc( DEFAULT_PERSON, tbparams )
-   JSON.json((base = DEFAULT_BC, changed = bc))
-end
 
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
