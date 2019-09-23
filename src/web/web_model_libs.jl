@@ -6,6 +6,7 @@ using Utils
 using MiniTB
 using DataFrames
 using TBComponents
+using Definitions
 
 
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
@@ -30,7 +31,8 @@ function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
    for (k,v) in modelpers.income
       inc += v
    end
-   MiniTB.Person( modelpers.pid, inc, modelpers.age, Female )
+   sex = modelpers.pid % 2 == 0 ? MiniTB.Male : MiniTB.Female
+   MiniTB.Person( modelpers.pid, inc, modelpers.age, sex )
 end
 
 function local_getnet(data :: Dict, gross::Real)::Real
@@ -49,18 +51,25 @@ end
 function make_results_frame( n :: Integer ) :: DataFrame
    DataFrame(
      pid = Vector{Union{BigInt,Missing}}(missing, n),
+     sex = Vector{Union{Gender,Missing}}(missing, n),
+     thing = Vector{Union{Integer,Missing}}(missing, n),
+     gross_income = Vector{Union{Real,Missing}}(missing, n),
+
      total_taxes_1 = Vector{Union{Real,Missing}}(missing, n),
      total_benefits_1 = Vector{Union{Real,Missing}}(missing, n),
      tax_1 = Vector{Union{Real,Missing}}(missing, n),
      benefit1_1 = Vector{Union{Real,Missing}}(missing, n),
      benefit2_1 = Vector{Union{Real,Missing}}(missing, n),
      net_income_1 = Vector{Union{Real,Missing}}(missing, n),
+     metr_1 = Vector{Union{Real,Missing}}(missing, n),
+
      total_taxes_2 = Vector{Union{Real,Missing}}(missing, n),
      total_benefits_2 = Vector{Union{Real,Missing}}(missing, n),
      tax_2 = Vector{Union{Real,Missing}}(missing, n),
      benefit1_2 = Vector{Union{Real,Missing}}(missing, n),
      benefit2_2 = Vector{Union{Real,Missing}}(missing, n),
-     net_income_2 = Vector{Union{Real,Missing}}(missing, n))
+     net_income_2 = Vector{Union{Real,Missing}}(missing, n),
+     metr_2 = Vector{Union{Real,Missing}}(missing, n))
 end
 
 function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataFrame
@@ -79,20 +88,30 @@ function doonerun( tbparams::MiniTB.Parameters, num_people :: Integer ) :: DataF
          rc2 = MiniTB.calculate( experson, tbparams )
          res = results[pnum,:]
          res.pid = experson.pid
+         res.sex = experson.sex
+         res.gross_income = experson.wage
+
+         res.thing = rand(1:10)
          res.tax_1 = rc1[:tax]
          res.benefit1_1 = rc1[:benefit1]
          res.benefit2_1 = rc1[:benefit2]
          res.total_taxes_1= rc1[:tax]
          res.total_benefits_1 = rc1[:benefit2]+rc1[:benefit1]
+         res.net_income_1 = rc1[:netincome]
+         res.metr_1 = rc1[:metr]
+
          res.tax_2 = rc2[:tax]
          res.benefit1_2 = rc2[:benefit1]
          res.benefit2_2 = rc2[:benefit2]
          res.total_taxes_2 = rc1[:tax]
          res.total_benefits_2 = rc2[:benefit2]+rc2[:benefit1]
+         res.net_income_2 = rc2[:netincome]
+         res.metr_2 = rc2[:metr]
 
       end # people
    end # hhlds
    @label end_of_calcs
    ran = rand()
-   "Done; people $pnum rand=$ran"
+   print("Done; people $pnum rand=$ran\n")
+   results;
 end
