@@ -9,7 +9,7 @@ using TBComponents
 
 
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
-   example_names = Dict()
+   example_names = Vector{AbstractString}()
    num_households = 0
    if load_examples
       example_names = Example_Household_Getter.initialise()

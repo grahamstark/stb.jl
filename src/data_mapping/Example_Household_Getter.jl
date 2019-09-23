@@ -10,7 +10,7 @@ export  initialise, get_household
 
 EXAMPLE_HOUSEHOLDS = Dict{String,Household}()
 
-KEYMAP = Vector{String}()
+KEYMAP = Vector{AbstractString}()
 
 
 """
@@ -19,7 +19,7 @@ return number of households available
 function initialise(
     ;
     household_name :: AbstractString = "example_households",
-    people_name :: AbstractString = "example_people"
+    people_name :: AbstractString = "example_people" ) :: Vector{AbstractString}
 
     global KEYMAP
     global EXAMPLE_HOUSEHOLDS

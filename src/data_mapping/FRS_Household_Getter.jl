@@ -13,8 +13,7 @@ function initialise(
         ;
         household_name :: AbstractString = "model_households",
         people_name :: AbstractString = "model_people",
-        start_year = -1 ) :: Vector{String}
-    ) :: Integer
+        start_year = -1 ) :: Integer
 
     global MODEL_HOUSEHOLDS
     # FIXME this is a hack
