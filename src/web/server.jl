@@ -91,22 +91,23 @@ end
 
 example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
 
+const NUM_REPEATS = 50 # simulates a longer calculation
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
-const BASE_RESULTS = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats )
+const BASE_RESULTS = doonerun( DEFAULT_PARAMS, num_households, num_people, 1 )
 
 
 function web_doonerun( req )
-   global num_households, num_people, DEFAULT_RUN
-   tbparams = map_params( req )
+   global num_households, num_people, BASE_RESULTS
+   tbparams = web_map_params( req )
    rc = doonerun( tbparams, num_people )
-   results = doonerun( params, num_households, num_people, num_repeats )
+   results = doonerun( params, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results, BASE_RESULTS )
    JSON.json( summary_output )
 end # doonerun
 
 
 function web_makebc( req )
-   tbparams = map_params( req )
+   tbparams = web_map_params( req )
    bc = web_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
@@ -134,3 +135,7 @@ end
 
 
 @sync serve(dd226, port)
+
+while true # FIXME better way?
+   ;
+end
