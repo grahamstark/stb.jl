@@ -56,21 +56,13 @@ function make_results_frame( n :: Integer ) :: DataFrame
      thing = Vector{Union{Integer,Missing}}(missing, n),
      gross_income = Vector{Union{Real,Missing}}(missing, n),
 
-     total_taxes_1 = Vector{Union{Real,Missing}}(missing, n),
-     total_benefits_1 = Vector{Union{Real,Missing}}(missing, n),
-     tax_1 = Vector{Union{Real,Missing}}(missing, n),
-     benefit1_1 = Vector{Union{Real,Missing}}(missing, n),
-     benefit2_1 = Vector{Union{Real,Missing}}(missing, n),
-     net_income_1 = Vector{Union{Real,Missing}}(missing, n),
-     metr_1 = Vector{Union{Real,Missing}}(missing, n),
-
-     total_taxes_2 = Vector{Union{Real,Missing}}(missing, n),
-     total_benefits_2 = Vector{Union{Real,Missing}}(missing, n),
-     tax_2 = Vector{Union{Real,Missing}}(missing, n),
-     benefit1_2 = Vector{Union{Real,Missing}}(missing, n),
-     benefit2_2 = Vector{Union{Real,Missing}}(missing, n),
-     net_income_2 = Vector{Union{Real,Missing}}(missing, n),
-     metr_2 = Vector{Union{Real,Missing}}(missing, n))
+     total_taxes = Vector{Union{Real,Missing}}(missing, n),
+     total_benefits = Vector{Union{Real,Missing}}(missing, n),
+     tax = Vector{Union{Real,Missing}}(missing, n),
+     benefit1 = Vector{Union{Real,Missing}}(missing, n),
+     benefit2 = Vector{Union{Real,Missing}}(missing, n),
+     net_income = Vector{Union{Real,Missing}}(missing, n),
+     metr = Vector{Union{Real,Missing}}(missing, n)
 end
 
 function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_people :: Integer, num_repeats :: Integer ) :: DataFrame
@@ -97,21 +89,15 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.gross_income = experson.wage
          res.weight = frshh.weight
          res.thing = rand(1:10)
-         res.tax_1 = rc1[:tax]
-         res.benefit1_1 = rc1[:benefit1]
-         res.benefit2_1 = rc1[:benefit2]
-         res.total_taxes_1= rc1[:tax]
-         res.total_benefits_1 = rc1[:benefit2]+rc1[:benefit1]
-         res.net_income_1 = rc1[:netincome]
-         res.metr_1 = rc1[:metr]
+         res.tax = rc1[:tax]
+         res.benefit1 = rc1[:benefit1]
+         res.benefit2 = rc1[:benefit2]
+         res.total_taxes= rc1[:tax]
+         res.total_benefits = rc1[:benefit2]+rc1[:benefit1]
+         res.net_income = rc1[:netincome]
+         res.metr = rc1[:metr]
 
-         res.tax_2 = rc2[:tax]
-         res.benefit1_2 = rc2[:benefit1]
-         res.benefit2_2 = rc2[:benefit2]
-         res.total_taxes_2 = rc1[:tax]
-         res.total_benefits_2 = rc2[:benefit2]+rc2[:benefit1]
-         res.net_income_2 = rc2[:netincome]
-         res.metr_2 = rc2[:metr]
+
 
       end # people
    end # hhlds

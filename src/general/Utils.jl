@@ -4,6 +4,14 @@ using Base.Unicode
 
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
 
+function addsysnotoname( names, sysno ) :: Array{Symbol,1}
+    a = Array{Symbol,1}(undef, 0)
+    for n in names
+        push!( a, Symbol(String( n )*"_$sysno"))
+    end
+    a
+    # Symbol.(String.( names ).*"_sys_$sysno")
+end
 
 function get_if_set(key, dict::Dict, default)
   if haskey(dict, key)
