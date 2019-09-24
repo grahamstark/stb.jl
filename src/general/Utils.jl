@@ -3,6 +3,7 @@ module Utils
 using Base.Unicode
 
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
+export addsysnotoname
 
 function addsysnotoname( names, sysno ) :: Array{Symbol,1}
     a = Array{Symbol,1}(undef, 0)

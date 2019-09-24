@@ -62,7 +62,7 @@ function make_results_frame( n :: Integer ) :: DataFrame
      benefit1 = Vector{Union{Real,Missing}}(missing, n),
      benefit2 = Vector{Union{Real,Missing}}(missing, n),
      net_income = Vector{Union{Real,Missing}}(missing, n),
-     metr = Vector{Union{Real,Missing}}(missing, n)
+     metr = Vector{Union{Real,Missing}}(missing, n))
 end
 
 function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_people :: Integer, num_repeats :: Integer ) :: DataFrame
@@ -96,9 +96,6 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.total_benefits = rc1[:benefit2]+rc1[:benefit1]
          res.net_income = rc1[:netincome]
          res.metr = rc1[:metr]
-
-
-
       end # people
    end # hhlds
    @label end_of_calcs
