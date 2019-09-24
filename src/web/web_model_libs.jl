@@ -55,7 +55,7 @@ function operate_on_frame( results :: DataFrame, adder, data::Dict )
    total
 end
 
-function summarise_results( base_results::DataFrame, results :: DataFrame )::Tuple
+function summarise_results!( results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
     basenames = names( base_results )
     basenames = addsysnotoname( basenames, 1 )
@@ -190,7 +190,7 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
         poverty_line=poverty_line,
         growth_assumption=growth
     )
-    (summary_output, results )
+    summary_output
 end
 
 function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person

@@ -28,7 +28,7 @@ base_results = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats
 @time begin
 
     results = doonerun( params, num_households, num_people, num_repeats )
-    summary_output, results = summarise_results( results, base_results )
+    summary_output = summarise_results!( results, base_results )
 
     if print_test
         print( "   deciles_1 = $( summary_output.deciles_1)\n\n" )

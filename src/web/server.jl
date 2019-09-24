@@ -91,13 +91,16 @@ end
 
 example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
 
+const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
+const BASE_RESULTS = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats )
+
 
 function web_doonerun( req )
-   global num_households, num_people
+   global num_households, num_people, DEFAULT_RUN
    tbparams = map_params( req )
    rc = doonerun( tbparams, num_people )
    results = doonerun( params, num_households, num_people, num_repeats )
-   summary_output, results = summarise_results( results, base_results )
+   summary_output = summarise_results!( results, BASE_RESULTS )
    JSON.json( summary_output )
 end # doonerun
 
@@ -129,7 +132,5 @@ if length(ARGS) > 0
 end
 
 
-const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
-const DEFAULT_RUN = = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats )
 
 @sync serve(dd226, port)
