@@ -17,7 +17,7 @@ const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_l_limit = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_l_limit=0&ben2_u_limit=0"
 
-println("starting server")
+println("starting up")
 
 include( "web_model_libs.jl")
 
@@ -48,11 +48,6 @@ end
 function addqstrdict(app, req)
    req[:parsed_querystring] = qstrtodict(req[:query])
    return app(req)
-end
-
-function paramtest(req)
-   JSON.json(req[:query])
-   JSON.json(req)
 end
 
 # Better error handling
@@ -91,24 +86,25 @@ end
 
 example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
 
-const NUM_REPEATS = 50 # simulates a longer calculation
+const NUM_REPEATS = 1 # simulates a longer calculation
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
-const BASE_RESULTS = doonerun( DEFAULT_PARAMS, num_households, num_people, 1 )
+const BASE_RESULTS = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, NUM_REPEATS )
 
 
 function web_doonerun( req )
-   global num_households, num_people, BASE_RESULTS
+   global num_households, num_people, BASE_RESULTS, NUM_REPEATS
    tbparams = web_map_params( req )
-   rc = doonerun( tbparams, num_people )
-   results = doonerun( params, num_households, num_people, NUM_REPEATS )
+   results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results, BASE_RESULTS )
+   println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
+   println( "tbparams\n$tbparams")
    JSON.json( summary_output )
 end # doonerun
 
 
 function web_makebc( req )
    tbparams = web_map_params( req )
-   bc = web_makebc( DEFAULT_PERSON, tbparams )
+   bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
@@ -120,7 +116,6 @@ end
 # Mux.splitquery,
    page(respond("<h1>OU DD226 TB Model</h1>")),
    page("/hhld/:hid", req -> web_get_hh((req[:params][:hid]))),
-   page("/paramtest", req -> web_paramtest(req)),
    page("/bc", req -> web_makebc(req)),
    page("/run", req -> web_doonerun(req)),
    Mux.notfound(),
@@ -132,10 +127,9 @@ if length(ARGS) > 0
    port = parse(Int64, ARGS[1])
 end
 
-
-
+println( "starting server port $port")
 @sync serve(dd226, port)
 
-while true # FIXME better way?
-   ;
-end
+# while true # FIXME better way?
+#   ;
+# end

@@ -7,8 +7,8 @@ using MiniTB
 using DataFrames
 using TBComponents
 using Definitions
-
-
+using CSV
+using StatsBase
 
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    example_names = Vector{AbstractString}()
@@ -67,7 +67,7 @@ function summarise_results!( results::DataFrame, base_results :: DataFrame )::Na
     results = hcat( base_results, results )
     @assert results.pid_1 == results.pid_2
     println( "computing $num_households hhlds and $num_people people ")
-    CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
+    # CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
 
     deciles_1 = TBComponents.binify( results, 10, :weight_1, :net_income_1 )
