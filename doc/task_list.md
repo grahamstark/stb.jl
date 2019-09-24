@@ -42,4 +42,5 @@
 
 ## Tabulators
 
-gainers/losers by group
+* gainers/losers by group
+* inequality/poverty

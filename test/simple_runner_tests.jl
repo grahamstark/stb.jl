@@ -4,6 +4,7 @@ using TBComponents
 using CSV
 using DataFrames
 using StatsBase
+using Utils
 
 include("../src/web/web_model_libs.jl" )
 
@@ -22,6 +23,7 @@ for i in 1:4
 
         results = doonerun( params, num_households, num_people, num_repeats )
         println( "computing $num_households hhlds and $num_people people ")
+        disallowmissing!( results )
         CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
         deciles_1 = TBComponents.binify( results, 10, :weight, :net_income_1 )
@@ -49,7 +51,7 @@ for i in 1:4
             nc= counts(results.thing,fweights( results.nc )),
             gainers = counts(results.thing,fweights( results.gainers )))
         gainlose_by_sex = DataFrame(
-            sex=levels( results.sex ),
+            sex=pretty.(levels( results.sex )),
             losers = counts(Int.(results.sex),fweights( results.losers )),
             nc= counts(Int.(results.sex),fweights( results.nc )),
             gainers = counts(Int.(results.sex),fweights( results.gainers )))
@@ -66,6 +68,11 @@ for i in 1:4
 
             println( "   poverty_1 = $(poverty_1)" )
             println( "   poverty_2 = $(poverty_2)" )
+
+            println( "   gainlose_by_sex = $(gainlose_by_sex)" )
+            println( "   gainlose_by_thing = $(gainlose_by_thing)" )
+
         end # print 1st
+        json_out = JSON.json( res_tup )
     end # timing block
 end # iteration
