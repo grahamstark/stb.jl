@@ -108,6 +108,15 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
     metr_hist_2 = fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights
     metr_hist_3 = metr_hist_2-metr_hist_1
 
+    targetting_benefit_1 = operate_on_frame( results, poverty_targetting_adder,
+        Dict(
+         :which_element_1=>:benefit1_1,
+         :which_element_2=>:benefit1_2,
+         :poverty_line=>poverty_line
+        )
+    )
+
+
     summary_output = (
         gainlose_by_sex=gainlose_by_sex,
         gainlose_by_thing=gainlose_by_thing,
@@ -124,6 +133,7 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
         deciles_1=deciles_1,
         deciles_2=deciles_2,
         deciles_3=deciles_3,
+        targetting_benefit_1=targetting_benefit_1,
         poverty_line=poverty_line,
         growth_assumption=growth
     )
