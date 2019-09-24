@@ -30,20 +30,18 @@ mr_edges = [-99999.99, 0.0, 0.1, 0.25, 0.5, 0.75, 1.0, 9999.0]
 growth = 0.02
 
 function poverty_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
-   which_1 = data[:which_element_1]
-   which_2 = data[:which_element_2]
+   which = data[:which_element]
    if dfr.net_income_1 <= data[:poverty_line]
-      return (dfr[which_2]-dfr[which_1])*dfr.weight_1
+      return dfr[which]*dfr.weight_1
    end
    return 0.0
 end
 
 function characteristic_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
-   which_1 = data[:which_element_1]
-   which_2 = data[:which_element_2]
+   which = data[:which_element]
    characteristic = data[:characteristic]
    if dfr[characteristic] in data[:targets]
-      return (dfr[which_2]-dfr[which_1])*dfr.weight_1
+      return dfr[which]*dfr.weight_1
    end
    return 0.0
 end
@@ -86,6 +84,18 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
     poverty_2 = TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_2  )
     poverty_3 =  diff_between( poverty_1, poverty_2 )
 
+    totals_1 = zeros(4)
+    totals_1[1]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
+    totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
+    totals_1[3]=sum(results[!,:benefits1_1].*results[!,:weight_1])
+    totals_1[4]=sum(results[!,:benefits2_1].*results[!,:weight_1])
+    totals_2 = zeros(4)
+    totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
+    totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
+    totals_2[3]=sum(results[!,:benefits1_2].*results[!,:weight_1])
+    totals_2[4]=sum(results[!,:benefits2_2].*results[!,:weight_1])
+    totals_3 = totals_2-totals_1
+    totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2"]
 
     disallowmissing!( results )
 
@@ -108,10 +118,15 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
     metr_hist_2 = fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights
     metr_hist_3 = metr_hist_2-metr_hist_1
 
-    targetting_benefit_1 = operate_on_frame( results, poverty_targetting_adder,
+    targetting_benefit1_1 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
-         :which_element_1=>:benefit1_1,
-         :which_element_2=>:benefit1_2,
+         :which_element=>:benefit1_1,
+         :poverty_line=>poverty_line
+        )
+    )
+    targetting_benefit1_2 = operate_on_frame( results, poverty_targetting_adder,
+        Dict(
+         :which_element=>:benefit1_2,
          :poverty_line=>poverty_line
         )
     )
@@ -133,7 +148,12 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
         deciles_1=deciles_1,
         deciles_2=deciles_2,
         deciles_3=deciles_3,
-        targetting_benefit_1=targetting_benefit_1,
+        targetting_benefit1_1=targetting_benefit1_1,
+        targetting_benefit1_2=targetting_benefit1_2,
+        totals_1=totals_1,
+        totals_2=totals_2,
+        totals_3=totals_3,
+        totals_names=totals_names,
         poverty_line=poverty_line,
         growth_assumption=growth
     )
