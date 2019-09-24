@@ -80,7 +80,8 @@ params = deepcopy(DEFAULT_PARAMS)
 num_repeats = 50
 
 json_out=missing
-results=missing
+results=missing    growth = 0.02
+
 
 base_results = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats )
 
