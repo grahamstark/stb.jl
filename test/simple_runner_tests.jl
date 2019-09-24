@@ -9,7 +9,7 @@ using Utils
 include("../src/web/web_model_libs.jl" )
 
 
-print_test = true
+print_test = false
 
 example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
 

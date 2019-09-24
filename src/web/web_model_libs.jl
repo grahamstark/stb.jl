@@ -87,13 +87,13 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
     totals_1 = zeros(4)
     totals_1[1]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
     totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
-    totals_1[3]=sum(results[!,:benefits1_1].*results[!,:weight_1])
-    totals_1[4]=sum(results[!,:benefits2_1].*results[!,:weight_1])
+    totals_1[3]=sum(results[!,:benefit1_1].*results[!,:weight_1])
+    totals_1[4]=sum(results[!,:benefit2_1].*results[!,:weight_1])
     totals_2 = zeros(4)
     totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
     totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
-    totals_2[3]=sum(results[!,:benefits1_2].*results[!,:weight_1])
-    totals_2[4]=sum(results[!,:benefits2_2].*results[!,:weight_1])
+    totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
+    totals_2[4]=sum(results[!,:benefit2_2].*results[!,:weight_1])
     totals_3 = totals_2-totals_1
     totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2"]
 
@@ -124,32 +124,65 @@ function summarise_results( base_results::DataFrame, results :: DataFrame )::Tup
          :poverty_line=>poverty_line
         )
     )
+    targetting_benefit1_1 /= totals_1[3]
+
     targetting_benefit1_2 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
          :which_element=>:benefit1_2,
          :poverty_line=>poverty_line
         )
     )
+    targetting_benefit1_2 /= totals_2[3]
+
+    targetting_benefit2_1 = operate_on_frame( results, poverty_targetting_adder,
+        Dict(
+         :which_element=>:benefit2_1,
+         :poverty_line=>poverty_line
+        )
+    )
+    targetting_benefit2_1 /= totals_1[4]
+
+    targetting_benefit2_2 = operate_on_frame( results, poverty_targetting_adder,
+        Dict(
+         :which_element=>:benefit2_2,
+         :poverty_line=>poverty_line
+        )
+    )
+    targetting_benefit2_2 /= totals_2[4]
+
+    targetting_benefit1_3 = targetting_benefit1_2 - targetting_benefit1_1
+    targetting_benefit2_3 = targetting_benefit2_2 - targetting_benefit2_1
 
 
     summary_output = (
         gainlose_by_sex=gainlose_by_sex,
         gainlose_by_thing=gainlose_by_thing,
+
         poverty_1=poverty_1,
         poverty_2=poverty_2,
         poverty_3=poverty_3,
+
         inequality_1=inequality_1,
         inequality_2=inequality_2,
         inequality_3=inequality_3,
+
         metr_hist_1=metr_hist_1,
         metr_hist_2=metr_hist_2,
         metr_hist_3=metr_hist_3,
         metr_axis=mr_edges,
+
         deciles_1=deciles_1,
         deciles_2=deciles_2,
         deciles_3=deciles_3,
+
         targetting_benefit1_1=targetting_benefit1_1,
         targetting_benefit1_2=targetting_benefit1_2,
+        targetting_benefit1_3=targetting_benefit1_3,
+
+        targetting_benefit2_1=targetting_benefit2_1,
+        targetting_benefit2_2=targetting_benefit2_2,
+        targetting_benefit2_3=targetting_benefit2_3,
+
         totals_1=totals_1,
         totals_2=totals_2,
         totals_3=totals_3,
