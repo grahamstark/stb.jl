@@ -88,7 +88,7 @@ base_results = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats
 
     results = doonerun( params, num_households, num_people, num_repeats )
 
-    res_tup = summarise_results( results )
+    res_tup = summarise_results( results, base_results )
 
     if false
         println( "   deciles_1 = $( res_tup.deciles_1)" )
