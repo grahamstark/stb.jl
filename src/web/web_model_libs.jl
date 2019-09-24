@@ -9,6 +9,7 @@ using TBComponents
 using Definitions
 
 
+
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    example_names = Vector{AbstractString}()
    num_households = 0
@@ -25,6 +26,109 @@ function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    (example_names, num_households, num_people )
 end
 
+mr_edges = [-99999.99, 0.0, 0.1, 0.25, 0.5, 0.75, 1.0, 9999.0]
+growth = 0.02
+
+function poverty_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
+   which_1 = data[:which_element_1]
+   which_2 = data[:which_element_2]
+   if dfr.net_income_1 <= data[:poverty_line]
+      return (dfr[which_2]-dfr[which_1])*dfr.weight_1
+   end
+   return 0.0
+end
+
+function characteristic_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
+   which_1 = data[:which_element_1]
+   which_2 = data[:which_element_2]
+   characteristic = data[:characteristic]
+   if dfr[characteristic] in data[:targets]
+      return (dfr[which_2]-dfr[which_1])*dfr.weight_1
+   end
+   return 0.0
+end
+
+function operate_on_frame( results :: DataFrame, adder, data::Dict )
+   n = size( results )[1]
+   total = 0
+   for i in 1:n
+      total += adder( results[i,:], data )
+   end
+   total
+end
+
+function summarise_results( base_results::DataFrame, results :: DataFrame )::Tuple
+    global mr_edges, growth
+    basenames = names( base_results )
+    basenames = addsysnotoname( basenames, 1 )
+    names!( base_results, basenames )
+
+    n_names = names( results )
+    n_names = addsysnotoname( n_names, 2 )
+    names!( results, n_names )
+    results = hcat( base_results, results )
+    @assert results.pid_1 == results.pid_2
+    println( "computing $num_households hhlds and $num_people people ")
+    CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
+
+
+    deciles_1 = TBComponents.binify( results, 10, :weight_1, :net_income_1 )
+    deciles_2 = TBComponents.binify( results, 10, :weight_1, :net_income_2 )
+    deciles_3 =  deciles_2 - deciles_1
+
+    poverty_line = deciles_1[5,3]*(2.0/3.0)
+
+    inequality_1 = TBComponents.makeinequality( results, :weight_1, :net_income_1 )
+    inequality_2 = TBComponents.makeinequality( results, :weight_1, :net_income_2 )
+    inequality_3 =  diff_between( inequality_1, inequality_2 )
+
+    poverty_1 = TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_1  )
+    poverty_2 = TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_2  )
+    poverty_3 =  diff_between( poverty_1, poverty_2 )
+
+
+    disallowmissing!( results )
+
+    results.gainers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).>=0.01).*results.weight_1
+    results.losers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).<= -0.01).*results.weight_1
+    results.nc = ((abs.(results.net_income_2 - results.net_income_1)./results.net_income_1).< 0.01).*results.weight_1
+
+    gainlose_by_thing = DataFrame(
+        thing=levels( results.thing_1 ),
+        losers = counts(results.thing_1,fweights( results.losers )),
+        nc= counts(results.thing_1,fweights( results.nc )),
+        gainers = counts(results.thing_1,fweights( results.gainers )))
+    gainlose_by_sex = DataFrame(
+        sex=pretty.(levels( results.sex_1 )),
+        losers = counts(Int.(results.sex_1),fweights( results.losers )),
+        nc= counts(Int.(results.sex_1),fweights( results.nc )),
+        gainers = counts(Int.(results.sex_1),fweights( results.gainers )))
+
+    metr_hist_1 = fit(Histogram,results.metr_1,Weights(results.weight_1),mr_edges,closed=:right).weights
+    metr_hist_2 = fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights
+    metr_hist_3 = metr_hist_2-metr_hist_1
+
+    summary_output = (
+        gainlose_by_sex=gainlose_by_sex,
+        gainlose_by_thing=gainlose_by_thing,
+        poverty_1=poverty_1,
+        poverty_2=poverty_2,
+        poverty_3=poverty_3,
+        inequality_1=inequality_1,
+        inequality_2=inequality_2,
+        inequality_3=inequality_3,
+        metr_hist_1=metr_hist_1,
+        metr_hist_2=metr_hist_2,
+        metr_hist_3=metr_hist_3,
+        metr_axis=mr_edges,
+        deciles_1=deciles_1,
+        deciles_2=deciles_2,
+        deciles_3=deciles_3,
+        poverty_line=poverty_line,
+        growth_assumption=growth
+    )
+    (summary_output, results )
+end
 
 function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
    inc = 0.0
