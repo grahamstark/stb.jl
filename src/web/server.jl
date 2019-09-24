@@ -89,12 +89,18 @@ function web_map_params( req )
 end
 
 
+example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
+
+
 function web_doonerun( req )
-   num_people = 10_000
+   global num_households, num_people
    tbparams = map_params( req )
    rc = doonerun( tbparams, num_people )
-   JSON.json( rc )
+   results = doonerun( params, num_households, num_people, num_repeats )
+   summary_output, results = summarise_results( results, base_results )
+   JSON.json( summary_output )
 end # doonerun
+
 
 function web_makebc( req )
    tbparams = map_params( req )
@@ -121,7 +127,9 @@ port = 8000
 if length(ARGS) > 0
    port = parse(Int64, ARGS[1])
 end
-load_data( load_examples = true, load_main = true, start_year = 2017 )
+
+
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
+const DEFAULT_RUN = = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats )
 
 @sync serve(dd226, port)
