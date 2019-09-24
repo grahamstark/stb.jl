@@ -118,5 +118,5 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
    @label end_of_calcs
    ran = rand()
    print("Done; people $pnum rand=$ran\n")
-   results[1:pnum,:];
+   results[1:pnum-1,:];
 end
