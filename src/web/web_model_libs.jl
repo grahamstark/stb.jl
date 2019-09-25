@@ -73,19 +73,19 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     deciles = []
     push!( deciles, TBComponents.binify( results, 10, :weight_1, :net_income_1 ))
     push!( deciles, TBComponents.binify( results, 10, :weight_1, :net_income_2 ))
-    push!( deciles, deciles_2 - deciles_1 )
+    push!( deciles, deciles[2] - deciles[1] )
 
-    poverty_line = deciles_1[5,3]*(2.0/3.0)
+    poverty_line = deciles[1][5,3]*(2.0/3.0)
 
     inequality = []
     push!( inequality, TBComponents.makeinequality( results, :weight_1, :net_income_1 ))
     push!( inequality, TBComponents.makeinequality( results, :weight_1, :net_income_2 ))
-    push!( inequality, diff_between( inequality_2, inequality_1 ))
+    push!( inequality, diff_between( inequality[2], inequality[1] ))
 
     poverty = []
     push!(poverty, TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_1  ))
     push!( poverty, TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_2  ))
-    push!( poverty, diff_between( poverty_2, poverty_1 ))
+    push!( poverty, diff_between( poverty[2], poverty[1] ))
 
     totals = []
     totals_1 = zeros(4)
@@ -106,16 +106,17 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
     disallowmissing!( results )
 
+    # these are for the gain lose weights below
     results.gainers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).>=0.01).*results.weight_1
     results.losers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).<= -0.01).*results.weight_1
     results.nc = ((abs.(results.net_income_2 - results.net_income_1)./results.net_income_1).< 0.01).*results.weight_1
 
-    gainlose_by_thing = DataFrame(
+    gainlose_by_thing = (
         thing=levels( results.thing_1 ),
         losers = counts(results.thing_1,fweights( results.losers )),
         nc= counts(results.thing_1,fweights( results.nc )),
         gainers = counts(results.thing_1,fweights( results.gainers )))
-    gainlose_by_sex = DataFrame(
+    gainlose_by_sex = (
         sex=pretty.(levels( results.sex_1 )),
         losers = counts(Int.(results.sex_1),fweights( results.losers )),
         nc= counts(Int.(results.sex_1),fweights( results.nc )),
@@ -124,7 +125,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     metr_histogram = []
     push!( metr_histogram, fit(Histogram,results.metr_1,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
-    push!( metr_histogram, metr_hist_3 = metr_hist_2-metr_hist_1 )
+    push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
 
     targetting_benefit1 = []
     targetting_benefit1_1 = operate_on_frame( results, poverty_targetting_adder,
@@ -143,6 +144,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     )
     push!( targetting_benefit1, targetting_benefit1_2 /= totals_2[3] )
 
+    targetting_benefit2 = []
     targetting_benefit2_1 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
          :which_element=>:benefit2_1,
@@ -159,8 +161,8 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     )
     push!( targetting_benefit2, targetting_benefit2_2 /= totals_2[4] )
 
-    push!( targetting_benefit1, targetting_benefit1_3 = targetting_benefit1_2 - targetting_benefit1_1 )
-    push!( targetting_benefit2, targetting_benefit2_3 = targetting_benefit2_2 - targetting_benefit2_1 )
+    push!( targetting_benefit1, targetting_benefit1[2] - targetting_benefit1[1] )
+    push!( targetting_benefit2, targetting_benefit2[2] - targetting_benefit2[1] )
 
 
     summary_output = (
@@ -171,7 +173,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
         inequality=inequality,
 
-        metr_histogram=metr_historgram,
+        metr_histogram=metr_histogram,
         metr_axis=mr_edges,
 
         deciles=deciles,
