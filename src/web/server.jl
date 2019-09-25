@@ -118,7 +118,7 @@ end
    page("/hhld/:hid", req -> web_get_hh((req[:params][:hid]))),
    page("/bc", req -> web_makebc(req)),
    page("/run", req -> web_doonerun(req)),
-   Mux.notfound(),
+   Mux.notfound()
 )
 
 
