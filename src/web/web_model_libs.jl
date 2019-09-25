@@ -166,7 +166,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( targetting_benefit1, targetting_benefit1[2] - targetting_benefit1[1] )
     push!( targetting_benefit2, targetting_benefit2[2] - targetting_benefit2[1] )
 
-    totals .*= WEEKS_PER_YEAR # annualise 
+    totals .*= WEEKS_PER_YEAR # annualise
 
     summary_output = (
         gainlose_by_sex=gainlose_by_sex,
@@ -205,7 +205,7 @@ end
 function local_getnet(data :: Dict, gross::Real)::Real
    person = data[:person]
    person.wage = gross
-   rc = MiniTB.calculate( person, data[:params ] )
+   rc = MiniTB.calculate_internal( person, data[:params ] )
    return rc[:netincome]
 end
 
