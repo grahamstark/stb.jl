@@ -112,13 +112,13 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( poverty, diff_between( poverty[2], poverty[1] ))
 
     totals = []
-    totals_1 = zeros(4)
+    totals_1 = zeros(5)
     totals_1[1]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
     totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
     totals_1[3]=sum(results[!,:benefit1_1].*results[!,:weight_1])
     totals_1[4]=sum(results[!,:benefit2_1].*results[!,:weight_1])
     totals_1[5]=sum(results[!,:basic_income_1].*results[!,:weight_1])
-    totals_2 = zeros(4)
+    totals_2 = zeros(5)
     totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
     totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
     totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
