@@ -68,7 +68,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     names!( base_results, basenames ) # restore names in base run FIXME this needs synchronized
     @assert results.pid_1 == results.pid_2
     println( "computing $num_households hhlds and $num_people people ")
-    # CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
+    CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
 
     deciles_1 = TBComponents.binify( results, 10, :weight_1, :net_income_1 )
