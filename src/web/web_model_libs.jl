@@ -55,7 +55,7 @@ function operate_on_frame( results :: DataFrame, adder, data::Dict )
    total
 end
 
-function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
+function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple         
     global mr_edges, growth
     basenames = names( base_results )
     basenames_2 = addsysnotoname( basenames, 1 )
@@ -246,6 +246,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
             @goto end_of_calcs
          end
          experson = maptoexample( frsperson )
+         rc = nothing
          for i in 1:num_repeats
             rc = MiniTB.calculate( experson, tbparams )
          end
@@ -259,7 +260,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.benefit1 = rc[:benefit1]
          res.benefit2 = rc[:benefit2]
          res.total_taxes= rc[:tax]
-         res.total_benefits = rc[:benefit2]+rc1[:benefit1]
+         res.total_benefits = rc[:benefit2]+rc[:benefit1]
          res.net_income = rc[:netincome]
          res.metr = rc[:metr]
          res.tax_credit = rc[:tax_credit]
