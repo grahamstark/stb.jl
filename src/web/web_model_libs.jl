@@ -55,7 +55,7 @@ function operate_on_frame( results :: DataFrame, adder, data::Dict )
    total
 end
 
-function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple         
+function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
     basenames = names( base_results )
     basenames_2 = addsysnotoname( basenames, 1 )
@@ -70,21 +70,24 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     println( "computing $num_households hhlds and $num_people people ")
     CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
-
-    deciles_1 = TBComponents.binify( results, 10, :weight_1, :net_income_1 )
-    deciles_2 = TBComponents.binify( results, 10, :weight_1, :net_income_2 )
-    deciles_3 =  deciles_2 - deciles_1
+    deciles = []
+    push!( deciles, TBComponents.binify( results, 10, :weight_1, :net_income_1 ))
+    push!( deciles, TBComponents.binify( results, 10, :weight_1, :net_income_2 ))
+    push!( deciles, deciles_2 - deciles_1 )
 
     poverty_line = deciles_1[5,3]*(2.0/3.0)
 
-    inequality_1 = TBComponents.makeinequality( results, :weight_1, :net_income_1 )
-    inequality_2 = TBComponents.makeinequality( results, :weight_1, :net_income_2 )
-    inequality_3 =  diff_between( inequality_1, inequality_2 )
+    inequality = []
+    push!( inequality, TBComponents.makeinequality( results, :weight_1, :net_income_1 ))
+    push!( inequality, TBComponents.makeinequality( results, :weight_1, :net_income_2 ))
+    push!( inequality, diff_between( inequality_2, inequality_1 ))
 
-    poverty_1 = TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_1  )
-    poverty_2 = TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_2  )
-    poverty_3 =  diff_between( poverty_1, poverty_2 )
+    poverty = []
+    push!(poverty, TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_1  ))
+    push!( poverty, TBComponents.makepoverty( results, poverty_line, growth, :weight_1, :net_income_2  ))
+    push!( poverty, diff_between( poverty_2, poverty_1 ))
 
+    totals = []
     totals_1 = zeros(4)
     totals_1[1]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
     totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
@@ -96,6 +99,9 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
     totals_2[4]=sum(results[!,:benefit2_2].*results[!,:weight_1])
     totals_3 = totals_2-totals_1
+    push!( totals, totals_1 )
+    push!( totals, totals_2 )
+    push!( totals, totals_3 )
     totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2"]
 
     disallowmissing!( results )
@@ -115,17 +121,19 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         nc= counts(Int.(results.sex_1),fweights( results.nc )),
         gainers = counts(Int.(results.sex_1),fweights( results.gainers )))
 
-    metr_hist_1 = fit(Histogram,results.metr_1,Weights(results.weight_1),mr_edges,closed=:right).weights
-    metr_hist_2 = fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights
-    metr_hist_3 = metr_hist_2-metr_hist_1
+    metr_histogram = []
+    push!( metr_histogram, fit(Histogram,results.metr_1,Weights(results.weight_1),mr_edges,closed=:right).weights )
+    push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
+    push!( metr_histogram, metr_hist_3 = metr_hist_2-metr_hist_1 )
 
+    targetting_benefit1 = []
     targetting_benefit1_1 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
          :which_element=>:benefit1_1,
          :poverty_line=>poverty_line
         )
     )
-    targetting_benefit1_1 /= totals_1[3]
+    push!( targetting_benefit1, targetting_benefit1_1 /= totals_1[3] )
 
     targetting_benefit1_2 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
@@ -133,7 +141,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
          :poverty_line=>poverty_line
         )
     )
-    targetting_benefit1_2 /= totals_2[3]
+    push!( targetting_benefit1, targetting_benefit1_2 /= totals_2[3] )
 
     targetting_benefit2_1 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
@@ -141,7 +149,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
          :poverty_line=>poverty_line
         )
     )
-    targetting_benefit2_1 /= totals_1[4]
+    push!( targetting_benefit2, targetting_benefit2_1 /= totals_1[4] )
 
     targetting_benefit2_2 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
@@ -149,44 +157,30 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
          :poverty_line=>poverty_line
         )
     )
-    targetting_benefit2_2 /= totals_2[4]
+    push!( targetting_benefit2, targetting_benefit2_2 /= totals_2[4] )
 
-    targetting_benefit1_3 = targetting_benefit1_2 - targetting_benefit1_1
-    targetting_benefit2_3 = targetting_benefit2_2 - targetting_benefit2_1
+    push!( targetting_benefit1, targetting_benefit1_3 = targetting_benefit1_2 - targetting_benefit1_1 )
+    push!( targetting_benefit2, targetting_benefit2_3 = targetting_benefit2_2 - targetting_benefit2_1 )
 
 
     summary_output = (
         gainlose_by_sex=gainlose_by_sex,
         gainlose_by_thing=gainlose_by_thing,
 
-        poverty_1=poverty_1,
-        poverty_2=poverty_2,
-        poverty_3=poverty_3,
+        poverty=poverty,
 
-        inequality_1=inequality_1,
-        inequality_2=inequality_2,
-        inequality_3=inequality_3,
+        inequality=inequality,
 
-        metr_hist_1=metr_hist_1,
-        metr_hist_2=metr_hist_2,
-        metr_hist_3=metr_hist_3,
+        metr_histogram=metr_historgram,
         metr_axis=mr_edges,
 
-        deciles_1=deciles_1,
-        deciles_2=deciles_2,
-        deciles_3=deciles_3,
+        deciles=deciles,
 
-        targetting_benefit1_1=targetting_benefit1_1,
-        targetting_benefit1_2=targetting_benefit1_2,
-        targetting_benefit1_3=targetting_benefit1_3,
+        targetting_benefit1=targetting_benefit1,
 
-        targetting_benefit2_1=targetting_benefit2_1,
-        targetting_benefit2_2=targetting_benefit2_2,
-        targetting_benefit2_3=targetting_benefit2_3,
+        targetting_benefit2=targetting_benefit2,
 
-        totals_1=totals_1,
-        totals_2=totals_2,
-        totals_3=totals_3,
+        totals=totals,
         totals_names=totals_names,
         poverty_line=poverty_line,
         growth_assumption=growth
