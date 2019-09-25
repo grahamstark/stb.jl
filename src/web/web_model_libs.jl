@@ -10,6 +10,8 @@ using Definitions
 using CSV
 using StatsBase
 
+const WEEKS_PER_YEAR=362.25/7.0
+
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    example_names = Vector{AbstractString}()
    num_households = 0
@@ -164,6 +166,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( targetting_benefit1, targetting_benefit1[2] - targetting_benefit1[1] )
     push!( targetting_benefit2, targetting_benefit2[2] - targetting_benefit2[1] )
 
+    totals .*= WEEKS_PER_YEAR # annualise 
 
     summary_output = (
         gainlose_by_sex=gainlose_by_sex,
