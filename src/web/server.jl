@@ -10,6 +10,7 @@ using Model_Household
 using Utils
 using MiniTB
 using TBComponents
+using HttpCommon
 
 const DEFAULT_PORT=8000
 const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
@@ -21,17 +22,29 @@ println("starting up")
 
 include( "web_model_libs.jl")
 
+# gks work round some (version?) thing in the diffeq code
+function get_thing( thing::AbstractArray, key :: String, default :: String )
+   for i in thing
+      if i[1] == key
+         return i[2]
+      end
+   end # loop
+   default
+end #get
+
 # Headers -- set Access-Control-Allow-Origin for either dev or prod
 # this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
 # not used yet
 function with_headers(res, req)
-    println("Origin: ", get(req[:headers], "Origin", ""))
     headers  = HttpCommon.headers()
+    origin = get_thing(req[:headers], "Origin", "")
+    println( req[:headers] )
+    println( "origin $origin")
     headers["Content-Type"] = "application/json; charset=utf-8"
-    if get(req[:headers], "Origin", "") == "http://localhost:$DEFAULT_PORT"
-        headers["Access-Control-Allow-Origin"] = "http://localhost:$DEFAULT_PORT"
+    if origin == "http://oustb"
+        headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME "http://localhost:$DEFAULT_PORT/run/"
     else
-        headers["Access-Control-Allow-Origin"] = "http://app.juliadiffeq.org"
+        headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME http://app.juliadiffeq.org"
     end
     println(headers["Access-Control-Allow-Origin"])
     Dict(
@@ -80,6 +93,8 @@ function web_map_params( req )
    tbparams.ben2_l_limit = get_if_set("ben2_l_limit", querydict, tbparams.ben2_l_limit)
    tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
+   println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
+   println( "tbparams\n$tbparams")
    tbparams
 end
 
@@ -96,8 +111,6 @@ function web_doonerun( req )
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
-   println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
-   println( "tbparams\n$tbparams")
    JSON.json( summary_output )
 end # doonerun
 
@@ -115,10 +128,10 @@ end
    addqstrdict,
 # Mux.splitquery,
    page(respond("<h1>OU DD226 TB Model</h1>")),
-   page("/hhld/:hid", req -> web_get_hh((req[:params][:hid]))),
-   page("/bc", req -> web_makebc(req)),
-   page("/run", req -> web_doonerun(req)),
-   Mux.notfound()
+   page("/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
+   page("/bc", req -> with_headers( web_makebc(req), req )),
+   page("/run", req -> with_headers( web_doonerun(req), req )),
+   Mux.notfound(),
 )
 
 
