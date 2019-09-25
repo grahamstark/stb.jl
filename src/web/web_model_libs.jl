@@ -162,7 +162,6 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         )
     )
     push!( targetting_benefit2, targetting_benefit2_2 /= totals_2[4] )
-
     push!( targetting_benefit1, targetting_benefit1[2] - targetting_benefit1[1] )
     push!( targetting_benefit2, targetting_benefit2[2] - targetting_benefit2[1] )
 
@@ -182,7 +181,6 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         deciles=deciles,
 
         targetting_benefit1=targetting_benefit1,
-
         targetting_benefit2=targetting_benefit2,
 
         totals=totals,
@@ -228,6 +226,7 @@ function make_results_frame( n :: Integer ) :: DataFrame
      tax = Vector{Union{Real,Missing}}(missing, n),
      benefit1 = Vector{Union{Real,Missing}}(missing, n),
      benefit2 = Vector{Union{Real,Missing}}(missing, n),
+     basic_income = Vector{Union{Real,Missing}}(missing, n),
      net_income = Vector{Union{Real,Missing}}(missing, n),
      metr = Vector{Union{Real,Missing}}(missing, n),
      tax_credit = Vector{Union{Real,Missing}}(missing, n))
@@ -258,6 +257,8 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.tax = rc[:tax]
          res.benefit1 = rc[:benefit1]
          res.benefit2 = rc[:benefit2]
+         res.basic_income = rc[:basic_income]
+
          res.total_taxes= rc[:tax]
          res.total_benefits = rc[:benefit2]+rc[:benefit1]
          res.net_income = rc[:netincome]

@@ -93,6 +93,7 @@ function web_map_params( req )
    tbparams.ben2_l_limit = get_if_set("ben2_l_limit", querydict, tbparams.ben2_l_limit)
    tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
+   tbparams.basic_income = get_if_set("basic_income", querydict, tbparams.basic_income)
    println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
    println( "tbparams\n$tbparams")
    tbparams
