@@ -27,6 +27,7 @@ base_results = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats
 
 @time begin
 
+    params.it_rate[1] = 0.66
     results = doonerun( params, num_households, num_people, num_repeats )
     summary_output = summarise_results!( results, base_results )
 
