@@ -93,6 +93,8 @@ function web_map_params( req )
    tbparams.ben2_l_limit = get_if_set("ben2_l_limit", querydict, tbparams.ben2_l_limit)
    tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
+   println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
+   println( "tbparams\n$tbparams")
    tbparams
 end
 
@@ -109,8 +111,6 @@ function web_doonerun( req )
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
-   println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
-   println( "tbparams\n$tbparams")
    JSON.json( summary_output )
 end # doonerun
 
