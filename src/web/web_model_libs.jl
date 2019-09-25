@@ -55,16 +55,17 @@ function operate_on_frame( results :: DataFrame, adder, data::Dict )
    total
 end
 
-function summarise_results!( results::DataFrame, base_results :: DataFrame )::NamedTuple
+function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
     basenames = names( base_results )
-    basenames = addsysnotoname( basenames, 1 )
-    names!( base_results, basenames )
+    basenames_2 = addsysnotoname( basenames, 1 )
+    names!( base_results, basenames_2 )
 
     n_names = names( results )
     n_names = addsysnotoname( n_names, 2 )
     names!( results, n_names )
     results = hcat( base_results, results )
+    names!( base_results, basenames ) # restore names in base run FIXME this needs synchronized
     @assert results.pid_1 == results.pid_2
     println( "computing $num_households hhlds and $num_people people ")
     # CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')

@@ -86,7 +86,7 @@ end
 
 example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
 
-const NUM_REPEATS = 50 # simulates a longer calculation
+const NUM_REPEATS = 1 # simulates a longer calculation
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 const BASE_RESULTS = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, NUM_REPEATS )
 
@@ -95,7 +95,7 @@ function web_doonerun( req )
    global num_households, num_people, BASE_RESULTS, NUM_REPEATS
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
-   summary_output = summarise_results!( results, BASE_RESULTS )
+   summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
    println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
    println( "tbparams\n$tbparams")
    JSON.json( summary_output )
