@@ -136,7 +136,18 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
          :poverty_line=>poverty_line
         )
     )
-    push!( targetting_benefit1, targetting_benefit1_1 /= totals_1[3] )
+    tv = totals_1[3] > 0 ? targetting_benefit1_1 / totals_1[3] : 0.0
+    push!( targetting_benefit1, tv )
+
+    targetting_basic_income = []
+    targetting_basic_income_1 = operate_on_frame( results, poverty_targetting_adder,
+        Dict(
+         :which_element=>:basic_income_1,
+         :poverty_line=>poverty_line
+        )
+    )
+    tv = totals_1[3] > 0 ? targetting_basic_income_1 / totals_1[3] : 0.0
+    push!( targetting_basic_income, tv )
 
     targetting_benefit1_2 = operate_on_frame( results, poverty_targetting_adder,
         Dict(
@@ -144,7 +155,8 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
          :poverty_line=>poverty_line
         )
     )
-    push!( targetting_benefit1, targetting_benefit1_2 /= totals_2[3] )
+    tv = totals_2[3] > 0 ? targetting_benefit1_2 / totals_2[3] : 0.0
+    push!( targetting_benefit1, tv )
 
     targetting_benefit2 = []
     targetting_benefit2_1 = operate_on_frame( results, poverty_targetting_adder,
@@ -162,6 +174,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         )
     )
     push!( targetting_benefit2, targetting_benefit2_2 /= totals_2[4] )
+
     push!( targetting_benefit1, targetting_benefit1[2] - targetting_benefit1[1] )
     push!( targetting_benefit2, targetting_benefit2[2] - targetting_benefit2[1] )
 
