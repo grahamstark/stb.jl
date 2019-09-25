@@ -174,7 +174,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
         targetting_benefit1=targetting_benefit1,
         targetting_benefit2=targetting_benefit2,
-        targetting_basic_income=targetting_basic_income
+        targetting_basic_income=targetting_basic_income,
 
         totals=totals,
         totals_names=totals_names,
