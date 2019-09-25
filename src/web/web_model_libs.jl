@@ -57,6 +57,28 @@ function operate_on_frame( results :: DataFrame, adder, data::Dict )
    total
 end
 
+function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item_name :: AbstractString, poverty_line :: Real ) :: AbstractArray
+    targetting = zeros(3)
+    for sys in 1:2
+        key = Symbol( "$(item_name)_$sys" )
+        on_target = operate_on_frame( results, poverty_targetting_adder,
+            Dict(
+             :which_element=>key,
+             :poverty_line=>poverty_line
+            )
+        )
+        targetting[sys] = on_target
+    end
+    targetting[3] = targetting[2]-targetting[1]
+    for sys in 1:3
+        if total_spend[sys] > 0
+            targetting[sys] /= total_spend[sys]
+            targetting[sys] *= 100.0
+        end
+    end # loop to props
+    targetting
+end
+
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
     basenames = names( base_results )
@@ -95,11 +117,13 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
     totals_1[3]=sum(results[!,:benefit1_1].*results[!,:weight_1])
     totals_1[4]=sum(results[!,:benefit2_1].*results[!,:weight_1])
+    totals_1[5]=sum(results[!,:basic_income_1].*results[!,:weight_1])
     totals_2 = zeros(4)
     totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
     totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
     totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
     totals_2[4]=sum(results[!,:benefit2_2].*results[!,:weight_1])
+    totals_2[5]=sum(results[!,:basic_income_2].*results[!,:weight_1])
     totals_3 = totals_2-totals_1
     push!( totals, totals_1 )
     push!( totals, totals_2 )
@@ -129,54 +153,9 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
 
-    targetting_benefit1 = []
-    targetting_benefit1_1 = operate_on_frame( results, poverty_targetting_adder,
-        Dict(
-         :which_element=>:benefit1_1,
-         :poverty_line=>poverty_line
-        )
-    )
-    tv = totals_1[3] > 0 ? targetting_benefit1_1 / totals_1[3] : 0.0
-    push!( targetting_benefit1, tv )
-
-    targetting_basic_income = []
-    targetting_basic_income_1 = operate_on_frame( results, poverty_targetting_adder,
-        Dict(
-         :which_element=>:basic_income_1,
-         :poverty_line=>poverty_line
-        )
-    )
-    tv = totals_1[3] > 0 ? targetting_basic_income_1 / totals_1[3] : 0.0
-    push!( targetting_basic_income, tv )
-
-    targetting_benefit1_2 = operate_on_frame( results, poverty_targetting_adder,
-        Dict(
-         :which_element=>:benefit1_2,
-         :poverty_line=>poverty_line
-        )
-    )
-    tv = totals_2[3] > 0 ? targetting_benefit1_2 / totals_2[3] : 0.0
-    push!( targetting_benefit1, tv )
-
-    targetting_benefit2 = []
-    targetting_benefit2_1 = operate_on_frame( results, poverty_targetting_adder,
-        Dict(
-         :which_element=>:benefit2_1,
-         :poverty_line=>poverty_line
-        )
-    )
-    push!( targetting_benefit2, targetting_benefit2_1 /= totals_1[4] )
-
-    targetting_benefit2_2 = operate_on_frame( results, poverty_targetting_adder,
-        Dict(
-         :which_element=>:benefit2_2,
-         :poverty_line=>poverty_line
-        )
-    )
-    push!( targetting_benefit2, targetting_benefit2_2 /= totals_2[4] )
-
-    push!( targetting_benefit1, targetting_benefit1[2] - targetting_benefit1[1] )
-    push!( targetting_benefit2, targetting_benefit2[2] - targetting_benefit2[1] )
+    targetting_benefit1 = add_targetting( results, [totals[1][3],totals[2][3],totals[3][3]], "benefit1", poverty_line )
+    targetting_benefit2 = add_targetting( results, [totals[1][4],totals[2][4],totals[3][4]], "benefit2", poverty_line )
+    targetting_basic_income = add_targetting( results, [totals[1][5],totals[2][5],totals[3][5]], "basic_income", poverty_line )
 
     totals .*= WEEKS_PER_YEAR # annualise
 
@@ -195,6 +174,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
         targetting_benefit1=targetting_benefit1,
         targetting_benefit2=targetting_benefit2,
+        targetting_basic_income=targetting_basic_income
 
         totals=totals,
         totals_names=totals_names,
@@ -273,7 +253,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.basic_income = rc[:basic_income]
 
          res.total_taxes= rc[:tax]
-         res.total_benefits = rc[:benefit2]+rc[:benefit1]
+         res.total_benefits = rc[:benefit2]+rc[:benefit1]+rc[:basic_income]
          res.net_income = rc[:netincome]
          res.metr = rc[:metr]
          res.tax_credit = rc[:tax_credit]
