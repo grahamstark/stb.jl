@@ -7,9 +7,14 @@
     <title>DD226 Microsim Demo</title>
     <script type='text/javascript' src='/js/jquery.js'></script>
     <script type='text/javascript' src='/js/jquery-ui/jquery-ui.min.js'></script>
+
+    <!-- vega graphics -->
     <script type="text/javascript" src="/js/vega-lite.min.js"></script>
     <script type="text/javascript" src="/js/vega.js"></script>
+    <script type="text/javascript" src="/js/vega-embed.min.js"></script>
+
     <script type='text/javascript' src="/js/stb-support.js"></script>
+    
     <link rel='stylesheet' href='/css/tacit.min.css'/>
     <link rel='stylesheet' href='/css/font-awsome-all.min.css'/>
 </head>
@@ -38,11 +43,11 @@
                 <legend>Mininum Income Benefit</legend>
                 <table>
                     <tr>
-                        
+
                         <td><label for='benefit1'>Payment</label><input type='number' min='0' max='500' step='1' name='benefit1' id='benefit1' value='150.00'/></td>
                     </tr>
                 </table>
-                
+
             </fieldset>
             <fieldset>
                 <legend>Basic Income</legend>

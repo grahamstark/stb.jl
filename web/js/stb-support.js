@@ -6,8 +6,80 @@ stb.createMainOutputs = function( result ){
 }
 
 stb.createBCOutputs = function( result ){
+    var pre = result["base"];
+    var changed = result["changed"];
+    var data = [];
+    for( var i = 0; i < pre[1].length; i++){
+        data.push( {"gross1":pre[0][i], "pre":pre[1][i] })
+    }
+    // var data_post= [];
+    for( var i = 0; i < changed[1].length; i++){
+        data.push( {"gross2":changed[0][i], "post":changed[1][i] })
+    }
+    console.log( data );
 
-
+    var budget_vg = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "width": 300,
+        "height": 300,
+        "description": "Budget Constraint",
+        "data": {"values": data }, // , "post":data_post
+        "layer":[
+            {
+                "mark": "point",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "gross1",
+                           "axis":{
+                               "title": "Gross Income"
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "pre",
+                           "axis":{
+                              "title": "Net Income"
+                           } },
+                    "color": {"value":"blue"}
+                } // encoding
+            }, // pre layer point
+            {
+                "mark": "point",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "gross2",
+                           "axis":{
+                              "title": "Gross Income"
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "post",
+                           "axis":{
+                              "title": "Net Income"
+                           } },
+                   "color": {"value":"red"}
+               } // encoding
+           }, // post later point
+           {
+                "mark": "line",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "gross1" },
+                    "y": { "type": "quantitative",
+                           "field": "pre" },
+                    "color": {"value":"blue"}
+                } // encoding
+            }, // pre layer line
+           {
+               "mark": "line",
+               "encoding":{
+                   "x": { "type": "quantitative",
+                          "field": "gross2" },
+                   "y": { "type": "quantitative",
+                          "field": "post" },
+                  "color": {"value":"red"}
+              } // encoding
+            } // post layer line
+        ]
+    }
+    vegaEmbed('#output', budget_vg );
 }
 
 stb.runModel = function( page ){
