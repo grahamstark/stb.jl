@@ -1,5 +1,14 @@
 window.stb = {}; // Create global container
 
+stb.createMainOutputs = function( result ){
+
+
+}
+
+stb.createBCOutputs = function( result ){
+
+
+}
 
 stb.runModel = function( page ){
     console.log( "run model called")
@@ -36,7 +45,12 @@ stb.runModel = function( page ){
              console.log( "base[0][1]="+result["base"][0][1] );
              console.log( "changed[1][1]="+result["changed"][1][1] );
              // var r = JSON.parse( ""+result );
+             if( which_action == "run" ){
+                 stb.createMainOutputs( result );
+             } else {
+                 stb.createBCOutputs( result );
 
+             }
          }
      });
 }

@@ -34,8 +34,8 @@ end #get
 
 # Headers -- set Access-Control-Allow-Origin for either dev or prod
 # this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
-# not used yet
-function with_headers(res, req)
+# FIXME clean this up!
+function with_headers(res :: AbstractString, req  :: Dict )
     headers  = HttpCommon.headers()
     origin = get_thing(req[:headers], "Origin", "")
     println( req[:headers] )
@@ -58,13 +58,13 @@ function web_get_hh(hdstr::AbstractString)
    JSON.json(FRS_Household_Getter.get_household(hid))
 end
 
-function addqstrdict(app, req)
+function addqstrdict(app, req  :: Dict )
    req[:parsed_querystring] = qstrtodict(req[:query])
    return app(req)
 end
 
 # Better error handling
-function errorCatch(app, req)
+function errorCatch( app, req  :: Dict )
    try
       app(req)
    catch e
@@ -81,7 +81,7 @@ function errorCatch(app, req)
 end
 
 
-function web_map_params( req )
+function web_map_params( req  :: Dict )
    querydict = req[:parsed_querystring]
    tbparams = deepcopy(MiniTB.DEFAULT_PARAMS)
    tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow)
@@ -107,7 +107,7 @@ const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 const BASE_RESULTS = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, NUM_REPEATS )
 
 
-function web_doonerun( req )
+function web_doonerun( req :: Dict )
    global num_households, num_people, BASE_RESULTS, NUM_REPEATS
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
@@ -116,7 +116,7 @@ function web_doonerun( req )
 end # doonerun
 
 
-function web_makebc( req )
+function web_makebc( req  :: Dict )
    tbparams = web_map_params( req )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))
@@ -128,8 +128,8 @@ end
    Mux.defaults,
    addqstrdict,
 # Mux.splitquery,
-   page(respond("<h1>OU DD226 TB Model</h1>")),
-   page("/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
+   page( respond("<h1>OU DD226 TB Model</h1>")),
+   page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> with_headers( web_makebc(req), req )),
    page("/run", req -> with_headers( web_doonerun(req), req )),
    Mux.notfound(),
