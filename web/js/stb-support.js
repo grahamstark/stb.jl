@@ -1,7 +1,17 @@
 window.stb = {}; // Create global container
 
-stb.createMainOutputs = function( result ){
+stb.createBlock = function( title, key ){
+    var block = $("<div/>",{id: key, class:'fixme' });
+    var title = $("<h3>").text( title )
+    return block;
+}
 
+stb.createMainOutputs = function( result ){
+    var container = $("<div/>",{id: "output-container", class:'fixme' });
+    var taxblock = createBlock( "Direct Tax", "tax" );
+    container.append( taxblock )
+
+    $( "#output").append( container )
 
 }
 
@@ -16,12 +26,16 @@ stb.createBCOutputs = function( result ){
     for( var i = 0; i < changed[1].length; i++){
         data.push( {"gross2":changed[0][i], "post":changed[1][i] })
     }
+
+    data.push( {"gross3":0.0, "base":0.0});
+    data.push( {"gross3":2000.0, "base":2000.0});
     console.log( data );
 
     var budget_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-        "width": 300,
-        "height": 300,
+        "title": "Budget Constraint",
+        "width": 600,
+        "height": 600,
         "description": "Budget Constraint",
         "data": {"values": data }, // , "post":data_post
         "layer":[
@@ -31,12 +45,12 @@ stb.createBCOutputs = function( result ){
                     "x": { "type": "quantitative",
                            "field": "gross1",
                            "axis":{
-                               "title": "Gross Income"
+                               "title": "Gross Income (£pw)"
                            }},
                     "y": { "type": "quantitative",
                            "field": "pre",
                            "axis":{
-                              "title": "Net Income"
+                              "title": "Net Income (£pw)"
                            } },
                     "color": {"value":"blue"}
                 } // encoding
@@ -47,12 +61,12 @@ stb.createBCOutputs = function( result ){
                     "x": { "type": "quantitative",
                            "field": "gross2",
                            "axis":{
-                              "title": "Gross Income"
+                              "title": "Gross Income (£pw)"
                            }},
                     "y": { "type": "quantitative",
                            "field": "post",
                            "axis":{
-                              "title": "Net Income"
+                              "title": "Net Income (£pw)"
                            } },
                    "color": {"value":"red"}
                } // encoding
@@ -76,7 +90,21 @@ stb.createBCOutputs = function( result ){
                           "field": "post" },
                   "color": {"value":"red"}
               } // encoding
-            } // post layer line
+          },
+          { // diagonal in grey
+               "mark": "line",
+               "encoding":{
+                   "x": { "type": "quantitative",
+                          "field": "gross3" },
+                   "y": { "type": "quantitative",
+                          "field": "base" },
+                   "color": {"value":"#ccc"},
+                   "strokeWidth": {"value": 1.0}
+                   // "strokeDash":
+               } // encoding
+           }, // pre layer line
+
+ // post layer line
         ]
     }
     vegaEmbed('#output', budget_vg );
