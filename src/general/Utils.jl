@@ -27,8 +27,6 @@ function diff_between(m2::Dict, m1::Dict)::Dict
    for k in keybs
       v1 = m1[k]
       v2 = m2[k]
-      t1 = typeof(v1)
-      t2 = typeof(v2)
       try
          d = v2 - v1
          out[k] = d
