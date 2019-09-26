@@ -128,7 +128,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( totals, totals_1 )
     push!( totals, totals_2 )
     push!( totals, totals_3 )
-    totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2"]
+    totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2", "Basic Income"]
 
     disallowmissing!( results )
 
