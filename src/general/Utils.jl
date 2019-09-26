@@ -21,7 +21,7 @@ function get_if_set(key, dict::Dict, default)
    default
 end
 
-function diff_between(m1::Dict, m2::Dict)::Dict
+function diff_between(m2::Dict, m1::Dict)::Dict
    out = Dict()
    keybs = intersect(keys(m1), keys(m2))
    for k in keybs
