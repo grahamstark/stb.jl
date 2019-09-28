@@ -124,7 +124,7 @@ stb.runModel = function( page ){
     var basic_income = $("#basic_income").val()
     var which_action = $("#which_action").val()
     $.ajax(
-        { url: "http://localhost:8000/"+which_action+"/",
+        { url: "http://oustb:8000/"+which_action+"/",
          method: 'get',
          dataType: 'json',
          data: {
