@@ -1,0 +1,18 @@
+[Unit]
+Description=CLC Model Server
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+User=graham_s
+EnvironmentFile=/etc/sysconfig/gksenvironment
+# The PID file is optional, but recommended in the manpage
+# "so that systemd can identify the main process of the daemon"
+PIDFile=/var/run/msc_server.pid
+ExecStart=/home/graham_s/VirtualWorlds/projects/southampton/model/scripts/msc_server_nohup
+ExecStop=/bin/kill -WINCH ${MAINPID}
+KillSignal=SIGCONT
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
