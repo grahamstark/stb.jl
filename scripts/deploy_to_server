@@ -1,10 +1,10 @@
-echo "updating adrsv4.."
+echo "updating oustb.."
 sh ./scripts/commit_and_build $1
-fping -c1 -t300 adrsv4 &>/dev/null 
+fping -c1 -t300 oustb &>/dev/null
 if [ "$?" = 0 ]
 then
-   cat scripts/remote_deploy.sh | ssh adrsv4 /bin/bash
-   # rsync -ax -v  --delete ../frontend_v4/blog/ adrsv4:/var/www/adrs/blog/   
+   cat scripts/remote_deploy.sh | ssh oustb /bin/bash
+   rsync -ax -v  /var/www/ou/stb/ oustb:/var/www/ou/stb/
 else
-   echo "adrsv4 down"
+   echo "oustb down"
 fi
