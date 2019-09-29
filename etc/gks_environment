@@ -4,5 +4,5 @@ GKS_HOME=/home/graham_s/
 VW_HOME=$GKS_HOME/VirtualWorlds
 PROJECTS_HOME=$VW_HOME/projects
 # OU Model
-STB_HOME=$PROJECTS_HOME/ou/stb/
+STB_HOME=$PROJECTS_HOME/ou/stb.jl/
 OU_HOME=$STB_HOME
