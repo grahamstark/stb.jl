@@ -1,13 +1,8 @@
-CATALINA_HOME=/opt/tomcat
-JDK_HOME=/opt/jdk
-JAVA_HOME=$JDK_HOME
-JRE_HOME=/opt/jdk/
-JSVC=/usr/bin/jsvc
+JULIA=/opt/julia/
 
 GKS_HOME=/home/graham_s/
 VW_HOME=$GKS_HOME/VirtualWorlds
 PROJECTS_HOME=$VW_HOME/projects
-# Southampton Model
-MSC_HOME=$PROJECTS_HOME/southampton/
-MSC_MODEL=$MSC_HOME/model/
-
+# OU Model
+STB_HOME=$PROJECTS_HOME/ou/stb/
+OU_HOME=$STB_HOME
