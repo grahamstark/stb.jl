@@ -12,6 +12,9 @@ using MiniTB
 using TBComponents
 using HttpCommon
 
+import Mux.WebSockets
+
+
 const DEFAULT_PORT=8000
 const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 
@@ -35,6 +38,7 @@ end #get
 # Headers -- set Access-Control-Allow-Origin for either dev or prod
 # this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
 # FIXME clean this up!
+#
 function with_headers(res :: AbstractString, req  :: Dict )
     headers  = HttpCommon.headers()
     origin = get_thing(req[:headers], "Origin", "")
@@ -122,12 +126,15 @@ function web_makebc( req  :: Dict )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
+#
+# from diffeq thingy instead of Mux.defaults
+#
 # ourstack = stack(Mux.todict, errorCatch, Mux.splitquery, Mux.toresponse) # from DiffEq
+#
 
 @app dd226 = (
    Mux.defaults,
    addqstrdict,
-# Mux.splitquery,
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> with_headers( web_makebc(req), req )),
@@ -136,14 +143,14 @@ end
 )
 
 
-port = 8000
+port = DEFAULT_PORT
 if length(ARGS) > 0
    port = parse(Int64, ARGS[1])
 end
 
-println( "starting server port $port")
-@sync serve(dd226, port)
+serve(dd226, port)
 
-# while true # FIXME better way?
-#   ;
-# end
+while true # FIXME better way?
+   println( "server running on port $port")
+   sleep( 60 )
+ end
