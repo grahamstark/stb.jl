@@ -145,11 +145,11 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
     for( var i = 0; i < results.deciles[0][0].length; i++){
-        data.push( {"popn1":results.deciles[0][0][i], "pre":results.deciles[0][1][i] });
+        data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
     // var data_post= [];
-    for( var i = 0; i < results.deciles[1][0].length; i++){
-        data.push( {"popn2":results.deciles[1][0][i], "post":results.deciles[1][1][i] });
+    for( var i = 0; i < result.deciles[1][0].length; i++){
+        data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
     }
     data.push( {"popn3":0.0, "base":0.0});
     data.push( {"popn3":2000.0, "base":2000.0});
