@@ -144,7 +144,7 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     }
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
-    for( var i = 0; i < results.deciles[0][0].length; i++){
+    for( var i = 0; i < result.deciles[0][0].length; i++){
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
     // var data_post= [];
