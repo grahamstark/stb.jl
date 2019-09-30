@@ -1,5 +1,5 @@
 echo "updating oustb.."
-sh ./scripts/commit_and_build $1
+#sh ./scripts/commit_and_build $1
 fping -c1 -t300 oustb &>/dev/null
 if [ "$?" = 0 ]
 then
