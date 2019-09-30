@@ -45,3 +45,9 @@
     display: block;
     float: right;
 }
+
+/* see: https://stackoverflow.com/questions/5713410/how-to-equally-distribute-columns-width-in-html-table-when-the-number-of-them-is */
+.stb-table{
+    width: 95%;
+    table-layout : fixed;
+}
