@@ -33,3 +33,14 @@
 .positive_strong{
     font-weight: bold;
 }
+
+    .params-block{
+        display: block;
+        float: left;
+        width: 50%;
+    }
+    .output-block{
+        display: block;
+        float: left
+        width: 50%;
+    }
