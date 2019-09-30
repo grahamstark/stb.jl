@@ -116,6 +116,94 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     $( "#"+element_id ).html( output )
 }
 
+const GOLDEN_RATIO = 1.618
+
+function createLorenzCurve( targetId, result, thumbnail ){
+    var height = 400;
+    var xtitle = "Population Share";
+    var ytitle = "Income Share";
+    var title = "Lorenz Curve"
+    if( thumbnail ){
+        var height = 40;
+        xtitle = "";
+        ytitle = "";
+        title = "";
+    }
+    var width = Math.trunc( GOLDEN_RATIO*height);
+    var data=[];
+    for( var i = 0; i < results.deciles[0][0].length; i++){
+        data.push( {"popn1":results.deciles[0][0][i], "pre":results.deciles[0][1][i] });
+    }
+    // var data_post= [];
+    for( var i = 0; i < results.deciles[1][0].length; i++){
+        data.push( {"popn2":results.deciles[1][0][i], "post":results.deciles[1][1][i] });
+    }
+    data.push( {"popn3":0.0, "base":0.0});
+    data.push( {"popn3":2000.0, "base":2000.0});
+    var gini_vg = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "title": title,
+        "width": width,
+        "height": height,
+        "description": title,
+        "data": {"values": data }, // , "post":data_post
+        "layer":[
+            {
+                "mark": "line",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "popn1",
+                           "axis":{
+                               "title": xtitle
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "pre",
+                           "axis":{
+                              "title": ytitle
+                           } },
+                    "color": {"value":"blue"}
+                } // encoding
+            }, // pre layer line
+            {
+                "mark": "line",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "popn2",
+                           "axis":{
+                              "title": xtitle
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "post",
+                           "axis":{
+                              "title": ytitle
+                           } },
+                   "color": {"value":"red"}
+               } // encoding
+           }, // post line
+          { // diagonal in grey
+               "mark": "line",
+               "encoding":{
+                   "x": { "type": "quantitative",
+                          "field": "popn3" },
+                   "y": { "type": "quantitative",
+                          "field": "base" },
+                   "color": {"value":"#ccc"},
+                   "strokeWidth": {"value": 1.0}
+                   // "strokeDash":
+               } // encoding
+           },
+        ]
+    }
+    vegaEmbed( targetId, gini_vg );
+}
+
+function createDecileBarChart( result, thumbnail ){
+
+
+}
+
+
+
 stb.createMainOutputs = function( result ){
     stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 5, true )
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false )
