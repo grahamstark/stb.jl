@@ -231,10 +231,10 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
     console.log( "deciles" + result.deciles.toString());
-    console.log( "deciles[0][2] length" + result.deciles[0][0].length );
-    for( var i = 0; i < result.deciles[0][2].length; i++){
+    console.log( "deciles[0][2] length" + result.deciles[0][2].length );
+    for( var i = 0; i < result.deciles[2][2].length; i++){
         var dec = (i+1);
-        data.push( {"decile":dec, "gain":result.deciles[0][2][i] });
+        data.push( {"decile":dec, "gain":result.deciles[2][2][i] });
     }
     var deciles_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
@@ -246,10 +246,16 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
         "mark": "bar",
         "encoding":{
             "x": { "type": "ordinal",
-                   "field": "decile"
+                   "field": "decile",
+                   "axis":{
+                      "title": xtitle
+                   }
              },
             "y": { "type": "quantitative",
-                   "field": "gain"
+                   "field": "gain",
+                   "axis":{
+                      "title": ytitle
+                   }
             }
         } // encoding
     }
@@ -381,7 +387,7 @@ stb.runModel = function( page ){
     var which_action = $("#which_action").val();
     // $( '#output').html( "<div/>", {id:'loader'}); // a spinner
     $.ajax(
-        { url: "http://oustb:8000/"+which_action+"/",
+        { url: "http://oustb.mazegreenyachts.com:8000/"+which_action+"/",
          method: 'get',
          dataType: 'json',
          data: {
