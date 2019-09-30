@@ -233,7 +233,8 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
     console.log( "deciles" + result.deciles.toString());
     console.log( "deciles[0][0] length" + result.deciles[0][0].length );
     for( var i = 0; i < result.deciles[0][0].length; i++){
-        data.push( {"decile":(i+1), "gain":result.deciles[0][2][i] });
+        var dec = (i+1).toString();
+        data.push( {"decile":dec, "gain":result.deciles[0][2][i] });
     }
     var deciles_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
@@ -258,7 +259,7 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
                            } },
                     "color": {"value":"blue"}
                 } // encoding
-            }, // pre layer line
+            } // pre layer line
         ]
     }
     vegaEmbed( targetId, deciles_vg );
