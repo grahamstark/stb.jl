@@ -148,7 +148,7 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
     console.log( "deciles" + result.deciles.toString());
-    console.log( "deciles[0][0] length" + deciles[0][0].length );
+    console.log( "deciles[0][0] length" + result.deciles[0][0].length );
     for( var i = 0; i < result.deciles[0][0].length; i++){
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
@@ -157,7 +157,7 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
         data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
     }
     data.push( {"popn3":0.0, "base":0.0});
-    data.push( {"popn3":100.0, "base":100.0});
+    data.push( {"popn3":1.0, "base":1.0});
     var gini_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
         "title": title,
