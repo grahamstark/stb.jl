@@ -246,20 +246,14 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
         "mark": "bar",
         "encoding":{
             "x": { "type": "ordinal",
-                   "field": "decile",
-                   "axis":{
-                       "title": xtitle
-                   }
-               },
+                   "field": "decile"
+             },
             "y": { "type": "quantitative",
-                   "field": "gain",
-                   "axis":{
-                      "title": ytitle
-                }
+                   "field": "gain"
             }
         } // encoding
     }
-    console.log( "deciles_vg=" + deciles_vg.toString() );
+    console.log( "deciles_vg=" + JSON.stringify(deciles_vg) );
 
     vegaEmbed( targetId, deciles_vg );
 }
