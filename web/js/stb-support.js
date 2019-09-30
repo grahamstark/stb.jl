@@ -59,10 +59,7 @@ const MARKS =
   'arrows_3' : ARROWS_3,
   'circles'  : CIRCLES }
 
-stb.propToString = function( prop, down_is_good  ){
-    if( down_is_good ){
-        prop *= -1;
-    }
+stb.propToString = function( prop ){
     if( Math.abs( prop ) < 0.01 ){
         return 'nonsig';
     } else if ( prop > 0.1 ){
@@ -98,15 +95,19 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
 
     var nc = totals[2][pos];
     var pc = nc/totals[0][pos];
-    var pcchangeStr = stb.propToString( pc, down_is_good );
+    var arrow_str = stb.propToString( pc );
+    var pc_change_str = arrow_str;
+    if( down_is_good ){
+        pc_change_str= stb.propToString( -pc ); // point the arrow in the opposite direction
+    }
     var view = {
-        udclass: pcchangeStr,
-        arrow: ARROWS_1[pcchangeStr]
+        udclass: pc_change_str,
+        arrow: ARROWS_1[arrow_str]
     }
     view.which_thing = name;
     view.net_cost_str = "&#163;"+numeral(nc/(10**9)).format( '0,0')+"&nbsp;bn";
     view.pc_cost_str = "("+numeral(pc*100).format( '0,0.0')+"%)";
-    if( pcchangeStr == 'nonsig'){
+    if( pc_change_str == 'nonsig'){
         view.net_cost_str = 'unchanged';
         view.pc_cost_str = '';
     }
