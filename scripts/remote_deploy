@@ -1,6 +1,5 @@
 #!/bin/sh
-cd ~/VirtualWorlds/projects/adrs/backend/
-svn update ~/VirtualWorlds/projects/adrs/models/utils/
-
-svn update 
-svn update /var/www/adrs/
+cd ~/VirtualWorlds/projects/ou/stb.jl/
+git pull
+cd ~/VirtualWorlds/projects/TBComponents.jl/
+git pull
