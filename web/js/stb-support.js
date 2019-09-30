@@ -120,14 +120,16 @@ stb.createInequality = function( result ){
     var udclass = stb.propToString( result.inequality[2]['gini'] );
     var gini_post = numeral( result.inequality[1]['gini']*100 ).format( '0,0.0');
     var gini_change = numeral( result.inequality[2]['gini']*100 ).format( '0,0.0');
-
     var view = {
         gini_post: gini_post,
         gini_change:gini_change,
         arrow: ARROWS_1[udclass],
         udclass: udclass
     };
-    var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> ({{{arrow}}} {{gini_change}}</p>", view );
+    if( udclass == 'nonsig'){
+        view.gini_change = 'unchanged';
+    }
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> {{{gini_change}}} {{{arrow}}}</p>", view );
     $( "#inequality" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
@@ -215,11 +217,56 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     vegaEmbed( targetId, gini_vg );
 }
 
-function createDecileBarChart( result, thumbnail ){
-
-
+stb.createDecileBarChart = function( targetId, result, thumbnail ){
+    var height = 400;
+    var xtitle = "Deciles";
+    var ytitle = "Gains in &#163; pw";
+    var title = "Gains By Decile"
+    if( thumbnail ){
+        var height = 40;
+        xtitle = "";
+        ytitle = "";
+        title = "";
+    }createDecileBarChart
+    var width = Math.trunc( GOLDEN_RATIO*height);
+    var data=[];
+    console.log( "deciles" + result.deciles.toString());
+    console.log( "deciles[0][0] length" + result.deciles[0][0].length );
+    for( var i = 0; i < result.deciles[0][0].length; i++){
+        data.push( {"decile":(i+1), "gain":result.deciles[0][2][i] });
+    }
+    var deciles_vg = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "title": title,
+        "width": width,
+        "height": height,
+        "description": title,
+        "data": {"values": data }, // , "post":data_post
+        "layer":[
+            {
+                "mark": "bar",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "decile",
+                           "axis":{
+                               "title": xtitle
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "gain",
+                           "axis":{
+                              "title": ytitle
+                           } },
+                    "color": {"value":"blue"}
+                } // encoding
+            }, // pre layer line
+        ]
+    }
+    vegaEmbed( targetId, deciles_vg );
 }
 
+stb.createGainsByDecile = function( result ){
+    stb.createDecileBarChart( 'gains-by-decile', result, true );
+}
 
 
 stb.createMainOutputs = function( result ){
@@ -227,6 +274,7 @@ stb.createMainOutputs = function( result ){
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
     stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
     stb.createInequality( result );
+    stb.createGainsByDecile( result );
 }
 
 stb.createBCOutputs = function( result ){
