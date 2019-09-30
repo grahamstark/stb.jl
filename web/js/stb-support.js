@@ -387,7 +387,7 @@ stb.runModel = function( page ){
     var which_action = $("#which_action").val();
     // $( '#output').html( "<div/>", {id:'loader'}); // a spinner
     $.ajax(
-        { url: "http://oustb:8000/"+which_action+"/",
+        { url: "http://oustb.mazegreenyachts.com:8000/"+which_action+"/",
          method: 'get',
          dataType: 'json',
          data: {
