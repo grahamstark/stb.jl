@@ -116,9 +116,23 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     $( "#"+element_id ).html( output )
 }
 
+stb.createInequality = function( result ){
+    var udclass = stb.propToString( result.inequality[2]['gini'] );
+    var view = {
+        gini_post:result.inequality[2]['gini'],
+        gini_change:result.inequality[1]['gini'],
+        arrow: udclass,
+        udclass : udclass
+        )
+    }
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> ({{{arrow}}} {{gini_change}}</p>", view );
+    $( "#inequality" ).html( output )
+    stb.createLorenzCurve( "#lorenz", result, true );
+}
+
 const GOLDEN_RATIO = 1.618
 
-function createLorenzCurve( targetId, result, thumbnail ){
+stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var height = 400;
     var xtitle = "Population Share";
     var ytitle = "Income Share";
@@ -205,9 +219,10 @@ function createDecileBarChart( result, thumbnail ){
 
 
 stb.createMainOutputs = function( result ){
-    stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 5, true )
-    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false )
-    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false )
+    stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 5, true );
+    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
+    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
+    stb.createInequality( result );
 }
 
 stb.createBCOutputs = function( result ){
