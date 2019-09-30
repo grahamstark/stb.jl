@@ -59,7 +59,10 @@ const MARKS =
   'arrows_3' : ARROWS_3,
   'circles'  : CIRCLES }
 
-stb.propToString = function( prop  ){
+stb.propToString = function( prop, down_is_good  ){
+    if( down_is_good ){
+        prop *= -1;
+    }
     if( Math.abs( prop ) < 0.01 ){
         return 'nonsig';
     } else if ( prop > 0.1 ){
@@ -88,17 +91,14 @@ stb.getArrowAndClass = function( change, prop ){
     }
 }
 
-stb.createOneMainOutput = function( element_id, name, totals, pos, is_neg ){
+stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good ){
     console.log( "typeof totals " + typeof( totals ));
     console.log( "totals length" + totals.length );
     console.log( "totals " + totals.toString() );
 
     var nc = totals[2][pos];
-    if( is_neg ){
-        nc *= -1;
-    }
     var pc = nc/totals[0][pos];
-    var pcchangeStr = stb.propToString( pc );
+    var pcchangeStr = stb.propToString( pc, down_is_good );
     var view = {
         udclass: pcchangeStr,
         arrow: ARROWS_1[pcchangeStr]
@@ -119,7 +119,6 @@ stb.createMainOutputs = function( result ){
     stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 5, true )
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false )
     stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false )
-
 }
 
 stb.createBCOutputs = function( result ){
