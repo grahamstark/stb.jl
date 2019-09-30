@@ -10,8 +10,6 @@ using Definitions
 using CSV
 using StatsBase
 
-const WEEKS_PER_YEAR=362.25/7.0
-
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    example_names = Vector{AbstractString}()
    num_households = 0
