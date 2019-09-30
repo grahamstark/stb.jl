@@ -118,8 +118,8 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
 
 stb.createInequality = function( result ){
     var udclass = stb.propToString( result.inequality[2]['gini'] );
-    var gini_post = numeral(gini_post:result.inequality[1]['gini']*100).format( '0,0.0');
-    var gini_change = numeral(gini_post:result.inequality[2]['gini']*100).format( '0,0.0');
+    var gini_post = numeral( result.inequality[1]['gini']*100 ).format( '0,0.0');
+    var gini_change = numeral( result.inequality[2]['gini']*100 ).format( '0,0.0');
 
     var view = {
         gini_post: gini_post,
