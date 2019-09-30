@@ -24,21 +24,20 @@ stb.getArrowAndClass = function( change, prop ){
 
 stb.createOneMainOutput = function( element_id, name, totals, pos ){
     var nc = totals[3][pos];
-    var pc = nc/result.totals[1][pos];
+    var pc = nc/totals[1][pos];
     var view = stb.getArrowAndClass( nc, prop );
     view.which_thing = name;
     view.net_cost_str = numeral(nc).format( '0,0');
     view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
-
     var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{net_cost_str}}</strong>({{pc_cost_str}}), {{arrow}}</p>", view );
     $( "#"+element_id ).html( output )
 
 }
 
 stb.createMainOutputs = function( result ){
-    stb.createOneMainOutput( "net-cost", "Total Costs", results.totals, 6 )
-    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", results.totals, 6 )
-    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", results.totals, 6 )
+    stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 6 )
+    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 6 )
+    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 6 )
 
 }
 
@@ -169,12 +168,12 @@ stb.runModel = function( page ){
          success: function( result ){
              console.log( "stb; call OK");
              console.log( "result " + result );
-             console.log( "base[0][1]="+result["base"][0][1] );
-             console.log( "changed[1][1]="+result["changed"][1][1] );
              // var r = JSON.parse( ""+result );
              if( which_action == "run" ){
                  stb.createMainOutputs( result );
              } else {
+                 console.log( "base[0][1]="+result["base"][0][1] );
+                 console.log( "changed[1][1]="+result["changed"][1][1] );
                  stb.createBCOutputs( result );
 
              }

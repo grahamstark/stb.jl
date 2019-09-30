@@ -1,5 +1,5 @@
 echo "updating oustb.."
-scripts/deploy_frontent/
+scripts/deploy_frontend
 #sh ./scripts/commit_and_build $1
 fping -c1 -t300 oustb &>/dev/null
 if [ "$?" = 0 ]
