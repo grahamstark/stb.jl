@@ -231,10 +231,10 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
     console.log( "deciles" + result.deciles.toString());
-    console.log( "deciles[0][2] length" + result.deciles[0][0].length );
-    for( var i = 0; i < result.deciles[0][2].length; i++){
+    console.log( "deciles[0][2] length" + result.deciles[0][2].length );
+    for( var i = 0; i < result.deciles[2][2].length; i++){
         var dec = (i+1);
-        data.push( {"decile":dec, "gain":result.deciles[0][2][i] });
+        data.push( {"decile":dec, "gain":result.deciles[2][2][i] });
     }
     var deciles_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
