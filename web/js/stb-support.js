@@ -218,18 +218,19 @@ stb.createBCOutputs = function( result ){
 }
 
 stb.runModel = function( page ){
-    console.log( "run model called")
-    var it_allow = $("#it_allow").val()
-    var it_rate_1 = $("#it_rate_1").val()
-    var it_rate_2 = $("#it_rate_2").val()
-    var it_band = $("#it_band").val()
-    var benefit1 = $("#benefit1").val()
-    var benefit2 = $("#benefit2").val()
-    var ben2_l_limit = $("#ben2_l_limit").val()
-    var ben2_taper = $("#ben2_taper").val()
-    var ben2_u_limit = $("#ben2_u_limit").val()
-    var basic_income = $("#basic_income").val()
-    var which_action = $("#which_action").val()
+    console.log( "run model called");
+    var it_allow = $("#it_allow").val();
+    var it_rate_1 = $("#it_rate_1").val();
+    var it_rate_2 = $("#it_rate_2").val();
+    var it_band = $("#it_band").val();
+    var benefit1 = $("#benefit1").val();
+    var benefit2 = $("#benefit2").val();
+    var ben2_l_limit = $("#ben2_l_limit").val();
+    var ben2_taper = $("#ben2_taper").val();
+    var ben2_u_limit = $("#ben2_u_limit").val();
+    var basic_income = $("#basic_income").val();
+    var which_action = $("#which_action").val();
+    $( '#output').html( "<div/>", {class:'loader'}); // a spinner
     $.ajax(
         { url: "http://oustb:8000/"+which_action+"/",
          method: 'get',
