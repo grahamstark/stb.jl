@@ -118,11 +118,14 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
 
 stb.createInequality = function( result ){
     var udclass = stb.propToString( result.inequality[2]['gini'] );
+    var gini_post = numeral(gini_post:result.inequality[1]['gini']*100).format( '0,0.0');
+    var gini_change = numeral(gini_post:result.inequality[2]['gini']*100).format( '0,0.0');
+
     var view = {
-        gini_post:result.inequality[1]['gini'],
-        gini_change:result.inequality[2]['gini'],
+        gini_post: gini_post,
+        gini_change:gini_change,
         arrow: udclass,
-        udclass : udclass
+        udclass: udclass
     };
     var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> ({{{arrow}}} {{gini_change}}</p>", view );
     $( "#inequality" ).html( output );
@@ -144,6 +147,8 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     }
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
+    console.log( "deciles" + result.deciles.toString());
+    console.log( "deciles[0][0] length" + deciles[0][0].length );
     for( var i = 0; i < result.deciles[0][0].length; i++){
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
@@ -152,7 +157,7 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
         data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
     }
     data.push( {"popn3":0.0, "base":0.0});
-    data.push( {"popn3":2000.0, "base":2000.0});
+    data.push( {"popn3":100.0, "base":100.0});
     var gini_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
         "title": title,
