@@ -246,10 +246,16 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
         "mark": "bar",
         "encoding":{
             "x": { "type": "ordinal",
-                   "field": "decile"
+                   "field": "decile",
+                   "axis":{
+                      "title": xtitle
+                   }
              },
             "y": { "type": "quantitative",
-                   "field": "gain"
+                   "field": "gain",
+                   "axis":{
+                      "title": ytitle
+                   }
             }
         } // encoding
     }
