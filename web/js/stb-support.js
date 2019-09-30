@@ -15,7 +15,7 @@ stb.getArrowAndClass = function( change, prop ){
     var prop = change/base;
     if( Math.abs( prop) < 0.01 ){
         return {udclass:"no-change", arrow:NO_ARROW };
-    else if( prop > 0 ){
+    } else if( prop > 0 ){
         return {udclass:"change-up", arrow:UP_ARROW };
     } else  {
         return {udclass:"change-down",arrow:DOWN_ARROW };
