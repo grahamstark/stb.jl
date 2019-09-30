@@ -230,7 +230,7 @@ stb.runModel = function( page ){
     var ben2_u_limit = $("#ben2_u_limit").val();
     var basic_income = $("#basic_income").val();
     var which_action = $("#which_action").val();
-    $( '#output').html( "<div/>", {class:'loader'}); // a spinner
+    // $( '#output').html( "<div/>", {id:'loader'}); // a spinner
     $.ajax(
         { url: "http://oustb:8000/"+which_action+"/",
          method: 'get',
