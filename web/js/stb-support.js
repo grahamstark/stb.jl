@@ -36,7 +36,7 @@ const ARROWS_2 = { // see https://en.wikipedia.org/wiki/Arrow_(symbol)
 'negative_weak'   : '&#x21e1;'}
 
 const ARROWS_1 = { //  see https://en.wikipedia.org/wiki/Arrow_(symbol) Don't work on Windows Unicode 9
-'nonsig'          : '&#x25CF;',
+'nonsig'          : '',
 'positive_strong' : '&#x1F881;',
 'positive_med'    : '&#x1F871;',
 'positive_weak'   : '&#x1F861;',
@@ -124,7 +124,7 @@ stb.createInequality = function( result ){
     var view = {
         gini_post: gini_post,
         gini_change:gini_change,
-        arrow: udclass,
+        arrow: ARROWS_1[udclass],
         udclass: udclass
     };
     var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> ({{{arrow}}} {{gini_change}}</p>", view );
