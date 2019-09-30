@@ -113,20 +113,19 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     }
 
     var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
-    $( "#"+element_id ).html( output )
+    $( "#"+element_id ).html( output );
 }
 
 stb.createInequality = function( result ){
     var udclass = stb.propToString( result.inequality[2]['gini'] );
     var view = {
-        gini_post:result.inequality[2]['gini'],
-        gini_change:result.inequality[1]['gini'],
+        gini_post:result.inequality[1]['gini'],
+        gini_change:result.inequality[2]['gini'],
         arrow: udclass,
         udclass : udclass
-        )
-    }
+    };
     var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> ({{{arrow}}} {{gini_change}}</p>", view );
-    $( "#inequality" ).html( output )
+    $( "#inequality" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
 
