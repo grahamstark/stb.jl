@@ -119,14 +119,17 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_1[4]=sum(results[!,:benefit2_1].*results[!,:weight_1])
     totals_1[5]=sum(results[!,:basic_income_1].*results[!,:weight_1])
     totals_1[6]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
+
     totals_2 = zeros(6)
     totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
     totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
     totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
     totals_2[4]=sum(results[!,:benefit2_2].*results[!,:weight_1])
     totals_2[5]=sum(results[!,:basic_income_2].*results[!,:weight_1])
-    totals_1[6]=sum(results[!,:net_income_2].*results[!,:weight_1])
+    totals_2[6]=sum(results[!,:net_income_2].*results[!,:weight_1])
+
     totals_3 = totals_2-totals_1
+
     push!( totals, totals_1 )
     push!( totals, totals_2 )
     push!( totals, totals_3 )
