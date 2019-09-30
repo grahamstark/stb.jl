@@ -246,7 +246,7 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
             {
                 "mark": "bar",
                 "encoding":{
-                    "x": { "type": "quantitative",
+                    "x": { "type": "ordinal",
                            "field": "decile",
                            "axis":{
                                "title": xtitle
