@@ -15,6 +15,7 @@
 
     <script type='text/javascript' src="/js/stb-support.js"></script>
     <script type='text/javascript' src="/js/mustache.min.js"></script>
+    <script type='text/javascript' src="/js/numeral.js"></script>
     <link rel="stylesheet" type="text/css" href="https://learn2.open.ac.uk/theme/styles.php/osep/1569489122_1567580537/all" />
     <!--
     <link rel='stylesheet' href='/css/tacit.min.css'/>
@@ -22,11 +23,14 @@
     <link rel='stylesheet' href='/css/font-awsome-all.min.css'/>
 
     <!-- templates -->
-    <script id="net-cost" type="x-tmpl-mustache">
-        <td><p><strong>Net Cost: {{net_cost}}</strong>, {{arrow}}!</p><td>
+    <script id="net-cost-t" type="x-tmpl-mustache">
+        <td><p class='{{udclass}}'><strong>{{which_thing}}: {{level-change}}</strong>({{pct-change}}), {{arrow}}</p><td>
     </script>
-    <script id="marginal-rate" type="x-tmpl-mustache">
-        <td><p><strong>Avarage Marginal Rate: {{av_mr}}</strong>, {{arrow}}!</p><td>
+    <script id="marginal-rate-t" type="x-tmpl-mustache">
+        <td><p class='{{class}}'><strong>Average Marginal Rate: {{av_mr}}</strong>, {{arrow}}</p><td>
+    </script>
+    <script id="marginal-rate-t" type="x-tmpl-mustache">
+        <td><p class='{{class}}'><strong>Gainers and Losers: {{av_mr}}</strong>, {{arrow}}</p><td>
     </script>
 
 
@@ -49,11 +53,31 @@
             <h1>DD226 Microsim Demo</h1>
         </header>
 
-        <div id='output' class='output-block'><img src='/images/blank-graph.png' /></div>
+        <div id='output' class='output-block'>
+            <table>
+                <caption id='results-caption1'>Results Go Here</caption>
+                <tr>
+                    <td id='net-cost'></td>
+                    <td id='marginal-rates'></td>
+                    <td id='gainers-and-losers'></td>
+                </tr>
+                <tr>
+                    <td id='income-distribution'></td>
+                    <td id='inequality'></td>
+                    <td id='poverty'></td>
+                <tr>
+                    <tr>
+                    <td id='taxes-on-income'></td>
+                    <td id='benefit-spending'></td>
+                    <td id='taxes-on-spending'></td>
+                <tr>
+            </table>
+
+        </div>
         <div id='params' class='params-block'>
             <form>
 
-                <input type='hidden' name='which_action' id='which_action' value='bc'/>
+                <input type='hidden' name='which_action' id='which_action' value='run'/>
                 <fieldset>
                     <legend>Income Tax</legend>
                     <table>

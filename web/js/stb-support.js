@@ -6,12 +6,39 @@ stb.createBlock = function( title, key ){
     return block;
 }
 
-stb.createMainOutputs = function( result ){
-    var container = $("<div/>",{id: "output-container", class:'fixme' });
-    var taxblock = createBlock( "Direct Tax", "tax" );
-    container.append( taxblock )
+// font-awsome free..
+const UP_ARROW="<i class='fas fa-arrow-alt-circle-up'></i>";
+const DOWN_ARROW="<i class='fas fa-arrow-alt-circle-down'></i>";
+const NO_ARROW = "<i class='fas fa-minus-circle'></i>";
 
-    $( "#output").append( container )
+stb.getArrowAndClass = function( change, prop ){
+    var prop = change/base;
+    if( Math.abs( prop) < 0.01 ){
+        return {udclass:"no-change", arrow:NO_ARROW };
+    else if( prop > 0 ){
+        return {udclass:"change-up", arrow:UP_ARROW };
+    } else  {
+        return {udclass:"change-down",arrow:DOWN_ARROW };
+    }
+}
+
+stb.createOneMainOutput = function( element_id, name, totals, pos ){
+    var nc = totals[3][pos];
+    var pc = nc/result.totals[1][pos];
+    var view = stb.getArrowAndClass( nc, prop );
+    view.which_thing = name;
+    view.net_cost_str = numeral(nc).format( '0,0');
+    view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
+
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{net_cost_str}}</strong>({{pc_cost_str}}), {{arrow}}</p>", view );
+    $( "#"+element_id ).html( output )
+
+}
+
+stb.createMainOutputs = function( result ){
+    stb.createOneMainOutput( "net-cost", "Total Costs", results.totals, 6 )
+    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", results.totals, 6 )
+    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", results.totals, 6 )
 
 }
 
