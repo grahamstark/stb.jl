@@ -120,14 +120,16 @@ stb.createInequality = function( result ){
     var udclass = stb.propToString( result.inequality[2]['gini'] );
     var gini_post = numeral( result.inequality[1]['gini']*100 ).format( '0,0.0');
     var gini_change = numeral( result.inequality[2]['gini']*100 ).format( '0,0.0');
-
     var view = {
         gini_post: gini_post,
         gini_change:gini_change,
         arrow: ARROWS_1[udclass],
         udclass: udclass
     };
-    var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> ({{{arrow}}} {{gini_change}}</p>", view );
+    if( udclass == 'nonsig'){
+        view.gini_change = 'unchanged';
+    }
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Inequality: {{{gini_post}}}</strong> {{{gini_change}}} {{{arrow}}}</p>", view );
     $( "#inequality" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
