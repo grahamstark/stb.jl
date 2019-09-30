@@ -34,13 +34,13 @@
     font-weight: bold;
 }
 
-    .params-block{
-        display: block;
-        float: left;
-        width: 45%;
-    }
-    .output-block{
-        display: block;
-        float: left
-        width: 45%;
-    }
+.params-block{
+    display: block;
+    float: right;
+    width: 45%;
+}
+.output-block{
+    display: block;
+    float: left
+    width: 45%;
+}
