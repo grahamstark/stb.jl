@@ -243,25 +243,24 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
         "height": height,
         "description": title,
         "data": {"values": data }, // , "post":data_post
-        "layer":[
-            {
-                "mark": "bar",
-                "encoding":{
-                    "x": { "type": "ordinal",
-                           "field": "decile",
-                           "axis":{
-                               "title": xtitle
-                           }},
-                    "y": { "type": "quantitative",
-                           "field": "gain",
-                           "axis":{
-                              "title": ytitle
-                           } },
-                    "color": {"value":"blue"}
-                } // encoding
-            } // pre layer line
-        ]
+        "mark": "bar",
+        "encoding":{
+            "x": { "type": "ordinal",
+                   "field": "decile",
+                   "axis":{
+                       "title": xtitle
+                   }
+               },
+            "y": { "type": "quantitative",
+                   "field": "gain",
+                   "axis":{
+                      "title": ytitle
+                }
+            }
+        } // encoding
     }
+    console.log( "deciles_vg=" + deciles_vg.toString() );
+
     vegaEmbed( targetId, deciles_vg );
 }
 
