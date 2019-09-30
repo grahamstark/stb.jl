@@ -7,12 +7,78 @@ stb.createBlock = function( title, key ){
 }
 
 // font-awsome free..
-const UP_ARROW="<i class='fas fa-arrow-alt-circle-up'></i>";
-const DOWN_ARROW="<i class='fas fa-arrow-alt-circle-down'></i>";
-const NO_ARROW = "<i class='fas fa-minus-circle'></i>";
+const UP_ARROW="fas fa-arrow-alt-circle-up";
+const DOWN_ARROW="fas fa-arrow-alt-circle-down";
+const NO_ARROW = "fas fa-minus-circle";
+
+/*
+ choice of arrows/numbers for the table - we use various uncode blocks;
+ see: https://en.wikipedia.org/wiki/Arrow_(symbol)
+ Of 'arrows', only 'arrows_3' displays correctly in Windows, I think,
+ arrows_1 is prettiest
+*/
+const ARROWS_3 = { //  see https://en.wikipedia.org/wiki/Arrow_(symbol)
+'nonsig'          : '&#x25CF;',
+'positive_strong' : '&#x21c8;',
+'positive_med'    : '&#x2191;',
+'positive_weak'   : '&#x21e1;',
+'negative_strong' : '&#x21ca;',
+'negative_med'    : '&#x2193;',
+'negative_weak'   : '&#x21e3;'}
+
+const ARROWS_2 = { // see https://en.wikipedia.org/wiki/Arrow_(symbol)
+'nonsig'          : '&#x25CF;',
+'positive_strong' : '&#x21e7;',
+'positive_med'    : '&#x2191;',
+'positive_weak'   : '&#x21e3;',
+'negative_strong' : '&#x21e9;',
+'negative_med'    : '&#x2193;',
+'negative_weak'   : '&#x21e1;'}
+
+const ARROWS_1 = { //  see https://en.wikipedia.org/wiki/Arrow_(symbol) Don't work on Windows Unicode 9
+'nonsig'          : '&#x25CF;',
+'positive_strong' : '&#x1F881;',
+'positive_med'    : '&#x1F871;',
+'positive_weak'   : '&#x1F861;',
+'negative_strong' : '&#x1F883;',
+'negative_med'    : '&#x1F873;',
+'negative_weak'   : '&#x1F863;' }
+
+const CIRCLES = {
+'nonsig'          : '&#x25CF;',
+'positive_strong' : '&#x25CF;',
+'positive_med'    : '&#x25CF;',
+'positive_weak'   : '&#x25CF;',
+'negative_strong' : '&#x25CF;',
+'negative_med'    : '&#x25CF;',
+'negative_weak'   : '&#x25CF;' }
+
+const MARKS =
+{ 'arrows_2' : ARROWS_2,
+  'arrows_1' : ARROWS_1,
+  'arrows_3' : ARROWS_3,
+  'circles'  : CIRCLES }
+
+stb.propToString = function( prop  ){
+    if( Math.abs( prop ) < 0.01 ){
+        return 'nonsig';
+    } else if ( prop > 0.1 ){
+        return 'positive_strong';
+    } else if ( prop > 0.05 ){
+        return 'positive_med';
+    } else if ( prop > 0.0 ){
+        return 'positive_weak';
+    } else if ( prop < -0.1 ){
+        return 'negative_strong';
+    } else if (prop < -0.05 ){
+        return 'negative_med';
+    } else if ( prop < 0 ){
+        return 'negative_weak';
+    }
+    return "wtf!!";
+}
 
 stb.getArrowAndClass = function( change, prop ){
-    var prop = change/base;
     if( Math.abs( prop) < 0.01 ){
         return {udclass:"no-change", arrow:NO_ARROW };
     } else if( prop > 0 ){
@@ -22,22 +88,32 @@ stb.getArrowAndClass = function( change, prop ){
     }
 }
 
-stb.createOneMainOutput = function( element_id, name, totals, pos ){
-    var nc = totals[3][pos];
-    var pc = nc/totals[1][pos];
-    var view = stb.getArrowAndClass( nc, prop );
-    view.which_thing = name;
-    view.net_cost_str = numeral(nc).format( '0,0');
-    view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
-    var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{net_cost_str}}</strong>({{pc_cost_str}}), {{arrow}}</p>", view );
-    $( "#"+element_id ).html( output )
+stb.createOneMainOutput = function( element_id, name, totals, pos, is_neg ){
+    console.log( "typeof totals " + typeof( totals ));
+    console.log( "totals length" + totals.length );
+    console.log( "totals " + totals.toString() );
 
+    var nc = totals[2][pos];
+    if( is_neg ){
+        nc *= -1;
+    }
+    var pc = nc/totals[0][pos];
+    var pcchangeStr = stb.propToString( pc );
+    var view = {
+        udclass: pcchangeStr,
+        arrow: ARROWS_1[pcchangeStr]
+    }
+    view.which_thing = name;
+    view.net_cost_str = "&#163;"+numeral(nc/(10**9)).format( '0,0')+"&nbsp;bn";
+    view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{{net_cost_str}}}</strong>({{{pc_cost_str}}}) {{{arrow}}}</p>", view );
+    $( "#"+element_id ).html( output )
 }
 
 stb.createMainOutputs = function( result ){
-    stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 6 )
-    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 6 )
-    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 6 )
+    stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 5, true )
+    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false )
+    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false )
 
 }
 
