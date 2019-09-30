@@ -227,7 +227,7 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
         xtitle = "";
         ytitle = "";
         title = "";
-    }createDecileBarChart
+    }
     var width = Math.trunc( GOLDEN_RATIO*height);
     var data=[];
     console.log( "deciles" + result.deciles.toString());
