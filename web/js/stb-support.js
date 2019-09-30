@@ -105,8 +105,13 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, is_neg ){
     }
     view.which_thing = name;
     view.net_cost_str = "&#163;"+numeral(nc/(10**9)).format( '0,0')+"&nbsp;bn";
-    view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
-    var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{{net_cost_str}}}</strong>({{{pc_cost_str}}}) {{{arrow}}}</p>", view );
+    view.pc_cost_str = "("+numeral(pc*100).format( '0,0.0')+"%)";
+    if( pcchangeStr == 'nonsig'){
+        view.net_cost_str = 'unchanged';
+        view.pc_cost_str = '';
+    }
+
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>{{which_thing}}: {{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
     $( "#"+element_id ).html( output )
 }
 
