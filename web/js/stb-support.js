@@ -270,7 +270,7 @@ stb.createGainsByDecile = function( result ){
 
 
 stb.createMainOutputs = function( result ){
-    stb.createOneMainOutput( "net-cost", "Total Costs", result.totals, 5, true );
+    stb.createOneMainOutput( "net-cost", "Net Cost of your Changes", result.totals, 5, true );
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
     stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
     stb.createInequality( result );
