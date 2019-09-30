@@ -259,7 +259,7 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
 }
 
 stb.createGainsByDecile = function( result ){
-    stb.createDecileBarChart( 'changes-by-decile', result, true );
+    stb.createDecileBarChart( '#deciles', result, true );
 }
 
 
