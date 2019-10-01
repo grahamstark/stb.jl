@@ -17,9 +17,6 @@ const MODEL_DATA_DIR="$(PROJECT_DIR)/data/"
 const FRS_DIR = "/mnt/data/frs/"
 const HBAI_DIR = "/mnt/data/hbai/"
 
-export WEEKS_PER_YEAR
-const WEEKS_PER_YEAR=362.25/7.0
-
 
 @enum Employment_Status begin  # mapped from empstat
    Missing_Employment_Status = -1

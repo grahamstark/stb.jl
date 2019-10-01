@@ -193,12 +193,13 @@ function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
       inc += v
    end
    sex = modelpers.pid % 2 == 0 ? MiniTB.Male : MiniTB.Female
-   MiniTB.Person( modelpers.pid, inc, modelpers.age, sex )
+   MiniTB.Person( modelpers.pid, inc, modelpers.usual_hours_worked, modelpers.age, sex )
 end
 
 function local_getnet(data :: Dict, gross::Real)::Real
    person = data[:person]
    person.wage = gross
+   person.hours = gross/MiniTB.DEFAULT_WAGE
    rc = MiniTB.calculate_internal( person, data[:params ] )
    return rc[:netincome]
 end
