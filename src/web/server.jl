@@ -73,7 +73,6 @@ function errorCatch( app, req  :: Dict )
       app(req)
    catch e
       println("Error occured!")
-
       io = IOBuffer()
       showerror(io, e)
       err_text = takebuf_string(io)
