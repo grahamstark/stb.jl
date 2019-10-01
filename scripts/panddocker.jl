@@ -55,4 +55,10 @@ end
 opts["include-after-body"]=["includes/main_form.html"]
 opts["include-before-body"]=["includes/main_output.html"]
 
-`/usr/bin/pandoc`
+`/usr/bin/pandoc `
+
+MD_DIR = "/home/graham_s/OU/DD226/docs/sections/"
+OUT_DIR = "/var/www/ou/stb/"
+INCLUDE_DIR = "/home/graham_s/VirtualWorlds/projects/ou/stb.jl/web/"
+
+cmd=`/usr/bin/pandoc`
