@@ -75,6 +75,7 @@ function addone(
     end
     if ! ismissing(form)
         push!( includes, "$(INCLUDE_DIR)/$(form).html" )
+        opts["include-after-body"] = [ "run-model-js.html" ]
     end
     if pos > 1
         opts["number-offset"]=(pos-1)
