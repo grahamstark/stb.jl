@@ -65,6 +65,7 @@ function addone(
     output :: NullableString,
     form::NullableString,
     content::AbstractString,
+    model::NullableString,
     prev_content::NullableString,
     next_content::NullableString )
 
@@ -75,7 +76,9 @@ function addone(
     end
     if ! ismissing(form)
         push!( includes, "$(INCLUDE_DIR)/$(form).html" )
-        opts["include-after-body"] = [ "run-model-js.html" ]
+    end
+    if ! ismissing(model)
+        opts["include-after-body"] = [ "$(INCLUDE_DIR)/run-$model-js.html" ]
     end
     if pos > 1
         opts["number-offset"]=(pos-1)
@@ -117,5 +120,5 @@ for i in 1:npages
         next = df[i+1,:content]
     end
     page = df[i,:]
-    addone( i, npages, page.title, page.output, page.form, page.content, prev, next )
+    addone( i, npages, page.title, page.output, page.form, page.content, page.model, prev, next )
 end

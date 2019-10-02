@@ -2,7 +2,7 @@
 
     $('#runbutton').on( 'click', function(){
         console.log( "pressed" );
-        stb.runModel( "bc");
+        stb.runModel( "stb");
     });
 
   </script>
