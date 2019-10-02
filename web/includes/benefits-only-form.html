@@ -1,9 +1,8 @@
 <div id='params' class='params-block'>
     <form>
-        <input type='hidden' name='which_action' id='which_action' value='run'/>
         <fieldset>
-            <legend>Basic Income (&#163;pw)</legend>
-            <label for='basic_income'>Payment</label><input type='number' min='0' max='500' step='1' name='basic_income' id='basic_income' value='0.00'/>
+            <legend>Mininum Income Benefit  (&#163;pw)</legend>
+            <label for='benefit1'>Payment</label><input type='number' min='0' max='500' step='0.10' name='benefit1' id='benefit1' value='73.00'/>
         </fieldset>
         <fieldset>
             <legend>Tax Credit-type Benefit (&#163;pw)</legend>
@@ -13,8 +12,8 @@
             <label for='ben2_taper'>Taper above upper limit (%)</label><input type='number' min='0' max='1' step='0.01' name='ben2_taper' id='ben2_taper' value='41' />
         </fieldset>
         <fieldset>
-            <legend>Mininum Income Benefit  (&#163;pw)</legend>
-            <label for='benefit1'>Payment</label><input type='number' min='0' max='500' step='0.10' name='benefit1' id='benefit1' value='73.00'/>
+            <legend>Basic Income (&#163;pw)</legend>
+            <label for='basic_income'>Payment</label><input type='number' min='0' max='500' step='1' name='basic_income' id='basic_income' value='0.00'/>
         </fieldset>
         <button id='runbutton' name='runbutton' type="button">Run The Model</button>
     </form>

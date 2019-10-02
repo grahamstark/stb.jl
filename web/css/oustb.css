@@ -38,14 +38,14 @@
     display: block;
     float: left;
     width: 48%;
-    height:600px;
+    min-height:600px;
 }
 
 .params-block{
     display: block;
     float: left;
     width: 48%;
-    height:600px;
+    min-height:600px;
 }
 
 /* see: https://stackoverflow.com/questions/5713410/how-to-equally-distribute-columns-width-in-html-table-when-the-number-of-them-is */
