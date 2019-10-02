@@ -11,12 +11,12 @@ const DEFAULT_OPTS = Dict(
                 "https://learn2.open.ac.uk/theme/styles.php/osep/1569489122_1567580537/all",
                 "/css/oustb.css"
             ],
-    "include-in-header" => [ "$INCLUDE_DIR/ou-js-headers.html"],
-    "from"              => "markdown+smart",
+    "include-in-header" => [ "$INCLUDE_DIR/ou-js-headers.html" ],
+    "from"              => "markdown",
     "section-divs"      => true,
     "standalone"        => true,
     "number-sections"   => true,
-    "bibliography"      => "DD226.bib",
+    "bibliography"      => "$INCLUDE_DIR/DD226.bib",
     "default-image-extension"=>"svg",
     "csl"               => "$PANDOC_DIR/chicago-note-bibliography.csl",
     "to"                => "html5",
@@ -25,7 +25,8 @@ const DEFAULT_OPTS = Dict(
 
 );
 
-function makeoptstring( opts :: Dict, format=missing ) :: AbstractString
+function makeoptarray( opts :: Dict, format=missing ) :: AbstractArray
+    out = []
     oldformat = opts["to"]
     if ! ismissing(format)
          opts["to"] = format
@@ -44,15 +45,14 @@ function makeoptstring( opts :: Dict, format=missing ) :: AbstractString
             v = [v]
         end
         for ve in v
+            push!( out, k )
             if ve !== ""
-                s *= " $k $ve"
-            else
-                s *= " $k "
+                push!( out, ve )
             end
         end
     end
-    opts["to"] = oldformat
-    s
+    # opts["to"] = oldformat
+    out
 end
 
 function addone(
@@ -77,23 +77,13 @@ function addone(
         opts["number-offset"]=(pos-1)
     end
     opts["include-before-body"] = includes
-    forward = ""
-    backward = ""
-    if ! ismissing(prev_content )
-        backward="<a href='$(next_content).html'>prev</a>"
-    end
-    if ! ismissing(prev_content )
-        forward="<a href='$next_content).html'>prev</a>"
-    end
-    nav = "<footer><nav>$backward $forward</nav></footer>"
-    opts["include-after-body"] = nav
     opts["o"] = "$(OUT_DIR)$(content).html"
-    optstr = makeoptstring( opts )
-    optstr *= " $(MD_DIR)$(content).md"
+    optsarr = makeoptarray( opts )
+    push!(optsarr, "$(MD_DIR)$(content).md" )
 
-    cmd=`/usr/bin/pandoc $optstr`
-    println( cmd )
-    run( cmd )
+    cmd=`/usr/bin/pandoc $optsarr`
+    # println( cmd )
+    run( `$cmd` )
 end
 
 addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
