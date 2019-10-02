@@ -372,7 +372,7 @@ stb.createBCOutputs = function( result ){
     vegaEmbed('#output', budget_vg );
 }
 
-stb.runModel = function( page ){
+stb.runModel = function( which_action ){
     console.log( "run model called");
     var it_allow = $("#it_allow").val();
     var it_rate_1 = $("#it_rate_1").val();
@@ -384,7 +384,6 @@ stb.runModel = function( page ){
     var ben2_taper = $("#ben2_taper").val();
     var ben2_u_limit = $("#ben2_u_limit").val();
     var basic_income = $("#basic_income").val();
-    var which_action = $("#which_action").val();
     // $( '#output').html( "<div/>", {id:'loader'}); // a spinner
     $.ajax(
         { url: "http://oustb.mazegreenyachts.com:8000/"+which_action+"/",
@@ -406,13 +405,12 @@ stb.runModel = function( page ){
              console.log( "stb; call OK");
              console.log( "result " + result );
              // var r = JSON.parse( ""+result );
-             if( which_action == "run" ){
+             if( which_action == "stb" ){ // main model
                  stb.createMainOutputs( result );
+             } else if( which_action == "bc" ){
+                 stb.createBCOutputs( result ); // bc model
              } else {
-                 console.log( "base[0][1]="+result["base"][0][1] );
-                 console.log( "changed[1][1]="+result["changed"][1][1] );
-                 stb.createBCOutputs( result );
-
+                 console.log( "unknown instruction " + which_action )
              }
          }
      });
