@@ -18,7 +18,6 @@ const FRS_DIR = "/mnt/data/frs/"
 const HBAI_DIR = "/mnt/data/hbai/"
 
 
-
 @enum Employment_Status begin  # mapped from empstat
    Missing_Employment_Status = -1
    Employee = 1

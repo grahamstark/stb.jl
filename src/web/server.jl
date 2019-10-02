@@ -18,8 +18,8 @@ import Mux.WebSockets
 const DEFAULT_PORT=8000
 const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 
-const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_l_limit = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
-const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_l_limit=0&ben2_u_limit=0"
+const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_min_hours = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
+const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_min_hours=0&ben2_u_limit=0"
 
 println("starting up")
 
@@ -73,7 +73,6 @@ function errorCatch( app, req  :: Dict )
       app(req)
    catch e
       println("Error occured!")
-
       io = IOBuffer()
       showerror(io, e)
       err_text = takebuf_string(io)
@@ -84,18 +83,21 @@ function errorCatch( app, req  :: Dict )
    end
 end
 
+function d100( v :: Number ) :: Number
+   d/100.0
+end
 
 function web_map_params( req  :: Dict )
    querydict = req[:parsed_querystring]
    tbparams = deepcopy(MiniTB.DEFAULT_PARAMS)
-   tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow)
-   tbparams.it_rate[1] = get_if_set("it_rate_1", querydict, tbparams.it_rate[1])
-   tbparams.it_rate[2] = get_if_set("it_rate_2", querydict, tbparams.it_rate[2])
-   tbparams.it_band[1] = get_if_set("it_band", querydict, tbparams.it_band[1])
+   tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow, operation=weeklyise )
+   tbparams.it_rate[1] = get_if_set("it_rate_1", querydict, tbparams.it_rate[1], operation=d100 )
+   tbparams.it_rate[2] = get_if_set("it_rate_2", querydict, tbparams.it_rate[2], operation=d100 )
+   tbparams.it_band[1] = get_if_set("it_band", querydict, tbparams.it_band[1], operation=weeklyise)
    tbparams.benefit1 = get_if_set("benefit1", querydict, tbparams.benefit1)
    tbparams.benefit2 = get_if_set("benefit2", querydict, tbparams.benefit2)
-   tbparams.ben2_l_limit = get_if_set("ben2_l_limit", querydict, tbparams.ben2_l_limit)
-   tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper)
+   tbparams.ben2_min_hours = get_if_set("ben2_min_hours", querydict, tbparams.ben2_min_hours)
+   tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper, operation=d100)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
    tbparams.basic_income = get_if_set("basic_income", querydict, tbparams.basic_income)
    println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")

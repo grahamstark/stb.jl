@@ -14,11 +14,15 @@ function addsysnotoname(names, sysno)::Array{Symbol,1}
     # Symbol.(String.( names ).*"_sys_$sysno")
 end
 
-function get_if_set(key, dict::Dict, default)
+function get_if_set(key, dict::Dict, default; operation=nothing)
+   v = default
    if haskey(dict, key)
-      return dict[key]
+      v = dict[key]
+      if operation !== nothing
+         v = operation( v )
+      end
    end
-   default
+   v
 end
 
 """
