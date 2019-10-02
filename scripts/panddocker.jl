@@ -85,20 +85,36 @@ function addone(
     links = []
 
     if ! ismissing( prev_content )
-        push!( links, "prev:$prev_content")
+        push!( links, "prev:$(prev_content).html")
     end
     if ! ismissing( next_content )
-        push!( links, "next:$next_content")
+        push!( links, "next:$(next_content).html")
     end
     opts["variable"] = links
     optsarr = makeoptarray( opts )
 
     push!(optsarr, "$(MD_DIR)$(content).md" )
     cmd=`/usr/bin/pandoc $optsarr`
+    println( cmd )
     # println( cmd )
     run( `$cmd` )
 end
 
 df = CSV.File( "$INCLUDE_DIR/ou-files.csv") |> DataFrame
 
-addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
+# addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
+
+npages = size( df )[1]
+
+for i in 1:npages
+    prev = missing
+    if i > 1
+        prev = df[i-1,:content]
+    end
+    next = missing
+    if i < npages
+        next = df[i+1,:content]
+    end
+    page = df[i,:]
+    addone( i, npages, page.title, page.output, page.form, page.content, prev, next )
+end

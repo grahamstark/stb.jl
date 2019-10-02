@@ -39,6 +39,7 @@ $for(header-includes)$
 $endfor$
 </head>
 <body>
+<div id="ou-org">
 $if(title)$
 <header>
 <h1 class="title">$title$</h1>
@@ -71,7 +72,7 @@ $endfor$
 <footer>
   <nav>
   $if(prev)$
-    <a href='$prev$'>Prev<a>
+    <a href='$prev$'>Prev</a>
   $endif$
   |
   $if(next)$
@@ -80,6 +81,6 @@ $endfor$
 
   </nav>
 </footer>
-
+</div><!-- ou div -->
 </body>
 </html>
