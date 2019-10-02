@@ -45,7 +45,7 @@ function with_headers(res :: AbstractString, req  :: Dict )
     println( req[:headers] )
     println( "origin $origin")
     headers["Content-Type"] = "application/json; charset=utf-8"
-    if origin == "http://oustb"
+    if origin == "http://oustb.mazegreenyachts.com"
         headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME "http://localhost:$DEFAULT_PORT/run/"
     else
         headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME http://app.juliadiffeq.org"
@@ -84,7 +84,7 @@ function errorCatch( app, req  :: Dict )
 end
 
 function d100( v :: Number ) :: Number
-   d/100.0
+   v/100.0
 end
 
 function web_map_params( req  :: Dict )
@@ -140,7 +140,7 @@ end
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> with_headers( web_makebc(req), req )),
-   page("/run", req -> with_headers( web_doonerun(req), req )),
+   page("/stb", req -> with_headers( web_doonerun(req), req )),
    Mux.notfound(),
 )
 
