@@ -37,7 +37,7 @@
 .output-block{
     display: block;
     float: left;
-    width: 45%;
+    width: 50%;
     padding 3pt;
     height:600px;
 }
@@ -45,7 +45,7 @@
 .params-block{
     display: block;
     float: left;
-    width: 45%;
+    width: 50%;
     padding 3pt;
     height:600px;
 }
@@ -67,7 +67,7 @@ section{
 }
 
 body{
-    
+
     padding:5pt;
 
 }
