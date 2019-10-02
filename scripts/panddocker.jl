@@ -88,9 +88,9 @@ function addone(
         push!( links, "prev:$prev_content")
     end
     if ! ismissing( next_content )
-        push!( links, "prev:$next_content")
+        push!( links, "next:$next_content")
     end
-    opts['variable'] = links
+    opts["variable"] = links
     optsarr = makeoptarray( opts )
 
     push!(optsarr, "$(MD_DIR)$(content).md" )
