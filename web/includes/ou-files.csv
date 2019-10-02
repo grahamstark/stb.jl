@@ -9,7 +9,7 @@ title,output,form,model,content
 "Who is this for?",,,,roles-and-results
 "Budget Constraints - Introduction",bc-output,tax-only-form,bc,bc-intro
 "Budget Constraints - Adding Benefits",bc-output,benefits-only-form,bc,bc-cash-benefits
-"The Main Model",main-output,main-form,bc,tax-benefit-tour
+"The Main Model",main-output,main-form,stb,tax-benefit-tour
 "Modelling Direct Taxation",main-output,tax-only-form,stb,tax-benefit-direct-taxation
 "Modelling Benefits",main-output,benefits-only-form,stb,tax-benefit-benefits
 "Modelling Spending Taxes",main-output,main-form,stb,tax-benefit-indirect-taxation
