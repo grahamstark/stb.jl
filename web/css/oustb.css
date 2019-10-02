@@ -37,16 +37,14 @@
 .output-block{
     display: block;
     float: left;
-    width: 50%;
-    padding 3pt;
+    width: 48%;
     height:600px;
 }
 
 .params-block{
     display: block;
     float: left;
-    width: 50%;
-    padding 3pt;
+    width: 48%;
     height:600px;
 }
 
