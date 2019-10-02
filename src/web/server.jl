@@ -84,7 +84,7 @@ function errorCatch( app, req  :: Dict )
 end
 
 function d100( v :: Number ) :: Number
-   d/100.0
+   v/100.0
 end
 
 function web_map_params( req  :: Dict )
