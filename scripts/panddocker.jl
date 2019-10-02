@@ -1,3 +1,6 @@
+using CSV
+using DataFrames
+
 MD_DIR = "/home/graham_s/OU/DD226/docs/sections/"
 OUT_DIR = "/var/www/ou/stb/"
 INCLUDE_DIR = "/home/graham_s/VirtualWorlds/projects/ou/stb.jl/web/includes/"
@@ -78,12 +81,24 @@ function addone(
     end
     opts["include-before-body"] = includes
     opts["o"] = "$(OUT_DIR)$(content).html"
-    optsarr = makeoptarray( opts )
-    push!(optsarr, "$(MD_DIR)$(content).md" )
+    opts["metadata"] = "title:$title"
+    links = []
 
+    if ! ismissing( prev_content )
+        push!( links, "prev:$prev_content")
+    end
+    if ! ismissing( next_content )
+        push!( links, "prev:$next_content")
+    end
+    opts['variable'] = links
+    optsarr = makeoptarray( opts )
+
+    push!(optsarr, "$(MD_DIR)$(content).md" )
     cmd=`/usr/bin/pandoc $optsarr`
     # println( cmd )
     run( `$cmd` )
 end
+
+df = CSV.File( "$INCLUDE_DIR/ou-files.csv") |> DataFrame
 
 addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
