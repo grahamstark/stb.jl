@@ -34,11 +34,9 @@ $endif$
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
-<table class='fixtable'><tr>
 $for(header-includes)$
-  <td>$header-includes$</td>
+  $header-includes$
 $endfor$
-</tr></table>
 </head>
 <body>
 <div id="ou-org">
@@ -57,9 +55,12 @@ $endif$
 </header>
 $endif$
 <div id='input-section-if-any'>
-$for(include-before)$
-$include-before$
-$endfor$
+<table class='fixtable'><tr>
+  $for(include-before)$
+  <td>$include-before$</td><!-- gks fixme a hack -->
+  $endfor$
+</tr></table>
+
 </div>
 <p>&nbsp;</p>
 $if(toc)$
