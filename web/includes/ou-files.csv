@@ -7,11 +7,11 @@ title,output,form,model,content
 "A Tax Benefit Model",,,,tax-benefit-intro
 "Welcome to Unicoria",,,,welcome-to-unicornia
 "Who is this for?",,,,roles-and-results
-"Budget Constraints - Introduction",bc-output,main-form,bc,bc-intro
-"Budget Constraints - Adding Benefits",bc-output,main-form,bc,bc-cash-benefits
+"Budget Constraints - Introduction",bc-output,tax-only-form,bc,bc-intro
+"Budget Constraints - Adding Benefits",bc-output,benefits-only-form,bc,bc-cash-benefits
 "The Main Model",main-output,main-form,bc,tax-benefit-tour
-"Modelling Direct Taxation",main-output,main-form,stb,tax-benefit-direct-taxation
-"Modelling Benefits",main-output,main-form,stb,tax-benefit-benefits
+"Modelling Direct Taxation",main-output,tax-only-form,stb,tax-benefit-direct-taxation
+"Modelling Benefits",main-output,benefits-only-form,stb,tax-benefit-benefits
 "Modelling Spending Taxes",main-output,main-form,stb,tax-benefit-indirect-taxation
 "Modelling Minimum Wages",main-output,main-form,stb,tax-benefit-minimum-wages
 "You are the Finance Secretary 1: Attacking Poverty",main-output,main-form,stb,tax-benefit-package-1-poverty
