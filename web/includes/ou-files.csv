@@ -9,3 +9,12 @@ title,output,form,content
 "Who is this for?",,,roles-and-results
 "Budget Constraints - Introduction",blank-output,main-form,bc-intro
 "Budget Constraints - Adding Benefits",blank-output,main-form,bc-cash-benefits
+"The Main Model",main-output,main-form,tax-benefit-tour
+"Modelling Direct Taxation",main-output,main-form,tax-benefit-direct-taxation
+"Modelling Benefits",main-output,main-form,tax-benefit-benefits
+"Modelling Spending Taxes",main-output,main-form,tax-benefit-indirect-taxation
+"Modelling Minimum Wages",main-output,main-form,tax-benefit-minimum-wages
+"You are the Finance Secretary 1: Attacking Poverty",main-output,main-form,tax-benefit-package-1-poverty
+"You are the Finance Secretary 2: Incentivising the Economy",main-output,main-form,tax-benefit-package-2-incentives
+"You are the Finance Secretary 3: A Woman- and Child- Friendly Budget",main-output,main-form,tax-benefit-package-3-women-and-children
+"Tax Benefit Models - Where Now?",,,tax-benefit-extensions
