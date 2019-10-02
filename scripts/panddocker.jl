@@ -11,7 +11,7 @@ const DEFAULT_OPTS = Dict(
     "data-dir"          => PANDOC_DIR,
     "css"               =>
             [
-                "https://learn2.open.ac.uk/theme/styles.php/osep/1569489122_1567580537/all",
+                "/css/ou-clone.css",
                 "/css/oustb.css"
             ],
     "include-in-header" => [ "$INCLUDE_DIR/ou-js-headers.html" ],
