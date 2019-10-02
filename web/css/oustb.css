@@ -55,3 +55,19 @@
     width: 95%;
     table-layout : fixed;
 }
+
+div.input-section-if-any{
+    width:100%;
+    display:block;
+}
+
+section{
+    width:100%;
+    display:block;
+}
+
+body{
+    
+    padding:5pt;
+
+}
