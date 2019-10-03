@@ -4,7 +4,7 @@ scripts/deploy_frontend
 fping -c1 -t300 oustb.mazegreenyachts.com &>/dev/null
 if [ "$?" = 0 ]
 then
-   cat scripts/remote_deploy | ssh oustb /bin/bash
+   cat scripts/remote_deploy | ssh oustb.mazegreenyachts.com /bin/bash
    rsync -ax -v  /var/www/ou/stb/ oustb.mazegreenyachts.com:/var/www/ou/stb/
 else
    echo "oustb down"
