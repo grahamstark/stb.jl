@@ -14,7 +14,10 @@ function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    example_names = Vector{AbstractString}()
    num_households = 0
    if load_examples
-      example_names = Example_Household_Getter.initialise()
+      example_names = Example_Household_Getter.initialise(
+          household_name = "model_households_scotland",
+          people_name    = "model_people_scotland"
+      )
    end
    if load_main
       rc = @timed begin

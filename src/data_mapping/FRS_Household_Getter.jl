@@ -20,7 +20,7 @@ function initialise(
     Year_Starts = Dict(2015=>(2,2), 2016=>(19243,43560),2017=>(38551,87612))
     start_hh_row = 2
     start_pers_row = 2
-    if start_year > 2015
+    if start_year > 2015 # FIXME this is dangerous and silly -load everything & select!!
         start_hh_row = Year_Starts[start_year][1]
         start_pers_row = Year_Starts[start_year][2]
     end
