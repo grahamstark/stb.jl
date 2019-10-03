@@ -116,6 +116,19 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     $( "#"+element_id ).html( output );
 }
 
+stb.createGainLose = function( result ){
+    var view = {}
+    view.gainers = numeral(result.gainlose_totals.gainers).format('0,0');
+    view.nc = numeral(result.gainlose_totals.nc).format('0,0');
+    view.losers = numeral(result.gainlose_totals.losers).format('0,0');
+    view.gainers_pct = numeral(100.0*result.gainlose_totals.gainers/result.unit_count).format('0,0.0');
+    view.nc = numeral(100.0*result.gainlose_totals.nc/result.unit_count).format('0,0.0');
+    view.losers = numeral(100.0*result.gainlose_totals.losers/result.unit_count).format('0,0.0');
+    var output = Mustache.render( "<span class='positive_med''>Gainers: {{gainers}}({{gainers_pct}}%)</span><span class=''>Unchanged: {{nc}}({{nc_pct}}%)</span><span class='positive_med''>Losers: {{losers}}({{losers_pct}}%)</span> ", view );
+    $( "#gainers-and-losers" ).html( output );
+
+}
+
 stb.createInequality = function( result ){
     var udclass = stb.propToString( result.inequality[2]['gini'] );
     var gini_post = numeral( result.inequality[1]['gini']*100 ).format( '0,0.0');
@@ -275,6 +288,8 @@ stb.createMainOutputs = function( result ){
     stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
     stb.createInequality( result );
     stb.createGainsByDecile( result );
+    stb.createGainLose( result );
+
 }
 
 stb.annotationToString = function( annotation ){
