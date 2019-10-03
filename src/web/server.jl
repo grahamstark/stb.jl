@@ -106,7 +106,7 @@ function web_map_params( req  :: Dict )
 end
 
 
-example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
+example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2015 )
 
 const NUM_REPEATS = 30 # simulates a longer calculation
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
