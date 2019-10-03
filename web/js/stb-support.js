@@ -277,16 +277,38 @@ stb.createMainOutputs = function( result ){
     stb.createGainsByDecile( result );
 }
 
+stb.annotationToString = function( annotation ){
+    var mrs = "na";
+    var tc = "na";
+    if( taxcredit < 999 ){
+        mrs = numeral( .marginal_rate*100 ).format( '0,0.0');
+        tc = numeral( changed.annotations[i].tax_credit ).format( '0,0.0');
+    }
+    return "Marginal Rate: "+mrs+"Tax Credit: "+tc;
+}
+
+
+
 stb.createBCOutputs = function( result ){
-    var pre = result["base"];
-    var changed = result["changed"];
+    var pre = result.base;
+    var changed = result.changed;
     var data = [];
-    for( var i = 0; i < pre[1].length; i++){
-        data.push( {"gross1":pre[0][i], "pre":pre[1][i] })
+    var n = pre.points[1].length;
+    for( var i = 0; i < n; i++){
+        var annotation = "";
+        if( i < (n-1)){
+            annotation = stb.annotationToString(pre.annotations[i]);
+        }
+        data.push( {"gross1":pre.points[0][i], "pre":pre.points[1][i], "ann_pre":annotation })
     }
     // var data_post= [];
-    for( var i = 0; i < changed[1].length; i++){
-        data.push( {"gross2":changed[0][i], "post":changed[1][i] })
+    n = changed.points[1].length;
+    for( var i = 0; i < n; i++){
+        var annotation = "";
+        if( i < (n-1)){
+            annotation = stb.annotationToString(changed.annotations[i])
+        }
+        data.push( {"gross2":changed.points[0][i], "post":changed.points[1][i], "ann_post":annotation })
     }
 
     data.push( {"gross3":0.0, "base":0.0});
@@ -340,7 +362,8 @@ stb.createBCOutputs = function( result ){
                            "field": "gross1" },
                     "y": { "type": "quantitative",
                            "field": "pre" },
-                    "color": {"value":"blue"}
+                    "color": {"value":"blue"},
+                    "tooltip": {"field":"ann_pre", "type":"nominal"  }
                 } // encoding
             }, // pre layer line
            {
@@ -350,7 +373,8 @@ stb.createBCOutputs = function( result ){
                           "field": "gross2" },
                    "y": { "type": "quantitative",
                           "field": "post" },
-                  "color": {"value":"red"}
+                  "color": {"value":"red"},
+                  "tooltip": { "field":"ann_post", "type":"nominal" }
               } // encoding
           },
           { // diagonal in grey

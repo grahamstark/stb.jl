@@ -81,6 +81,7 @@ function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item
     targetting
 end
 
+
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
     basenames = names( base_results )
@@ -211,9 +212,11 @@ function local_getnet(data :: Dict, gross::Real)::Real
    return rc[:netincome]
 end
 
-function local_makebc( person :: MiniTB.Person, tbparams :: MiniTB.Parameters )
+function local_makebc( person :: MiniTB.Person, tbparams :: MiniTB.Parameters ) :: NamedTuple
    data = Dict( :person=>person, :params=>tbparams )
-   pointstoarray( TBComponents.makebc( data, local_getnet ))
+   bc = TBComponents.makebc( data, local_getnet )
+   annotations = annotate_bc( bc )
+   ( points = pointstoarray( bc ), annotations = annotations )
 end
 
 
