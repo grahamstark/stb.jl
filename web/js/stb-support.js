@@ -102,7 +102,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     }
     var view = {
         udclass: pc_change_str,
-        arrow: ARROWS_1[arrow_str]
+        arrow: ARROWS_2[arrow_str]
     }
     view.which_thing = name;
     view.net_cost_str = "&#163;"+numeral(nc/(10**9)).format( '0,0')+"&nbsp;bn";
@@ -123,7 +123,7 @@ stb.createInequality = function( result ){
     var view = {
         gini_post: gini_post,
         gini_change:gini_change,
-        arrow: ARROWS_1[udclass],
+        arrow: ARROWS_2[udclass],
         udclass: udclass
     };
     if( udclass == 'nonsig'){
@@ -280,11 +280,11 @@ stb.createMainOutputs = function( result ){
 stb.annotationToString = function( annotation ){
     var mrs = "na";
     var tc = "na";
-    if( taxcredit < 999 ){
-        mrs = numeral( .marginal_rate*100 ).format( '0,0.0');
-        tc = numeral( changed.annotations[i].tax_credit ).format( '0,0.0');
+    if( annotation.taxcredit < 999 ){
+        mrs = numeral( annotation.marginalrate*100 ).format( '0,0.0');
+        tc = numeral( annotation.taxcredit ).format( '0,0.0');
     }
-    return "Marginal Rate: "+mrs+"Tax Credit: "+tc;
+    return "Marginal Rate: "+mrs+"% Tax Credit: £"+tc;
 }
 
 

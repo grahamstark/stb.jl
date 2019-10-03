@@ -145,6 +145,11 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     results.losers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).<= -0.01).*results.weight_1
     results.nc = ((abs.(results.net_income_2 - results.net_income_1)./results.net_income_1).< 0.01).*results.weight_1
 
+    gainlose_totals = (
+        losers = sum( results.losers ),
+        nc = sum( results.nc ),
+        gainers = sum( results.losers ))
+
     gainlose_by_thing = (
         thing=levels( results.thing_1 ),
         losers = counts(results.thing_1,fweights( results.losers )),
@@ -168,6 +173,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals .*= WEEKS_PER_YEAR # annualise
 
     summary_output = (
+        gainlose_totals=gainlose_totals,
         gainlose_by_sex=gainlose_by_sex,
         gainlose_by_thing=gainlose_by_thing,
 
