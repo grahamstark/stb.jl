@@ -10,4 +10,3 @@ people_dataset = CSV.File("$(MODEL_DATA_DIR)/$(people_name).tab", delim='\t') |>
 
 scottish_hhlds = hh_dataset[(hh_dataset.region .== 299999999),:]
 scottish_people = join(people_dataset,scottish_hhlds,on=[:hid,:data_year],kind = :semi)
-# fixme there's some nice one-line join for this
