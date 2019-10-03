@@ -24,11 +24,10 @@ function initialise(
         start_hh_row = Year_Starts[start_year][1]
         start_pers_row = Year_Starts[start_year][2]
     end
-    nyears = start_year - 2015
-
     hh_dataset = CSV.File("$(MODEL_DATA_DIR)/$(household_name).tab", delim='\t', datarow=start_hh_row) |> DataFrame
     # FIXME HORRIBLE HACK - correct (???) weights for num years in dataset
     # we need to generate our own weights here
+    nyears = 2018 - start_year
     hh_dataset[!,:weight] ./= nyears
     people_dataset = CSV.File("$(MODEL_DATA_DIR)/$(people_name).tab", delim='\t', datarow=start_pers_row) |> DataFrame
     npeople = size( people_dataset)[1]

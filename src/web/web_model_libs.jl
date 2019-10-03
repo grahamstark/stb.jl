@@ -83,7 +83,6 @@ end
 
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
-    rny = Float( ynears )
     basenames = names( base_results )
     basenames_2 = addsysnotoname( basenames, 1 )
     names!( base_results, basenames_2 )

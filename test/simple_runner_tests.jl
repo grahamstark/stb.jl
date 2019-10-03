@@ -11,7 +11,7 @@ include("../src/web/web_model_libs.jl" )
 
 print_test = false
 
-example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2017 )
+example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2015 )
 
 hhlds_to_do = num_households
 people_to_do = num_people
