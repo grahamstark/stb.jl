@@ -145,6 +145,8 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     results.losers = (((results.net_income_2 - results.net_income_1)./results.net_income_1).<= -0.01).*results.weight_1
     results.nc = ((abs.(results.net_income_2 - results.net_income_1)./results.net_income_1).< 0.01).*results.weight_1
 
+    unit_count = sum( results.weight_1 )
+
     gainlose_totals = (
         losers = sum( results.losers ),
         nc = sum( results.nc ),
@@ -193,7 +195,8 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         totals=totals,
         totals_names=totals_names,
         poverty_line=poverty_line,
-        growth_assumption=growth
+        growth_assumption=growth,
+        unit_count=unit_count
     )
     summary_output
 end
