@@ -83,6 +83,7 @@ end
 
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
+    rny = Float( ynears )
     basenames = names( base_results )
     basenames_2 = addsysnotoname( basenames, 1 )
     names!( base_results, basenames_2 )
@@ -196,7 +197,10 @@ function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
    for (k,v) in modelpers.income
       inc += v
    end
-   sex = modelpers.pid % 2 == 0 ? MiniTB.Male : MiniTB.Female
+   sex = MiniTB.Female
+   if modelpers.sex == Definitions.Male ## easier way?
+      sex = MiniTB.Male
+   end
    MiniTB.Person( modelpers.pid, inc, modelpers.usual_hours_worked, modelpers.age, sex )
 end
 
