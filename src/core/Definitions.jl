@@ -6,7 +6,7 @@ export Employment_Status  # mapped from empstat
 export Employee, Self_employed
 export Missing_Employment_Status
 
-export PRICES_DIR, MODEL_DATA_DIR
+export PRICES_DIR, MODEL_DATA_DIR, FRS_DIR, HBAI_DIR
 
 #
 # FIXME move this to some config file

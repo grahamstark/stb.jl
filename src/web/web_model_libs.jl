@@ -10,7 +10,7 @@ using Definitions
 using CSV
 using StatsBase
 
-function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
+function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2015 )
    example_names = Vector{AbstractString}()
    num_households = 0
    if load_examples
@@ -18,7 +18,11 @@ function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2017 )
    end
    if load_main
       rc = @timed begin
-         num_households,num_people,nhh2 = FRS_Household_Getter.initialise( start_year = start_year )
+         num_households,num_people,nhh2 =
+            FRS_Household_Getter.initialise(
+            household_name = "model_households_scotland",
+            people_name    = "model_people_scotland",
+            start_year = start_year )
       end
       mb = trunc(Integer, rc[3] / 1024^2)
       println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
@@ -192,7 +196,10 @@ function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
    for (k,v) in modelpers.income
       inc += v
    end
-   sex = modelpers.pid % 2 == 0 ? MiniTB.Male : MiniTB.Female
+   sex = MiniTB.Female
+   if modelpers.sex == Definitions.Male ## easier way?
+      sex = MiniTB.Male
+   end
    MiniTB.Person( modelpers.pid, inc, modelpers.usual_hours_worked, modelpers.age, sex )
 end
 
