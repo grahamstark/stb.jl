@@ -10,3 +10,6 @@ people_dataset = CSV.File("$(MODEL_DATA_DIR)/$(people_name).tab", delim='\t') |>
 
 scottish_hhlds = hh_dataset[(hh_dataset.region .== 299999999),:]
 scottish_people = join(people_dataset,scottish_hhlds,on=[:hid,:data_year],kind = :semi)
+
+CSV.write("$(MODEL_DATA_DIR)model_households_scotland.tab", model_households, delim = "\t")
+CSV.write("$(MODEL_DATA_DIR)model_people_scotland.tab", model_people, delim = "\t")
