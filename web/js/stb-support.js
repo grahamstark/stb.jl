@@ -336,8 +336,7 @@ stb.createBCOutputs = function( result ){
                            "axis":{
                               "title": "Net Income (£pw)"
                            } },
-                    "color": {"value":"blue"},
-                    "tooltip": {"field":"ann_pre" }
+                    "color": {"value":"blue"}
                 } // encoding
             }, // pre layer point
             {
@@ -353,8 +352,7 @@ stb.createBCOutputs = function( result ){
                            "axis":{
                               "title": "Net Income (£pw)"
                            } },
-                   "color": {"value":"red"},
-                   "tooltip": { "field":"ann_pre" }
+                   "color": {"value":"red"}
                } // encoding
            }, // post later point
            {
@@ -364,7 +362,8 @@ stb.createBCOutputs = function( result ){
                            "field": "gross1" },
                     "y": { "type": "quantitative",
                            "field": "pre" },
-                    "color": {"value":"blue"}
+                    "color": {"value":"blue"},
+                    "tooltip": {"field":"ann_pre", "type":"nominal"  }
                 } // encoding
             }, // pre layer line
            {
@@ -374,7 +373,8 @@ stb.createBCOutputs = function( result ){
                           "field": "gross2" },
                    "y": { "type": "quantitative",
                           "field": "post" },
-                  "color": {"value":"red"}
+                  "color": {"value":"red"},
+                  "tooltip": { "field":"ann_post", "type":"nominal" }
               } // encoding
           },
           { // diagonal in grey
