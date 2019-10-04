@@ -80,23 +80,18 @@ function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item
         targetting[sys] = on_target
     end
     # targetting[3] = targetting[2]-targetting[1]
-    for sys in 1:2
+    for sys in 1:3
         if total_spend[sys] > 0
             targetting[sys] /= total_spend[sys]
             targetting[sys] *= 100.0
         end
     end # loop to props
-    if total_spend[1] > 0
-        targetting[3] /= total_spend[1]
-        targetting[3] *= 100.0
-    end
-
     targetting
 end
 
 
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
-    
+
     n_names = names( results )
     n_names_2 = addsysnotoname( n_names, 2 )
     names!( results, n_names_2 )
