@@ -88,6 +88,41 @@ stb.getArrowAndClass = function( change, prop ){
     }
 }
 
+stb.createNetCost = function( result ){
+    var net_cost = result.totals[2][8]/10**9;
+    var view = {
+        net_cost_str: "Under &#163;1bn",
+        udclass: "nonsig",
+        dir: ""
+    }
+    if( Math.abs( net_cost ) > 10.0 ){
+        if( net_cost < 0 ){
+            net_cost *= -1;
+            view.dir = "Less";
+            view.udclass: "negative_strong",
+        } else {
+            view.dir = "More";
+            view.udclass: "positive_strong"
+        }
+        view.net_cost_str = "&#163;" +"&#163;"+numeral(net_cost).format( '0,0')+"&nbsp;bn";
+
+    }
+    view.arrow = ARROWS_2[view.udclass];
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Net Cost: {{{net_cost_str}}} {{dir}}</strong> {{{arrow}}}</p>", view );
+    $( "#net-cost" ).html( output );
+}
+
+stb.createMarginalRates= function( result ){
+    var view = {
+        av_marg_str: "",
+        av_marg_change_str:
+        udclass: "nonsig",
+    }
+    view.arrow = ARROWS_2[view.udclass];
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Avg Marginal Tax Rate: {{{av_marg_str}}}</strong> {{{arrow}}}</p>", view );
+    $( "#marginal-rates" ).html( output );
+}
+
 stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good ){
     console.log( "typeof totals " + typeof( totals ));
     console.log( "totals length" + totals.length );
@@ -149,13 +184,6 @@ stb.createInequality = function( result ){
     $( "#inequality" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
-
-stb.createSpendingTaxes = function( result ){
-    var output = "<p>Taxes on Spending unchangable!</p>";
-    $( "#taxes-on-spending" ).html( output );
-}
-
-
 
 stb.createPoverty = function( result ){
     var udclass = stb.propToString( result.poverty[2].headcount );
@@ -324,9 +352,10 @@ stb.createGainsByDecile = function( result ){
 
 
 stb.createMainOutputs = function( result ){
-    stb.createOneMainOutput( "net-cost", "Net Cost of your Changes", result.totals, 5, true );
+    stb.createNetCost( result );
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
     stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
+    stb.createOneMainOutput( "taxes-on-spending", "Taxes on Spending", result.totals, 7, false );
     stb.createInequality( result );
     stb.createGainsByDecile( result );
     stb.createGainLose( result );
