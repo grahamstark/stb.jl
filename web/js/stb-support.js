@@ -126,6 +126,7 @@ stb.createMarginalRates = function( result ){
     }
     over75 /= tot;
     over75_change /= tot;
+    
     metr = result.avg_metr[2];
     var view = {
         av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
@@ -139,7 +140,7 @@ stb.createMarginalRates = function( result ){
     var output = Mustache.render(
         "<ul class='{{udclass}}'>"+
             "<li>Average: {{{av_marg_str}}} ({{{arrow}}} {{{av_marg_change_str}}}) </li>"+
-            "<li>Pct above 75%: {{{over75}}} ({{{over75_change}}})</li>"+
+            "<li>Above 75%: {{{over75}}} ({{{over75_change}}})</li>"+
         "</ul>", view );
     $( "#marginal-rates" ).html( output );
 }
@@ -237,7 +238,7 @@ stb.createTargetting = function( result ){
         var view = {
             targetted: targetted
         };
-        output = Mustache.render( "<p>% of benefit changes targetted on poor: {{targetted}} </p>", view );
+        output = Mustache.render( "<p>Proportion of benefit changes targetted on poor: {{targetted}}.</p>", view );
     }
     $( "#targetting" ).html( output );
 }

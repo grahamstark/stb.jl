@@ -129,34 +129,33 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( poverty, diff_between( poverty[2], poverty[1] ))
 
     totals = []
-    totals_1 = zeros(9)
-    totals_1[1]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
-    totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
-    totals_1[3]=sum(results[!,:benefit1_1].*results[!,:weight_1])
-    totals_1[4]=sum(results[!,:benefit2_1].*results[!,:weight_1])
-    totals_1[5]=sum(results[!,:basic_income_1].*results[!,:weight_1])
-    totals_1[6]=sum(results[!,:vat_1].*results[!,:weight_1])
-    totals_1[7]=sum(results[!,:other_indirect_1].*results[!,:weight_1])
-    totals_1[8]=sum(results[!,:total_indirect_1].*results[!,:weight_1])
-    totals_1[9]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
+    totals_1 = Dict()
+    totals_1["total_taxes"]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
+    totals_1["total_benefits"]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
+    totals_1["benefit_1"]=sum(results[!,:benefit1_1].*results[!,:weight_1])
+    totals_1["benefit_2"]=sum(results[!,:benefit2_1].*results[!,:weight_1])
+    totals_1["basic_income"]=sum(results[!,:basic_income_1].*results[!,:weight_1])
+    totals_1["vat"]=sum(results[!,:vat_1].*results[!,:weight_1])
+    totals_1["other_indirect"]=sum(results[!,:other_indirect_1].*results[!,:weight_1])
+    totals_1["total_indirect"]=sum(results[!,:total_indirect_1].*results[!,:weight_1])
+    totals_1["net_incomes"]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
 
-    totals_2 = zeros(9)
-    totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
-    totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
-    totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
-    totals_2[4]=sum(results[!,:benefit2_2].*results[!,:weight_1])
-    totals_2[5]=sum(results[!,:basic_income_2].*results[!,:weight_1])
-    totals_1[6]=sum(results[!,:vat_2].*results[!,:weight_1])
-    totals_1[7]=sum(results[!,:other_indirect_2].*results[!,:weight_1])
-    totals_1[8]=sum(results[!,:total_indirect_2].*results[!,:weight_1])
-    totals_2[9]=sum(results[!,:net_income_2].*results[!,:weight_1])
+    totals_2 = Dict()
+    totals_1["total_taxes"]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
+    totals_1["total_benefits"]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
+    totals_1["benefit_1"]=sum(results[!,:benefit1_2].*results[!,:weight_1])
+    totals_1["benefit_2"]=sum(results[!,:benefit2_2].*results[!,:weight_1])
+    totals_1["basic_income"]=sum(results[!,:basic_income_2].*results[!,:weight_1])
+    totals_1["vat"]=sum(results[!,:vat_1].*results[!,:weight_2])
+    totals_1["other_indirect"]=sum(results[!,:other_indirect_2].*results[!,:weight_1])
+    totals_1["total_indirect"]=sum(results[!,:total_indirect_2].*results[!,:weight_1])
+    totals_1["net_incomes"]=sum(results[!,:net_income_2].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
 
-    totals_3 = totals_2-totals_1
+    totals_3 = diff_between(totals_2-totals_1)
 
     push!( totals, totals_1 )
     push!( totals, totals_2 )
     push!( totals, totals_3 )
-    totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2", "Basic Income","VAT", "Other Indirect", "Total Indirect", "Net Incomes"]
 
     disallowmissing!( results )
 
@@ -221,7 +220,6 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         targetting_basic_income=targetting_basic_income,
 
         totals=totals,
-        totals_names=totals_names,
         poverty_line=poverty_line,
         growth_assumption=growth,
         unit_count=unit_count
