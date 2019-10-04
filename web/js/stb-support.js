@@ -158,7 +158,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
         view.pc_cost_str = '';
     }
 
-    var output = Mustache.render( "<h4 class='{{udclass}}'>{{which_thing}}</h4> <strong>{{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
+    var output = Mustache.render( "<strong>{{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
     $( "#"+element_id ).html( output );
 }
 
@@ -374,7 +374,7 @@ stb.createMainOutputs = function( result ){
     stb.createGainLose( result );
     stb.createPoverty( result );
     stb.createTargetting( result );
-    stb.createMarginalRate( result );
+    stb.createMarginalRates( result );
 }
 
 stb.annotationToString = function( annotation ){
