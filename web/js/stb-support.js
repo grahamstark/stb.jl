@@ -127,8 +127,8 @@ stb.createMarginalRates = function( result ){
 
     var view = {
         av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
-        av_marg_change_str:numeral(100.0*result.avg_metr[1]).format( '0,0'),
-        udclass: stb.propToString( result.avg_metr[1]),
+        av_marg_change_str:numeral(100.0*result.avg_metr[2]).format( '0,0'),
+        udclass: stb.propToString( result.avg_metr[2]),
         over75: numeral(100.0*over75).format( '0,0')+"%"
     }
     view.arrow = ARROWS_2[view.udclass];
