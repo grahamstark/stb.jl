@@ -150,10 +150,17 @@ stb.createInequality = function( result ){
     stb.createLorenzCurve( "#lorenz", result, true );
 }
 
+stb.createSpendingTaxes = function( result ){
+    var output = "<p>Taxes on Spending unchangable!</p>";
+    $( "#taxes-on-spending" ).html( output );
+}
+
+
+
 stb.createPoverty = function( result ){
     var udclass = stb.propToString( result.poverty[2].headcount );
-    var headcount_post = numeral( result.poverty[1].headcount ).format( '0,0.0');
-    var headcount_change = numeral( 100.0*result.poverty[2].headcount/result.poverty[1].headcount ).format( '0,0.0')+"%";
+    var headcount_post = numeral( 100.*result.poverty[1].headcount ).format( '0,0.0')+"%";
+    var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0')+"%";
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
@@ -171,12 +178,12 @@ stb.createPoverty = function( result ){
 stb.createTargetting = function( result ){
     var targetted = "NA"
     if(result.targetting_total_benefits[2] > 0.0 ){
-        targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' );
+        targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
     }
     var view = {
         targetted: targetted
     };
-    var output = Mustache.render( "<p><strong>Benefit increase targetted on poor: {{targetted}}% </p>", view );
+    var output = Mustache.render( "<p><strong>Benefit increase targetted on poor: {{targetted}} </p>", view );
     $( "#targetting" ).html( output );
 }
 
