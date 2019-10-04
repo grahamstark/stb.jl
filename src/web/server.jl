@@ -108,9 +108,9 @@ end
 
 example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2015 )
 
-const NUM_REPEATS = 30 # simulates a longer calculation
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
-const BASE_RESULTS = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, NUM_REPEATS )
+
+const BASE_RESULTS = create_base_results( num_households, num_people )
 
 
 function web_doonerun( req :: Dict )

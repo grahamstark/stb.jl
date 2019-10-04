@@ -17,6 +17,9 @@ const MODEL_DATA_DIR="$(PROJECT_DIR)/data/"
 const FRS_DIR = "/mnt/data/frs/"
 const HBAI_DIR = "/mnt/data/hbai/"
 
+export NUM_REPEATS
+const NUM_REPEATS = 30 # simulates a longer calculation
+
 
 @enum Employment_Status begin  # mapped from empstat
    Missing_Employment_Status = -1

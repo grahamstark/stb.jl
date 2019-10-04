@@ -41,6 +41,14 @@ function poverty_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
    return 0.0
 end
 
+function create_base_results( num_households :: Integer, num_people :: Integer )
+   base_results = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, 1 )
+   basenames = names( base_results )
+   basenames = addsysnotoname( basenames, 1 )
+   names!( base_results, basenames )
+   base_results
+end
+
 function characteristic_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
    which = data[:which_element]
    characteristic = data[:characteristic]
@@ -89,24 +97,22 @@ end
 
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
-    basenames = names( base_results )
-    basenames_2 = addsysnotoname( basenames, 1 )
-    names!( base_results, basenames_2 )
 
     n_names = names( results )
-    n_names = addsysnotoname( n_names, 2 )
-    names!( results, n_names )
+    n_names_2 = addsysnotoname( n_names, 2 )
+    names!( results, n_names_2 )
     results = hcat( base_results, results )
-    names!( base_results, basenames ) # restore names in base run FIXME this needs synchronized
-    @assert results.pid_1 == results.pid_2
-    println( "computing $num_households hhlds and $num_people people ")
 
-    diff_names = addsysnotoname( n_names, 3 )
-    for name in basenames
-        diff_name = Symbol(String(n) * "_3")
-        name_1 = Symbol(String(n) * "_1")
-        name_2 = Symbol(String(n) * "_2")
-        results[diff_name] = results[name_2] - results[name_1]
+    @assert results.pid_1 == results.pid_2
+    for name in n_names
+        diff_name = Symbol(String(name) * "_3")
+        name_1 = Symbol(String(name) * "_1")
+        name_2 = Symbol(String(name) * "_2")
+        try
+            results[!,diff_name] = results[!,name_2] - results[!,name_1]
+        catch
+            ; # idiot check for non numeric cols
+        end
     end
 
     CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
@@ -164,7 +170,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     gainlose_totals = (
         losers = sum( results.losers ),
         nc = sum( results.nc ),
-        gainers = sum( results.gainer ))
+        gainers = sum( results.gainers ))
 
     gainlose_by_thing = (
         thing=levels( results.thing_1 ),

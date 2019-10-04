@@ -23,7 +23,7 @@ num_repeats = 50
 json_out=missing
 results=missing
 
-base_results = doonerun( DEFAULT_PARAMS, num_households, num_people, num_repeats )
+base_results = create_base_results( num_households, num_people )
 
 @time begin
 
