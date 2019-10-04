@@ -151,7 +151,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
 
     var nc = totals[2][pos];
     var pc = nc/totals[0][pos];
-    var arrow_str = stb.propToString( pc );
+    var arrow_str = stb.propToString( -pc );
     var pc_change_str = arrow_str;
     if( down_is_good ){
         pc_change_str= stb.propToString( -pc ); // point the arrow in the opposite direction
@@ -230,6 +230,7 @@ stb.createPoverty = function( result ){
 
 stb.createTargetting = function( result ){
     var targetted = "NA"
+    console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
     if(result.targetting_total_benefits[2] > 0.0 ){
         targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
     }
@@ -249,7 +250,7 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var ytitle = "Income Share";
     var title = "Lorenz Curve"
     if( thumbnail ){
-        var height = 40;
+        var height = 70;
         xtitle = "";
         ytitle = "";
         title = "";
@@ -330,7 +331,7 @@ stb.createDecileBarChart = function( targetId, result, thumbnail ){
     var ytitle = "Gains in &#163; pw";
     var title = "Gains By Decile"
     if( thumbnail ){
-        var height = 40;
+        var height = 70;
         xtitle = "";
         ytitle = "";
         title = "";
