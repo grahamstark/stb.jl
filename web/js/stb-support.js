@@ -91,20 +91,20 @@ stb.getArrowAndClass = function( change, prop ){
 stb.createNetCost = function( result ){
     var net_cost = result.totals[2][8]/10**9;
     var view = {
-        net_cost_str: "Under &#163;1bn",
+        net_cost_str: "Under &#163;10m",
         udclass: "nonsig",
         dir: ""
     }
-    if( Math.abs( net_cost ) >= 1.0 ){
+    if( Math.abs( net_cost ) >= 0.01 ){
         if( net_cost < 0 ){
             net_cost *= -1;
             view.dir = "Less";
-            view.udclass = "negative_strong";
+            view.udclass = "positive_strong";
         } else {
             view.dir = "More";
-            view.udclass = "positive_strong";
+            view.udclass = "negative_strong";
         }
-        view.net_cost_str = "&#163;" +"&#163;"+numeral(net_cost).format( '0,0')+"&nbsp;bn";
+        view.net_cost_str = "&#163;"+numeral(net_cost).format( '0,0')+"&nbsp;bn";
     }
     view.arrow = ARROWS_2[view.udclass];
     var output = Mustache.render( "<p class='{{udclass}}'> {{{net_cost_str}}} {{dir}}</strong> {{{arrow}}}</p>", view );
@@ -114,23 +114,29 @@ stb.createNetCost = function( result ){
 stb.createMarginalRates = function( result ){
 
     var over75 = 0.0;
+    var over75_change = 0.0;
     var tot = 0.0;
     for( var i = 0; i < result.metr_histogram.length; i++ ){
-        tot += result.metr_histogram[i];
+        tot += result.metr_histogram[1][i];
         // FIXME brittle
         if( i >= 4){
-            over75 += result.metr_histogram[i];
+            over75 += result.metr_histogram[1][i];
+            over75_change += result.metr_histogram[2][i];
         }
     }
 
     var view = {
-        av_marg_str: numeral(100.0*result.avg_metr[2]).format( '0,0')+"%",
-        av_marg_change_str:numeral(100.0*result.avg_metr[3]).format( '0,0'),
-        udclass: stb.propToString( result.avg_metr[3]),
+        av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
+        av_marg_change_str:numeral(100.0*result.avg_metr[1]).format( '0,0'),
+        udclass: stb.propToString( result.avg_metr[1]),
         over75: numeral(100.0*over75).format( '0,0')+"%"
     }
     view.arrow = ARROWS_2[view.udclass];
-    var output = Mustache.render( "<p class='{{udclass}}'> average{{{av_marg_str}}} {{{av_marg_change_str}}}</strong> {{{arrow}}} Over 75%: </p>", view );
+    var output = Mustache.render(
+        "<ul class='{{udclass}}'>"+
+            "<li>Average: {{{av_marg_str}}} ({{{arrow}}} {{{av_marg_change_str}}}) </li>"+
+            "<li>Pct abov 75%: {{{over75}}} ({{{over75_change}}})</li>"+
+        "</ul>", view );
     $( "#marginal-rates" ).html( output );
 }
 
@@ -158,7 +164,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
         view.pc_cost_str = '';
     }
 
-    var output = Mustache.render( "<strong>{{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
+    var output = Mustache.render( "<p class='udclass'>{{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
     $( "#"+element_id ).html( output );
 }
 
@@ -169,12 +175,12 @@ stb.createGainLose = function( result ){
     view.losers = numeral(result.gainlose_totals.losers).format('0,0');
     view.gainers_pct = numeral(100.0*result.gainlose_totals.gainers/result.unit_count).format('0,0.0');
     view.nc_pct = numeral(100.0*result.gainlose_totals.nc/result.unit_count).format('0,0.0');
-    view.losers = numeral(100.0*result.gainlose_totals.losers/result.unit_count).format('0,0.0');
+    view.losers_pct = numeral(100.0*result.gainlose_totals.losers/result.unit_count).format('0,0.0');
     var output = Mustache.render(
         "<ul>"+
-        "<li class='negative_med''>Losers: {{losers}}({{losers_pct}}%)</li>"+
-        "<li class=''>Unchanged: {{nc}}({{nc_pct}}%)</li> "+
-        "<li class='positive_med'>Gainers: {{gainers}}({{gainers_pct}}%)</li>"+
+        "<li class='negative_med''>Losers: {{losers}} ({{losers_pct}}%)</li>"+
+        "<li class=''>Unchanged: {{nc}} ({{nc_pct}}%)</li> "+
+        "<li class='positive_med'>Gainers: {{gainers}} ({{gainers_pct}}%)</li>"+
         "</ul>", view );
     $( "#gainers-and-losers" ).html( output );
 
@@ -193,7 +199,7 @@ stb.createInequality = function( result ){
     if( udclass == 'nonsig'){
         view.gini_change = 'unchanged';
     }
-    var output = Mustache.render( "<p class='{{udclass}}'>> {{{gini_post}}} {{{gini_change}}} {{{arrow}}}</p>", view );
+    var output = Mustache.render( "<p class='{{udclass}}'> {{{gini_post}}} ({{{arrow}}} {{{gini_change}}}) </p>", view );
     $( "#inequality" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
@@ -201,7 +207,7 @@ stb.createInequality = function( result ){
 stb.createPoverty = function( result ){
     var udclass = stb.propToString( result.poverty[2].headcount );
     var headcount_post = numeral( 100.*result.poverty[1].headcount ).format( '0,0.0')+"%";
-    var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0')+"%";
+    var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0');
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
@@ -211,7 +217,7 @@ stb.createPoverty = function( result ){
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
     }
-    var output = Mustache.render( "<p class='{{udclass}}'>{{{headcount_post}}}</strong> {{{headcount_change}}} {{{arrow}}}</p>", view );
+    var output = Mustache.render( "<p class='{{udclass}}'>{{{headcount_post}}}</strong> ({{{arrow}}} {{{headcount_change}}}) </p>", view );
     $( "#poverty" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
