@@ -217,7 +217,7 @@ stb.createPoverty = function( result ){
         headcount_post: headcount_post,
         headcount_change:headcount_change,
         udclass: udclass,
-        arrow: ARROWS_2[ stb.propToString(-hcv) ]
+        arrow: ARROWS_2[ stb.propToString(hcv) ]
     };
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
@@ -228,16 +228,16 @@ stb.createPoverty = function( result ){
 }
 
 stb.createTargetting = function( result ){
-    var output = "NA"
+    var output = "<p>NA</p>"
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
-    if( Math.abs( results.totals[2][1]) > 0.01 ){ // any change in total benefits
+    if( Math.abs( result.totals[2][1]) > 0.01 ){ // any change in total benefits
         if(result.targetting_total_benefits[2] > 0.0 ){
             targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
         }
         var view = {
             targetted: targetted
         };
-        var output = Mustache.render( "<p>% of benefit changes targetted on poor: {{targetted}} </p>", view );
+        output = Mustache.render( "<p>% of benefit changes targetted on poor: {{targetted}} </p>", view );
     }
     $( "#targetting" ).html( output );
 }
