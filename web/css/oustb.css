@@ -54,6 +54,10 @@
     table-layout : fixed;
 }
 
+.stb-table td{
+    min-height: 150px;
+}
+
 div.input-section-if-any{
     width:100%;
     display:block;
