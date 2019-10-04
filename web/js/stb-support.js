@@ -126,14 +126,16 @@ stb.createMarginalRates = function( result ){
     }
     over75 /= tot;
     over75_change /= tot;
+    metr = result.avg_metr[2];
     var view = {
         av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
-        av_marg_change_str: numeral(100.0*result.avg_metr[2]).format( '0,0'),
-        udclass: stb.propToString( result.avg_metr[2]),
+        av_marg_change_str: numeral(100.0*metr).format( '0,0'),
+        udclass: stb.propToString( metr ),
         over75: numeral(100.0*over75).format( '0,0')+"%",
-        over75_change: numeral(100.0*over75_change).format( '0,0')
+        over75_change: numeral(100.0*over75_change).format( '0,0'),
+        arrow: ARROWS_2[ stb.propToString( -metr)]
     }
-    view.arrow = ARROWS_2[view.udclass];
+
     var output = Mustache.render(
         "<ul class='{{udclass}}'>"+
             "<li>Average: {{{av_marg_str}}} ({{{arrow}}} {{{av_marg_change_str}}}) </li>"+
@@ -166,7 +168,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
         view.pc_cost_str = '';
     }
 
-    var output = Mustache.render( "<p class='udclass'>{{{net_cost_str}}}</strong>{{{pc_cost_str}}} {{{arrow}}}</p>", view );
+    var output = Mustache.render( "<p class='udclass'>{{{net_cost_str}}} ({{{arrow}}} {{{pc_cost_str}}}) </p>", view );
     $( "#"+element_id ).html( output );
 }
 
@@ -189,14 +191,15 @@ stb.createGainLose = function( result ){
 }
 
 stb.createInequality = function( result ){
-    var udclass = stb.propToString( result.inequality[2]['gini'] );
+    var gini_change = result.inequality[2]['gini']
+    var udclass = stb.propToString( -gini_change );
     var gini_post = numeral( result.inequality[1]['gini']*100 ).format( '0,0.0');
     var gini_change = numeral( result.inequality[2]['gini']*100 ).format( '0,0.0');
     var view = {
         gini_post: gini_post,
         gini_change:gini_change,
-        arrow: ARROWS_2[udclass],
-        udclass: udclass
+        udclass: udclass,
+        arrow: ARROWS_2[stb.propToString(gini_change)]
     };
     if( udclass == 'nonsig'){
         view.gini_change = 'unchanged';
@@ -207,14 +210,15 @@ stb.createInequality = function( result ){
 }
 
 stb.createPoverty = function( result ){
-    var udclass = stb.propToString( result.poverty[2].headcount );
+    var hcv = result.poverty[2].headcount;
+    var udclass = stb.propToString( -hcv );
     var headcount_post = numeral( 100.*result.poverty[1].headcount ).format( '0,0.0')+"%";
     var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0');
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
-        arrow: ARROWS_2[udclass],
-        udclass: udclass
+        udclass: udclass,
+        arrow: ARROWS_2[ stb.propToString(hcv) ]
     };
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
