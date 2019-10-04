@@ -46,5 +46,7 @@ base_results = create_base_results( num_households, num_people )
         print( "   metr_histogram= $(summary_output.metr_histogram)\n\n")
     end
 end # summary_output.timing summary_output.blockt = JSON.json( summary_output )
-
-print( JSON.json( summary_output ))
+println( "SUMMARY OUTPUT")
+println( summary_output )
+println( "as JSON")
+println( JSON.json( summary_output ))

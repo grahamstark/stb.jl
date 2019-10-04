@@ -4,6 +4,8 @@
 #
 using Mux
 using JSON
+
+using Definitions
 using FRS_Household_Getter
 using Example_Household_Getter
 using Model_Household
@@ -114,7 +116,6 @@ const BASE_RESULTS = create_base_results( num_households, num_people )
 
 
 function web_doonerun( req :: Dict )
-   global num_households, num_people, BASE_RESULTS, NUM_REPEATS
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
