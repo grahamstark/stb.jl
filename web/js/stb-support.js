@@ -152,12 +152,12 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     var nc = totals[2][pos];
     var pc = nc/totals[0][pos];
     var arrow_str = stb.propToString( pc );
-    var pc_change_str = arrow_str;
+    var udclass = arrow_str;
     if( down_is_good ){
-        pc_change_str= stb.propToString( -pc ); // point the arrow in the opposite direction
+        udclass= stb.propToString( -pc ); // point the arrow in the opposite direction
     }
     var view = {
-        udclass: pc_change_str,
+        udclass: udclass,
         arrow: ARROWS_2[arrow_str]
     }
     view.which_thing = name;
@@ -165,7 +165,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
 
     var output = "<p>No Change</p>";
-    if( pc_change_str !== 'nonsig'){
+    if( udclass !== 'nonsig'){
         output = Mustache.render( "<p class='{{{udclass}}}'>{{{net_cost_str}}} ({{{arrow}}} {{{pc_cost_str}}}) </p>", view );
     }
     $( "#"+element_id ).html( output );
@@ -232,7 +232,7 @@ stb.createTargetting = function( result ){
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
     if( Math.abs( result.totals[2][1]) > 0.01 ){ // any change in total benefits
         if(result.targetting_total_benefits[2] > 0.0 ){
-            targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
+            targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
         }
         var view = {
             targetted: targetted
