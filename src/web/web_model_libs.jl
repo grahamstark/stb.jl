@@ -96,8 +96,7 @@ end
 
 
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
-    global mr_edges, growth
-
+    
     n_names = names( results )
     n_names_2 = addsysnotoname( n_names, 2 )
     names!( results, n_names_2 )
