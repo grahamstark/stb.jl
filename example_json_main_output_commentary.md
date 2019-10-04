@@ -62,4 +62,4 @@ Total costings for various elements. Three base-, changed-, difference arrays.
 
 ### poverty_line, growth_assumption, unit_count
 
-not currently used (`unit_count` is number of people)
+not currently used (`unit_count` is number of people). Other fields may be added at the end, such as a count of households.

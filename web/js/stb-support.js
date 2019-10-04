@@ -89,7 +89,7 @@ stb.getArrowAndClass = function( change, prop ){
 }
 
 stb.createNetCost = function( result ){
-    var net_cost = result.totals[2][8]/10**9;
+    var net_cost = result.totals[2].net_incomes/10**9;
     var view = {
         net_cost_str: "Under &#163;10m",
         udclass: "nonsig",
@@ -126,7 +126,7 @@ stb.createMarginalRates = function( result ){
     }
     over75 /= tot;
     over75_change /= tot;
-    
+
     metr = result.avg_metr[2];
     var view = {
         av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
@@ -381,9 +381,9 @@ stb.createGainsByDecile = function( result ){
 
 stb.createMainOutputs = function( result ){
     stb.createNetCost( result );
-    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
-    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, true );
-    stb.createOneMainOutput( "taxes-on-spending", "Taxes on Spending", result.totals, 7, false );
+    stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, "total_taxes", false );
+    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, "total_benefits", true );
+    stb.createOneMainOutput( "taxes-on-spending", "Taxes on Spending", result.totals, "total_indirect", false );
     stb.createInequality( result );
     stb.createGainsByDecile( result );
     stb.createGainLose( result );
