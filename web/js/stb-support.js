@@ -116,7 +116,7 @@ stb.createMarginalRates = function( result ){
     var over75 = 0.0;
     var over75_change = 0.0;
     var tot = 0.0;
-    for( var i = 0; i < result.metr_histogram.length; i++ ){
+    for( var i = 0; i < result.metr_histogram[1].length; i++ ){
         tot += result.metr_histogram[1][i];
         // FIXME brittle
         if( i >= 4){
