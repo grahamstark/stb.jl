@@ -113,13 +113,26 @@ stb.createNetCost = function( result ){
 }
 
 stb.createMarginalRates= function( result ){
+
+    var over75 = 0.0;
+    var tot = 0.0;
+    for( var i = 0; i < result.metr_histogram.length); i++ ){
+        tot += result.metr_histogram[i];
+        // FIXME brittle
+        if( i >= 4){
+            over75 += result.metr_histogram[i];
+        }
+    }
+
     var view = {
-        av_marg_str: "",
-        av_marg_change_str:
-        udclass: "nonsig",
+        av_marg_str: numeral(100.0*result.avg_metr[2]).format( '0,0')+"%";
+        av_marg_change_str:numeral(100.0*result.avg_metr[3]).format( '0,0');
+        udclass: stb.propToString( result.avg_metr[3]);
+        over75: numeral(100.0*over75).format( '0,0')+"%";
     }
     view.arrow = ARROWS_2[view.udclass];
-    var output = Mustache.render( "<p class='{{udclass}}'><strong>Avg Marginal Tax Rate: {{{av_marg_str}}}</strong> {{{arrow}}}</p>", view );
+
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Marginal Tax Rates: average{{{av_marg_str}}} {{{av_marg_change_str}}}</strong> {{{arrow}}} Over 75%: </p>", view );
     $( "#marginal-rates" ).html( output );
 }
 
