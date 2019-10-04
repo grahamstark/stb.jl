@@ -27,7 +27,7 @@ const ARROWS_3 = { //  see https://en.wikipedia.org/wiki/Arrow_(symbol)
 'negative_weak'   : '&#x21e3;'}
 
 const ARROWS_2 = { // see https://en.wikipedia.org/wiki/Arrow_(symbol)
-'nonsig'          : '&#x25CF;',
+'nonsig'          : '',
 'positive_strong' : '&#x21e7;',
 'positive_med'    : '&#x2191;',
 'positive_weak'   : '&#x21e3;',
@@ -151,9 +151,9 @@ stb.createInequality = function( result ){
 }
 
 stb.createPoverty = function( result ){
-    var udclass = stb.propToString( result.inequality[2].headcount );
-    var headcount_post = numeral( result.inequality[1].headcount*100 ).format( '0,0.0');
-    var headcount_change = numeral( result.inequality[2].headcount*100 ).format( '0,0.0');
+    var udclass = stb.propToString( result.poverty[2].headcount );
+    var headcount_post = numeral( result.poverty[1].headcount ).format( '0,0.0');
+    var headcount_change = numeral( 100.0*result.poverty[2].headcount/result.poverty[1].headcount ).format( '0,0.0')+"%";
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
@@ -161,7 +161,7 @@ stb.createPoverty = function( result ){
         udclass: udclass
     };
     if( udclass == 'nonsig'){
-        view.headcount_change = 'unchanged';
+        view.headcount_change = '-';
     }
     var output = Mustache.render( "<p class='{{udclass}}'><strong>Poverty: {{{headcount_post}}}</strong> {{{headcount_change}}} {{{arrow}}}</p>", view );
     $( "#poverty" ).html( output );
@@ -170,18 +170,14 @@ stb.createPoverty = function( result ){
 
 stb.createTargetting = function( result ){
     var targetted = "NA"
-    if(result.targetting_total_benefits[3] > 0.0 ){
-        targetted = numeral(result.targetting_total_benefits[3]).format('0,0.0' );
+    if(result.targetting_total_benefits[2] > 0.0 ){
+        targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' );
     }
     var view = {
         targetted: targetted
     };
-    if( udclass == 'nonsig'){
-        view.headcount_change = 'unchanged';
-    }
     var output = Mustache.render( "<p><strong>Benefit increase targetted on poor: {{targetted}}% </p>", view );
     $( "#targetting" ).html( output );
-    stb.createLorenzCurve( "#lorenz", result, true );
 }
 
 
