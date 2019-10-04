@@ -140,7 +140,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_1[8]=sum(results[!,:total_indirect_1].*results[!,:weight_1])
     totals_1[9]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
 
-    totals_2 = zeros(6)
+    totals_2 = zeros(9)
     totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
     totals_2[2]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
     totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
@@ -185,9 +185,10 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
     metr_histogram = []
     avg_metr = zeros(3)
-    avg_metr[1] = sum( results.metr_1*results.weight_1)/sum( results.weight_1 )
-    avg_metr[2] = sum( results.metr_2*results.weight_1)/sum( results.weight_1 )
-    avg_metr[3] = sum( results.metr_3*results.weight_1)/sum( results.weight_1 )
+    wsum = sum( results.weight_1 )
+    avg_metr[1] = sum( results.metr_1.*results.weight_1)./wsum
+    avg_metr[2] = sum( results.metr_2.*results.weight_1)./wsum
+    avg_metr[3] = sum( results.metr_3.*results.weight_1)./wsum
 
     push!( metr_histogram, fit(Histogram,results.metr_1,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
@@ -309,7 +310,7 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.total_benefits = rc[:benefit2]+rc[:benefit1]+rc[:basic_income]
          res.net_income = rc[:netincome]
          res.metr = rc[:metr]
-         res.tax_credit = rc[:tax_credit],
+         res.tax_credit = rc[:tax_credit]
          res.vat = 0.0
          res.other_indirect = 0.0
          res.total_indirect = 0.0
