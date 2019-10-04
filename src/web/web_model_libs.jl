@@ -41,6 +41,14 @@ function poverty_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
    return 0.0
 end
 
+function create_base_results( num_households :: Integer, num_people :: Integer )
+   base_results = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, 1 )
+   basenames = names( base_results )
+   basenames = addsysnotoname( basenames, 1 )
+   names!( base_results, basenames )
+   base_results
+end
+
 function characteristic_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
    which = data[:which_element]
    characteristic = data[:characteristic]
@@ -61,7 +69,7 @@ end
 
 function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item_name :: AbstractString, poverty_line :: Real ) :: AbstractArray
     targetting = zeros(3)
-    for sys in 1:2
+    for sys in 1:3
         key = Symbol( "$(item_name)_$sys" )
         on_target = operate_on_frame( results, poverty_targetting_adder,
             Dict(
@@ -71,30 +79,42 @@ function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item
         )
         targetting[sys] = on_target
     end
-    targetting[3] = targetting[2]-targetting[1]
-    for sys in 1:3
+    # targetting[3] = targetting[2]-targetting[1]
+    for sys in 1:2
         if total_spend[sys] > 0
             targetting[sys] /= total_spend[sys]
             targetting[sys] *= 100.0
         end
     end # loop to props
+    if total_spend[1] > 0
+        targetting[3] /= total_spend[1]
+        targetting[3] *= 100.0
+    end
+
     targetting
 end
 
 
 function summarise_results!(; results::DataFrame, base_results :: DataFrame )::NamedTuple
     global mr_edges, growth
-    basenames = names( base_results )
-    basenames_2 = addsysnotoname( basenames, 1 )
-    names!( base_results, basenames_2 )
 
     n_names = names( results )
-    n_names = addsysnotoname( n_names, 2 )
-    names!( results, n_names )
+    n_names_2 = addsysnotoname( n_names, 2 )
+    names!( results, n_names_2 )
     results = hcat( base_results, results )
-    names!( base_results, basenames ) # restore names in base run FIXME this needs synchronized
+
     @assert results.pid_1 == results.pid_2
-    println( "computing $num_households hhlds and $num_people people ")
+    for name in n_names
+        diff_name = Symbol(String(name) * "_3")
+        name_1 = Symbol(String(name) * "_1")
+        name_2 = Symbol(String(name) * "_2")
+        try
+            results[!,diff_name] = results[!,name_2] - results[!,name_1]
+        catch
+            ; # idiot check for non numeric cols
+        end
+    end
+
     CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
     deciles = []
@@ -150,7 +170,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     gainlose_totals = (
         losers = sum( results.losers ),
         nc = sum( results.nc ),
-        gainers = sum( results.losers ))
+        gainers = sum( results.gainers ))
 
     gainlose_by_thing = (
         thing=levels( results.thing_1 ),
@@ -168,6 +188,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
 
+    targetting_total_benefits = add_targetting( results, [totals[1][2],totals[2][2],totals[3][2]], "total_benefits", poverty_line )
     targetting_benefit1 = add_targetting( results, [totals[1][3],totals[2][3],totals[3][3]], "benefit1", poverty_line )
     targetting_benefit2 = add_targetting( results, [totals[1][4],totals[2][4],totals[3][4]], "benefit2", poverty_line )
     targetting_basic_income = add_targetting( results, [totals[1][5],totals[2][5],totals[3][5]], "basic_income", poverty_line )
@@ -188,6 +209,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
         deciles=deciles,
 
+        targetting_total_benefits = targetting_total_benefits,
         targetting_benefit1=targetting_benefit1,
         targetting_benefit2=targetting_benefit2,
         targetting_basic_income=targetting_basic_income,
