@@ -111,7 +111,7 @@ stb.createNetCost = function( result ){
     $( "#net-cost" ).html( output );
 }
 
-stb.createMarginalRates= function( result ){
+stb.createMarginalRates = function( result ){
 
     var over75 = 0.0;
     var tot = 0.0;
@@ -374,6 +374,7 @@ stb.createMainOutputs = function( result ){
     stb.createGainLose( result );
     stb.createPoverty( result );
     stb.createTargetting( result );
+    stb.createMarginalRate( result );
 }
 
 stb.annotationToString = function( annotation ){

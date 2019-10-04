@@ -19,11 +19,11 @@ const DEFAULT_OPTS = Dict(
     "section-divs"      => true,
     "standalone"        => true,
     # "number-sections"   => true,
-    "bibliography"      => "$INCLUDE_DIR/DD226.bib",
+    # "bibliography"      => "$INCLUDE_DIR/DD226.bib",
     "default-image-extension"=>"svg",
     "csl"               => "$PANDOC_DIR/chicago-note-bibliography.csl",
     "to"                => "html5",
-    "filter"            => "pandoc-citeproc",
+    # FIXME this is broken "filter"            => "pandoc-citeproc",
     "template"          => "$INCLUDE_DIR/ou-template.html"
 
 );
