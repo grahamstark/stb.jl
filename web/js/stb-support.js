@@ -169,20 +169,18 @@ stb.createPoverty = function( result ){
 }
 
 stb.createTargetting = function( result ){
-    var udclass = stb.propToString( result.inequality[2].headcount );
-    var headcount_post = numeral( result.inequality[1].headcount*100 ).format( '0,0.0');
-    var headcount_change = numeral( result.inequality[2].headcount*100 ).format( '0,0.0');
+    var targetted = "NA"
+    if(result.targetting_total_benefits[3] > 0.0 ){
+        targetted = numeral(result.targetting_total_benefits[3]).format('0,0.0' );
+    }
     var view = {
-        headcount_post: headcount_post,
-        headcount_change:headcount_change,
-        arrow: ARROWS_2[udclass],
-        udclass: udclass
+        targetted = targetted,
     };
     if( udclass == 'nonsig'){
         view.headcount_change = 'unchanged';
     }
-    var output = Mustache.render( "<p class='{{udclass}}'><strong>Poverty: {{{headcount_post}}}</strong> {{{headcount_change}}} {{{arrow}}}</p>", view );
-    $( "#poverty" ).html( output );
+    var output = Mustache.render( "<p><strong>Benefit increase targetted on poor: {{targetted}}% </p>", view );
+    $( "#targetting" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
 
@@ -330,6 +328,7 @@ stb.createMainOutputs = function( result ){
     stb.createGainsByDecile( result );
     stb.createGainLose( result );
     stb.createPoverty( result );
+    stb.createTargetting( result );
 }
 
 stb.annotationToString = function( annotation ){
