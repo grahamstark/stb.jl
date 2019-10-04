@@ -151,7 +151,7 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
 
     var nc = totals[2][pos];
     var pc = nc/totals[0][pos];
-    var arrow_str = stb.propToString( -pc );
+    var arrow_str = stb.propToString( pc );
     var pc_change_str = arrow_str;
     if( down_is_good ){
         pc_change_str= stb.propToString( -pc ); // point the arrow in the opposite direction
@@ -162,13 +162,12 @@ stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good 
     }
     view.which_thing = name;
     view.net_cost_str = "&#163;"+numeral(nc/(10**9)).format( '0,0')+"&nbsp;bn";
-    view.pc_cost_str = "("+numeral(pc*100).format( '0,0.0')+"%)";
-    if( pc_change_str == 'nonsig'){
-        view.net_cost_str = 'unchanged';
-        view.pc_cost_str = '';
-    }
+    view.pc_cost_str = numeral(pc*100).format( '0,0.0')+"%";
 
-    var output = Mustache.render( "<p class='udclass'>{{{net_cost_str}}} ({{{arrow}}} {{{pc_cost_str}}}) </p>", view );
+    var output = "<p>No Change</p>";
+    if( pc_change_str !== 'nonsig'){
+        output = Mustache.render( "<p class='{{{udclass}}}'>{{{net_cost_str}}} ({{{arrow}}} {{{pc_cost_str}}}) </p>", view );
+    }
     $( "#"+element_id ).html( output );
 }
 
@@ -218,7 +217,7 @@ stb.createPoverty = function( result ){
         headcount_post: headcount_post,
         headcount_change:headcount_change,
         udclass: udclass,
-        arrow: ARROWS_2[ stb.propToString(hcv) ]
+        arrow: ARROWS_2[ stb.propToString(-hcv) ]
     };
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
@@ -229,15 +228,17 @@ stb.createPoverty = function( result ){
 }
 
 stb.createTargetting = function( result ){
-    var targetted = "NA"
+    var output = "NA"
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
-    if(result.targetting_total_benefits[2] > 0.0 ){
-        targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
+    if( Math.abs( results.totals[2][1] > 0.01 ){ // any change in total benefits
+        if(result.targetting_total_benefits[2] > 0.0 ){
+            targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
+        }
+        var view = {
+            targetted: targetted
+        };
+        var output = Mustache.render( "<p>% of benefit changes targetted on poor: {{targetted}} </p>", view );
     }
-    var view = {
-        targetted: targetted
-    };
-    var output = Mustache.render( "<p>Benefit increase targetted on poor: {{targetted}} </p>", view );
     $( "#targetting" ).html( output );
 }
 
@@ -380,7 +381,7 @@ stb.createGainsByDecile = function( result ){
 stb.createMainOutputs = function( result ){
     stb.createNetCost( result );
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
-    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
+    stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, true );
     stb.createOneMainOutput( "taxes-on-spending", "Taxes on Spending", result.totals, 7, false );
     stb.createInequality( result );
     stb.createGainsByDecile( result );
