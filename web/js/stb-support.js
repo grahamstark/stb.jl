@@ -124,18 +124,19 @@ stb.createMarginalRates = function( result ){
             over75_change += result.metr_histogram[2][i];
         }
     }
-
+    over75 /= tot
+    over75_change /= tot
     var view = {
         av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
         av_marg_change_str:numeral(100.0*result.avg_metr[2]).format( '0,0'),
-        udclass: stb.propToString( -1*result.avg_metr[2]),
+        udclass: stb.propToString( result.avg_metr[2]),
         over75: numeral(100.0*over75).format( '0,0')+"%"
     }
     view.arrow = ARROWS_2[view.udclass];
     var output = Mustache.render(
         "<ul class='{{udclass}}'>"+
             "<li>Average: {{{av_marg_str}}} ({{{arrow}}} {{{av_marg_change_str}}}) </li>"+
-            "<li>Pct abov 75%: {{{over75}}} ({{{over75_change}}})</li>"+
+            "<li>Pct above 75%: {{{over75}}} ({{{over75_change}}})</li>"+
         "</ul>", view );
     $( "#marginal-rates" ).html( output );
 }
