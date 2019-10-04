@@ -130,10 +130,10 @@ stb.createMarginalRates = function( result ){
     var view = {
         av_marg_str: numeral(100.0*result.avg_metr[1]).format( '0,0')+"%",
         av_marg_change_str: numeral(100.0*metr).format( '0,0'),
-        udclass: stb.propToString( metr ),
+        udclass: stb.propToString( -metr ),
         over75: numeral(100.0*over75).format( '0,0')+"%",
         over75_change: numeral(100.0*over75_change).format( '0,0'),
-        arrow: ARROWS_2[ stb.propToString( -metr)]
+        arrow: ARROWS_2[ stb.propToString( metr)]
     }
 
     var output = Mustache.render(
