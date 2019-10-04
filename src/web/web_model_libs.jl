@@ -132,8 +132,8 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_1 = Dict()
     totals_1["total_taxes"]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
     totals_1["total_benefits"]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
-    totals_1["benefit_1"]=sum(results[!,:benefit1_1].*results[!,:weight_1])
-    totals_1["benefit_2"]=sum(results[!,:benefit2_1].*results[!,:weight_1])
+    totals_1["benefit1"]=sum(results[!,:benefit1_1].*results[!,:weight_1])
+    totals_1["benefit2"]=sum(results[!,:benefit2_1].*results[!,:weight_1])
     totals_1["basic_income"]=sum(results[!,:basic_income_1].*results[!,:weight_1])
     totals_1["vat"]=sum(results[!,:vat_1].*results[!,:weight_1])
     totals_1["other_indirect"]=sum(results[!,:other_indirect_1].*results[!,:weight_1])
@@ -141,17 +141,17 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_1["net_incomes"]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
 
     totals_2 = Dict()
-    totals_1["total_taxes"]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
-    totals_1["total_benefits"]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
-    totals_1["benefit_1"]=sum(results[!,:benefit1_2].*results[!,:weight_1])
-    totals_1["benefit_2"]=sum(results[!,:benefit2_2].*results[!,:weight_1])
-    totals_1["basic_income"]=sum(results[!,:basic_income_2].*results[!,:weight_1])
-    totals_1["vat"]=sum(results[!,:vat_1].*results[!,:weight_2])
-    totals_1["other_indirect"]=sum(results[!,:other_indirect_2].*results[!,:weight_1])
-    totals_1["total_indirect"]=sum(results[!,:total_indirect_2].*results[!,:weight_1])
-    totals_1["net_incomes"]=sum(results[!,:net_income_2].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
+    totals_2["total_taxes"]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
+    totals_2["total_benefits"]=sum(results[!,:total_benefits_2].*results[!,:weight_1])
+    totals_2["benefit1"]=sum(results[!,:benefit1_2].*results[!,:weight_1])
+    totals_2["benefit2"]=sum(results[!,:benefit2_2].*results[!,:weight_1])
+    totals_2["basic_income"]=sum(results[!,:basic_income_2].*results[!,:weight_1])
+    totals_2["vat"]=sum(results[!,:vat_1].*results[!,:weight_2])
+    totals_2["other_indirect"]=sum(results[!,:other_indirect_2].*results[!,:weight_1])
+    totals_2["total_indirect"]=sum(results[!,:total_indirect_2].*results[!,:weight_1])
+    totals_2["net_incomes"]=sum(results[!,:net_income_2].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
 
-    totals_3 = diff_between(totals_2-totals_1)
+    totals_3 = diff_between(totals_2, totals_1)
 
     push!( totals, totals_1 )
     push!( totals, totals_2 )
@@ -193,12 +193,23 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
 
-    targetting_total_benefits = add_targetting( results, [totals[1][2],totals[2][2],totals[3][2]], "total_benefits", poverty_line )
-    targetting_benefit1 = add_targetting( results, [totals[1][3],totals[2][3],totals[3][3]], "benefit1", poverty_line )
-    targetting_benefit2 = add_targetting( results, [totals[1][4],totals[2][4],totals[3][4]], "benefit2", poverty_line )
-    targetting_basic_income = add_targetting( results, [totals[1][5],totals[2][5],totals[3][5]], "basic_income", poverty_line )
+    println( totals[1])
+    println( totals[2])
+    println( totals[3])
 
-    totals .*= WEEKS_PER_YEAR # annualise
+    targetting_total_benefits =
+        add_targetting( results,
+                [totals[1]["total_benefits"],
+                 totals[2]["total_benefits"],
+                 totals[3]["total_benefits"]],
+            "total_benefits", poverty_line )
+    targetting_benefit1 = add_targetting( results, [totals[1]["benefit1"],totals[2]["benefit1"],totals[3]["benefit1"]], "benefit1", poverty_line )
+    targetting_benefit2 = add_targetting( results, [totals[1]["benefit2"],totals[2]["benefit2"],totals[3]["benefit2"]], "benefit2", poverty_line )
+    targetting_basic_income = add_targetting( results, [totals[1]["basic_income"],totals[2]["basic_income"],totals[3]["basic_income"]], "basic_income", poverty_line )
+
+    for i in 1:3
+        mult_dict!(totals[i], WEEKS_PER_YEAR ) # annualise
+    end
 
     summary_output = (
         gainlose_totals=gainlose_totals,

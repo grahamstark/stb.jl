@@ -3,7 +3,7 @@ module Utils
 using Base.Unicode
 
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
-export addsysnotoname, diff_between
+export addsysnotoname, diff_between, mult_dict!
 
 function addsysnotoname(names, sysno)::Array{Symbol,1}
    a = Array{Symbol,1}(undef, 0)
@@ -42,6 +42,16 @@ function diff_between(m2::Dict, m1::Dict)::Dict
       end # exception
    end # loop[]
    out
+end
+
+function mult_dict!( m :: Dict, n :: Number )
+   for (k,v) in m
+      try
+         m[k] = v*n
+      catch
+         ;
+      end
+   end
 end
 
 """
