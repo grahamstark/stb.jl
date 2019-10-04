@@ -27,7 +27,7 @@ const ARROWS_3 = { //  see https://en.wikipedia.org/wiki/Arrow_(symbol)
 'negative_weak'   : '&#x21e3;'}
 
 const ARROWS_2 = { // see https://en.wikipedia.org/wiki/Arrow_(symbol)
-'nonsig'          : '&#x25CF;',
+'nonsig'          : '',
 'positive_strong' : '&#x21e7;',
 'positive_med'    : '&#x2191;',
 'positive_weak'   : '&#x21e3;',
@@ -86,6 +86,41 @@ stb.getArrowAndClass = function( change, prop ){
     } else  {
         return {udclass:"change-down",arrow:DOWN_ARROW };
     }
+}
+
+stb.createNetCost = function( result ){
+    var net_cost = result.totals[2][8]/10**9;
+    var view = {
+        net_cost_str: "Under &#163;1bn",
+        udclass: "nonsig",
+        dir: ""
+    }
+    if( Math.abs( net_cost ) > 10.0 ){
+        if( net_cost < 0 ){
+            net_cost *= -1;
+            view.dir = "Less";
+            view.udclass: "negative_strong",
+        } else {
+            view.dir = "More";
+            view.udclass: "positive_strong"
+        }
+        view.net_cost_str = "&#163;" +"&#163;"+numeral(net_cost).format( '0,0')+"&nbsp;bn";
+
+    }
+    view.arrow = ARROWS_2[view.udclass];
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Net Cost: {{{net_cost_str}}} {{dir}}</strong> {{{arrow}}}</p>", view );
+    $( "#net-cost" ).html( output );
+}
+
+stb.createMarginalRates= function( result ){
+    var view = {
+        av_marg_str: "",
+        av_marg_change_str:
+        udclass: "nonsig",
+    }
+    view.arrow = ARROWS_2[view.udclass];
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Avg Marginal Tax Rate: {{{av_marg_str}}}</strong> {{{arrow}}}</p>", view );
+    $( "#marginal-rates" ).html( output );
 }
 
 stb.createOneMainOutput = function( element_id, name, totals, pos, down_is_good ){
@@ -151,9 +186,9 @@ stb.createInequality = function( result ){
 }
 
 stb.createPoverty = function( result ){
-    var udclass = stb.propToString( result.inequality[2].headcount );
-    var headcount_post = numeral( result.inequality[1].headcount*100 ).format( '0,0.0');
-    var headcount_change = numeral( result.inequality[2].headcount*100 ).format( '0,0.0');
+    var udclass = stb.propToString( result.poverty[2].headcount );
+    var headcount_post = numeral( 100.*result.poverty[1].headcount ).format( '0,0.0')+"%";
+    var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0')+"%";
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
@@ -161,7 +196,7 @@ stb.createPoverty = function( result ){
         udclass: udclass
     };
     if( udclass == 'nonsig'){
-        view.headcount_change = 'unchanged';
+        view.headcount_change = '-';
     }
     var output = Mustache.render( "<p class='{{udclass}}'><strong>Poverty: {{{headcount_post}}}</strong> {{{headcount_change}}} {{{arrow}}}</p>", view );
     $( "#poverty" ).html( output );
@@ -170,18 +205,14 @@ stb.createPoverty = function( result ){
 
 stb.createTargetting = function( result ){
     var targetted = "NA"
-    if(result.targetting_total_benefits[3] > 0.0 ){
-        targetted = numeral(result.targetting_total_benefits[3]).format('0,0.0' );
+    if(result.targetting_total_benefits[2] > 0.0 ){
+        targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
     }
     var view = {
         targetted: targetted
     };
-    if( udclass == 'nonsig'){
-        view.headcount_change = 'unchanged';
-    }
-    var output = Mustache.render( "<p><strong>Benefit increase targetted on poor: {{targetted}}% </p>", view );
+    var output = Mustache.render( "<p><strong>Benefit increase targetted on poor: {{targetted}} </p>", view );
     $( "#targetting" ).html( output );
-    stb.createLorenzCurve( "#lorenz", result, true );
 }
 
 
@@ -321,9 +352,10 @@ stb.createGainsByDecile = function( result ){
 
 
 stb.createMainOutputs = function( result ){
-    stb.createOneMainOutput( "net-cost", "Net Cost of your Changes", result.totals, 5, true );
+    stb.createNetCost( result );
     stb.createOneMainOutput( "taxes-on-income", "Taxes on Incomes", result.totals, 0, false );
     stb.createOneMainOutput( "benefits-spending", "Spending on Benefits", result.totals, 1, false );
+    stb.createOneMainOutput( "taxes-on-spending", "Taxes on Spending", result.totals, 7, false );
     stb.createInequality( result );
     stb.createGainsByDecile( result );
     stb.createGainLose( result );

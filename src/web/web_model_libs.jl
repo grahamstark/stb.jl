@@ -129,13 +129,16 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( poverty, diff_between( poverty[2], poverty[1] ))
 
     totals = []
-    totals_1 = zeros(6)
+    totals_1 = zeros(9)
     totals_1[1]=sum(results[!,:total_taxes_1].*results[!,:weight_1])
     totals_1[2]=sum(results[!,:total_benefits_1].*results[!,:weight_1])
     totals_1[3]=sum(results[!,:benefit1_1].*results[!,:weight_1])
     totals_1[4]=sum(results[!,:benefit2_1].*results[!,:weight_1])
     totals_1[5]=sum(results[!,:basic_income_1].*results[!,:weight_1])
-    totals_1[6]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
+    totals_1[6]=sum(results[!,:vat_1].*results[!,:weight_1])
+    totals_1[7]=sum(results[!,:other_indirect_1].*results[!,:weight_1])
+    totals_1[8]=sum(results[!,:total_indirect_1].*results[!,:weight_1])
+    totals_1[9]=sum(results[!,:net_income_1].*results[!,:weight_1]) # FIXME not true if we have min wage or (maybe) indirect taxes
 
     totals_2 = zeros(6)
     totals_2[1]=sum(results[!,:total_taxes_2].*results[!,:weight_1])
@@ -143,14 +146,17 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     totals_2[3]=sum(results[!,:benefit1_2].*results[!,:weight_1])
     totals_2[4]=sum(results[!,:benefit2_2].*results[!,:weight_1])
     totals_2[5]=sum(results[!,:basic_income_2].*results[!,:weight_1])
-    totals_2[6]=sum(results[!,:net_income_2].*results[!,:weight_1])
+    totals_1[6]=sum(results[!,:vat_2].*results[!,:weight_1])
+    totals_1[7]=sum(results[!,:other_indirect_2].*results[!,:weight_1])
+    totals_1[8]=sum(results[!,:total_indirect_2].*results[!,:weight_1])
+    totals_2[9]=sum(results[!,:net_income_2].*results[!,:weight_1])
 
     totals_3 = totals_2-totals_1
 
     push!( totals, totals_1 )
     push!( totals, totals_2 )
     push!( totals, totals_3 )
-    totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2", "Basic Income","Net Incomes"]
+    totals_names=["Total Taxes","Total Benefits","Benefit1", "Benefit2", "Basic Income","VAT", "Other Indirect", "Total Indirect", "Net Incomes"]
 
     disallowmissing!( results )
 
@@ -178,6 +184,11 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         gainers = counts(Int.(results.sex_1),fweights( results.gainers )))
 
     metr_histogram = []
+    avg_metr = zeros(3)
+    avg_metr[1] = sum( results.metr_1*results.weight_1)/sum( results.weight_1 )
+    avg_metr[2] = sum( results.metr_2*results.weight_1)/sum( results.weight_1 )
+    avg_metr[3] = sum( results.metr_3*results.weight_1)/sum( results.weight_1 )
+
     push!( metr_histogram, fit(Histogram,results.metr_1,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
@@ -197,7 +208,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         poverty=poverty,
 
         inequality=inequality,
-
+        avg_metr=avg_metr,
         metr_histogram=metr_histogram,
         metr_axis=mr_edges,
 
@@ -261,7 +272,10 @@ function make_results_frame( n :: Integer ) :: DataFrame
      basic_income = Vector{Union{Real,Missing}}(missing, n),
      net_income = Vector{Union{Real,Missing}}(missing, n),
      metr = Vector{Union{Real,Missing}}(missing, n),
-     tax_credit = Vector{Union{Real,Missing}}(missing, n))
+     tax_credit = Vector{Union{Real,Missing}}(missing, n),
+     vat = Vector{Union{Real,Missing}}(missing, n),
+     other_indirect = Vector{Union{Real,Missing}}(missing, n),
+     total_indirect = Vector{Union{Real,Missing}}(missing, n))
 end
 
 function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_people :: Integer, num_repeats :: Integer ) :: DataFrame
@@ -295,7 +309,10 @@ function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_p
          res.total_benefits = rc[:benefit2]+rc[:benefit1]+rc[:basic_income]
          res.net_income = rc[:netincome]
          res.metr = rc[:metr]
-         res.tax_credit = rc[:tax_credit]
+         res.tax_credit = rc[:tax_credit],
+         res.vat = 0.0
+         res.other_indirect = 0.0
+         res.total_indirect = 0.0
       end # people
    end # hhlds
    @label end_of_calcs
