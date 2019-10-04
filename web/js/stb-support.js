@@ -107,7 +107,7 @@ stb.createNetCost = function( result ){
         view.net_cost_str = "&#163;" +"&#163;"+numeral(net_cost).format( '0,0')+"&nbsp;bn";
     }
     view.arrow = ARROWS_2[view.udclass];
-    var output = Mustache.render( "<h4>Net Cost</h4><p class='{{udclass}}'> {{{net_cost_str}}} {{dir}}</strong> {{{arrow}}}</p>", view );
+    var output = Mustache.render( "<p class='{{udclass}}'> {{{net_cost_str}}} {{dir}}</strong> {{{arrow}}}</p>", view );
     $( "#net-cost" ).html( output );
 }
 
@@ -130,7 +130,7 @@ stb.createMarginalRates= function( result ){
         over75: numeral(100.0*over75).format( '0,0')+"%"
     }
     view.arrow = ARROWS_2[view.udclass];
-    var output = Mustache.render( "<h4>Marginal Tax Rates</h4><p class='{{udclass}}'> average{{{av_marg_str}}} {{{av_marg_change_str}}}</strong> {{{arrow}}} Over 75%: </p>", view );
+    var output = Mustache.render( "<p class='{{udclass}}'> average{{{av_marg_str}}} {{{av_marg_change_str}}}</strong> {{{arrow}}} Over 75%: </p>", view );
     $( "#marginal-rates" ).html( output );
 }
 
@@ -171,7 +171,6 @@ stb.createGainLose = function( result ){
     view.nc_pct = numeral(100.0*result.gainlose_totals.nc/result.unit_count).format('0,0.0');
     view.losers = numeral(100.0*result.gainlose_totals.losers/result.unit_count).format('0,0.0');
     var output = Mustache.render(
-        "<h4>Gainers and Losers</h4>"+
         "<ul>"+
         "<li class='negative_med''>Losers: {{losers}}({{losers_pct}}%)</li>"+
         "<li class=''>Unchanged: {{nc}}({{nc_pct}}%)</li> "+
