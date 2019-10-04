@@ -174,7 +174,7 @@ stb.createTargetting = function( result ){
         targetted = numeral(result.targetting_total_benefits[3]).format('0,0.0' );
     }
     var view = {
-        targetted = targetted,
+        targetted = targetted
     };
     if( udclass == 'nonsig'){
         view.headcount_change = 'unchanged';
