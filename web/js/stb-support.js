@@ -122,9 +122,12 @@ stb.createGainLose = function( result ){
     view.nc = numeral(result.gainlose_totals.nc).format('0,0');
     view.losers = numeral(result.gainlose_totals.losers).format('0,0');
     view.gainers_pct = numeral(100.0*result.gainlose_totals.gainers/result.unit_count).format('0,0.0');
-    view.nc = numeral(100.0*result.gainlose_totals.nc/result.unit_count).format('0,0.0');
+    view.nc_pct = numeral(100.0*result.gainlose_totals.nc/result.unit_count).format('0,0.0');
     view.losers = numeral(100.0*result.gainlose_totals.losers/result.unit_count).format('0,0.0');
-    var output = Mustache.render( "<span class='positive_med''>Gainers: {{gainers}}({{gainers_pct}}%)</span><span class=''>Unchanged: {{nc}}({{nc_pct}}%)</span><span class='positive_med''>Losers: {{losers}}({{losers_pct}}%)</span> ", view );
+    var output = Mustache.render(
+        "<span class='negative_med''>Losers: {{losers}}({{losers_pct}}%)</span>"+
+        "<span class=''>Unchanged: {{nc}}({{nc_pct}}%)</span> "+
+        "<span class='positive_med''>Gainers: {{gainers}}({{gainers_pct}}%)</span>", view );
     $( "#gainers-and-losers" ).html( output );
 
 }
@@ -146,6 +149,43 @@ stb.createInequality = function( result ){
     $( "#inequality" ).html( output );
     stb.createLorenzCurve( "#lorenz", result, true );
 }
+
+stb.createPoverty = function( result ){
+    var udclass = stb.propToString( result.inequality[2].headcount );
+    var headcount_post = numeral( result.inequality[1].headcount*100 ).format( '0,0.0');
+    var headcount_change = numeral( result.inequality[2].headcount*100 ).format( '0,0.0');
+    var view = {
+        headcount_post: headcount_post,
+        headcount_change:headcount_change,
+        arrow: ARROWS_2[udclass],
+        udclass: udclass
+    };
+    if( udclass == 'nonsig'){
+        view.headcount_change = 'unchanged';
+    }
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Poverty: {{{headcount_post}}}</strong> {{{headcount_change}}} {{{arrow}}}</p>", view );
+    $( "#poverty" ).html( output );
+    stb.createLorenzCurve( "#lorenz", result, true );
+}
+
+stb.createTargetting = function( result ){
+    var udclass = stb.propToString( result.inequality[2].headcount );
+    var headcount_post = numeral( result.inequality[1].headcount*100 ).format( '0,0.0');
+    var headcount_change = numeral( result.inequality[2].headcount*100 ).format( '0,0.0');
+    var view = {
+        headcount_post: headcount_post,
+        headcount_change:headcount_change,
+        arrow: ARROWS_2[udclass],
+        udclass: udclass
+    };
+    if( udclass == 'nonsig'){
+        view.headcount_change = 'unchanged';
+    }
+    var output = Mustache.render( "<p class='{{udclass}}'><strong>Poverty: {{{headcount_post}}}</strong> {{{headcount_change}}} {{{arrow}}}</p>", view );
+    $( "#poverty" ).html( output );
+    stb.createLorenzCurve( "#lorenz", result, true );
+}
+
 
 const GOLDEN_RATIO = 1.618
 
@@ -289,7 +329,7 @@ stb.createMainOutputs = function( result ){
     stb.createInequality( result );
     stb.createGainsByDecile( result );
     stb.createGainLose( result );
-
+    stb.createPoverty( result );
 }
 
 stb.annotationToString = function( annotation ){
