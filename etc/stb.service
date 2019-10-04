@@ -15,7 +15,7 @@ EnvironmentFile=/etc/systemd/user/gks_environment
 PIDFile=/var/run/stb_server.pid
 ExecStart=/home/graham_s/VirtualWorlds/projects/ou/stb.jl/scripts/run_server.sh
 ExecStop=/bin/kill -WINCH ${MAINPID}
-KillSignal=SIGCONT
+KillSignal=SIGKILL
 PrivateTmp=true
 
 [Install]
