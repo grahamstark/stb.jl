@@ -230,7 +230,7 @@ stb.createPoverty = function( result ){
 stb.createTargetting = function( result ){
     var output = "NA"
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
-    if( Math.abs( results.totals[2][1] > 0.01 ){ // any change in total benefits
+    if( Math.abs( results.totals[2][1]) > 0.01 ){ // any change in total benefits
         if(result.targetting_total_benefits[2] > 0.0 ){
             targetted = numeral(100*result.targetting_total_benefits[2]).format('0,0.0' )+"%";
         }
