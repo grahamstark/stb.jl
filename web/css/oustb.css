@@ -36,7 +36,7 @@
 
 .input-section-if-any{
     /*width:100%;*/
-    display:grid;
+    display:inline-grid;
     padding: 10px;
     grid-template-columns: auto auto;
     min-height:600px;
