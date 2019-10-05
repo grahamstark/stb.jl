@@ -71,11 +71,11 @@ function addone(
 
     opts = deepcopy( DEFAULT_OPTS )
     includes = []
-    if ! ismissing(output)
-        push!( includes, "$(INCLUDE_DIR)/$(output).html" )
-    end
     if ! ismissing(form)
         push!( includes, "$(INCLUDE_DIR)/$(form).html" )
+    end
+    if ! ismissing(output)
+        push!( includes, "$(INCLUDE_DIR)/$(output).html" )
     end
     if ! ismissing(model)
         opts["include-after-body"] = [ "$(INCLUDE_DIR)/run-$model-js.html" ]

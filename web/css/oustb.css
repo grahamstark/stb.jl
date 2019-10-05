@@ -35,22 +35,18 @@
 }
 
 .input-section-if-any{
-    width:100%;
-    display:block;
+    /*width:100%;*/
+    display:grid;
+    padding: 10px;
+    grid-template-columns: auto auto;
     min-height:600px;
 }
 
 .output-block{
-    display: block;
-    float: left;
-    width: 65%;
     min-height:600px;
 }
 
 .params-block{
-    display: block;
-    float: left;
-    width: 35%;
     min-height:600px;
 }
 
