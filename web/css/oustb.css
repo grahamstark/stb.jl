@@ -34,7 +34,7 @@
     font-weight: bold;
 }
 
-.input-section-if-any{
+#input-section-if-any{
     /*width:100%;*/
     display:inline-grid;
     padding: 10px;
@@ -42,11 +42,11 @@
     min-height:600px;
 }
 
-.output-block{
+#output-block{
     min-height:600px;
 }
 
-.params-block{
+#params-block{
     min-height:600px;
 }
 
