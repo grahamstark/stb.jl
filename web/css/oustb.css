@@ -39,7 +39,7 @@
     display:inline-grid;
     padding: 10px;
     grid-template-columns: 35% auto;
-    min-height:600px;
+    /*min-height:600px;*/
 }
 
 #output-block{
