@@ -38,7 +38,7 @@
     /*width:100%;*/
     display:inline-grid;
     padding: 10px;
-    grid-template-columns: auto auto;
+    grid-template-columns: 35% auto;
     min-height:600px;
 }
 
