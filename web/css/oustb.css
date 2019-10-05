@@ -34,17 +34,23 @@
     font-weight: bold;
 }
 
+.input-section-if-any{
+    width:100%;
+    display:block;
+    min-height:600px;
+}
+
 .output-block{
     display: block;
     float: left;
-    width: 48%;
+    width: 65%;
     min-height:600px;
 }
 
 .params-block{
     display: block;
     float: left;
-    width: 48%;
+    width: 35%;
     min-height:600px;
 }
 
@@ -56,11 +62,6 @@
 
 .stb-table td{
     min-height: 150px;
-}
-
-div.input-section-if-any{
-    width:100%;
-    display:block;
 }
 
 section{

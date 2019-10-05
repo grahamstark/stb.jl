@@ -433,8 +433,8 @@ stb.createBCOutputs = function( result ){
     var budget_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
         "title": "Budget Constraint",
-        "width": 600,
-        "height": 600,
+        "width": 500,
+        "height": 500,
         "description": "Budget Constraint",
         "data": {"values": data }, // , "post":data_post
         "layer":[
