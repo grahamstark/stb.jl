@@ -109,7 +109,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         end
     end
 
-    CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
+    # CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
     deciles = []
     push!( deciles, TBComponents.binify( results, 10, :weight_1, :net_income_1 ))

@@ -213,7 +213,12 @@ stb.createPoverty = function( result ){
     var hcv = result.poverty[2].headcount;
     var udclass = stb.propToString( -hcv );
     var headcount_post = numeral( 100.*result.poverty[1].headcount ).format( '0,0.0')+"%";
-    var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0');
+    var headcount_change = numeral( 100.*result.poverty[2].headcount ).format( '0,0.0')+"%";
+    var gap_post = numeral( 100.0*result.poverty[1].gap ).format( '0,0.0');
+    var gap_change = numeral( 100.0*result.poverty[2].gap ).format( '0,0.0');
+    var fht_post = numeral( 100.0*result.poverty[1].foster_greer_thorndyke[4]).format( '0,0.0');
+    var fgt_change = numeral( 100.0*result.poverty[2].foster_greer_thorndyke[4] ).format( '0,0.0');
+
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
@@ -223,9 +228,14 @@ stb.createPoverty = function( result ){
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
     }
-    var output = Mustache.render( "<p class='{{udclass}}'>{{{headcount_post}}}</strong> ({{{arrow}}} {{{headcount_change}}}) </p>", view );
+    var output = Mustache.render( "<li class='{{udclass}}'>"+
+      "<ul>Headcount: {{{headcount_post}}} ({{{arrow}}} {{{headcount_change}}}) </ul>"+
+      "<ul>Poverty Gap: {{{gap_post}}} ({{{arrow}}} {{{gap_change}}}) </ul>"+
+      "<ul>Severity (FGT): {{{fgt_post}}} ({{{arrow}}} {{{fgt_change}}}) </ul>"+
+      "</li>"+
+
+      , view );
     $( "#poverty" ).html( output );
-    stb.createLorenzCurve( "#lorenz", result, true );
 }
 
 stb.createTargetting = function( result ){
