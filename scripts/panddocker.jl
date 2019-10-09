@@ -1,7 +1,9 @@
 using CSV
 using DataFrames
 
-MD_DIR = "/home/graham_s/OU/DD226/docs/sections/"
+DD226_DIR="/home/graham_s/OU/DD226/docs/"
+MD_DIR = "$DD226_DIR/sections/"
+BIB_FILE = "$DD226_DIR/data/DD226.bib"
 OUT_DIR = "/var/www/ou/stb/"
 INCLUDE_DIR = "/home/graham_s/VirtualWorlds/projects/ou/stb.jl/web/includes/"
 PANDOC_DIR = "/home/graham_s/pandoc_data/"
@@ -19,7 +21,7 @@ const DEFAULT_OPTS = Dict(
     "section-divs"      => true,
     "standalone"        => true,
     # "number-sections"   => true,
-    # "bibliography"      => "$INCLUDE_DIR/DD226.bib",
+    "bibliography"      =>  BIB_FILE,
     "default-image-extension"=>"svg",
     "csl"               => "$PANDOC_DIR/chicago-note-bibliography.csl",
     "to"                => "html5",
@@ -80,9 +82,9 @@ function addone(
     if ! ismissing(model)
         opts["include-after-body"] = [ "$(INCLUDE_DIR)/run-$model-js.html" ]
     end
-    if pos > 1
-        opts["number-offset"]=(pos-1)
-    end
+    # if pos > 1
+    #     opts["number-offset"]=(pos-1)
+    # end
     opts["include-before-body"] = includes
     opts["o"] = "$(OUT_DIR)$(content).html"
     opts["metadata"] = "title:$title"
@@ -98,6 +100,7 @@ function addone(
     optsarr = makeoptarray( opts )
 
     push!(optsarr, "$(MD_DIR)$(content).md" )
+    push!(optsarr, "$(MD_DIR)footnotes.md" )
     cmd=`/usr/bin/pandoc $optsarr`
     println( cmd )
     # println( cmd )
