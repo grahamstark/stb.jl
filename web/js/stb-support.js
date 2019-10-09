@@ -222,17 +222,22 @@ stb.createPoverty = function( result ){
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
+        gap_post: gap_post,
+        gap_change:gap_change,
+        fgt_post: fgt_post,
+        fgt_change:fgt_change,
+
         udclass: udclass,
         arrow: ARROWS_2[ stb.propToString(hcv) ]
     };
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
     }
-    var output = Mustache.render( "<li class='{{udclass}}'>"+
-      "<ul>Headcount: {{{headcount_post}}} ({{{arrow}}} {{{headcount_change}}}) </ul>"+
-      "<ul>Poverty Gap: {{{gap_post}}} ({{{arrow}}} {{{gap_change}}}) </ul>"+
-      "<ul>Severity (FGT): {{{fgt_post}}} ({{{arrow}}} {{{fgt_change}}}) </ul>"+
-      "</li>", view );
+    var output = Mustache.render( "<ul class='{{udclass}}'>"+
+      "<li>Headcount: {{{headcount_post}}} ({{{arrow}}} {{{headcount_change}}}) </li>"+
+      "<li>Poverty Gap: {{{gap_post}}} ({{{arrow}}} {{{gap_change}}}) </li>"+
+      "<li>Severity (FGT): {{{fgt_post}}} ({{{arrow}}} {{{fgt_change}}}) </li>"+
+      "</ul>", view );
     $( "#poverty" ).html( output );
 }
 
