@@ -232,9 +232,7 @@ stb.createPoverty = function( result ){
       "<ul>Headcount: {{{headcount_post}}} ({{{arrow}}} {{{headcount_change}}}) </ul>"+
       "<ul>Poverty Gap: {{{gap_post}}} ({{{arrow}}} {{{gap_change}}}) </ul>"+
       "<ul>Severity (FGT): {{{fgt_post}}} ({{{arrow}}} {{{fgt_change}}}) </ul>"+
-      "</li>"+
-
-      , view );
+      "</li>", view );
     $( "#poverty" ).html( output );
 }
 
