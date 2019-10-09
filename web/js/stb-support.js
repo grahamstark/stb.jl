@@ -216,7 +216,7 @@ stb.createPoverty = function( result ){
     var headcount_change = numeral( 100.*result.poverty[2].headcount ).format( '0,0.0')+"%";
     var gap_post = numeral( 100.0*result.poverty[1].gap ).format( '0,0.0');
     var gap_change = numeral( 100.0*result.poverty[2].gap ).format( '0,0.0');
-    var fht_post = numeral( 100.0*result.poverty[1].foster_greer_thorndyke[4]).format( '0,0.0');
+    var fgt_post = numeral( 100.0*result.poverty[1].foster_greer_thorndyke[4]).format( '0,0.0');
     var fgt_change = numeral( 100.0*result.poverty[2].foster_greer_thorndyke[4] ).format( '0,0.0');
 
     var view = {
