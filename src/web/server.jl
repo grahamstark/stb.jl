@@ -113,7 +113,7 @@ example_names, num_households, num_people = load_data( load_examples = true, loa
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 
 const BASE_RESULTS = create_base_results( num_households, num_people )
-const ZERO_BASE_RESULTS = [[0,2000.0],[0,2000.0]] # oaraneterisze 2000
+const ZERO_DEFAULT_BC = (points=[[0,2000.0],[0,2000.0]],annotations=["",""]) # oaraneterisze 2000
 
 
 function web_doonerun( req :: Dict )
@@ -133,7 +133,7 @@ end
 function web_makezbc( req  :: Dict )
    tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
-   JSON.json((base = ZERO_BASE_RESULTS, changed = bc))
+   JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
 end
 
 #
