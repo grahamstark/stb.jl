@@ -89,9 +89,9 @@ function d100( v :: Number ) :: Number
    v/100.0
 end
 
-function web_map_params( req  :: Dict )
+function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS )
    querydict = req[:parsed_querystring]
-   tbparams = deepcopy(MiniTB.DEFAULT_PARAMS)
+   tbparams = deepcopy( defaults )
    tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow, operation=weeklyise )
    tbparams.it_rate[1] = get_if_set("it_rate_1", querydict, tbparams.it_rate[1], operation=d100 )
    tbparams.it_rate[2] = get_if_set("it_rate_2", querydict, tbparams.it_rate[2], operation=d100 )
@@ -129,6 +129,12 @@ function web_makebc( req  :: Dict )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
+function web_makezbc( req  :: Dict )
+   tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
+   bc =  local_makebc( DEFAULT_PERSON, tbparams )
+   JSON.json((base = DEFAULT_BC, changed = bc))
+end
+
 #
 # from diffeq thingy instead of Mux.defaults
 #
@@ -141,7 +147,9 @@ end
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> with_headers( web_makebc(req), req )),
+   page("/zbc", req -> with_headers( web_makezbc(req), req )),
    page("/stb", req -> with_headers( web_doonerun(req), req )),
+
    Mux.notfound(),
 )
 
