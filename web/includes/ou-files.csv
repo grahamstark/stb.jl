@@ -1,16 +1,16 @@
 title,output,form,model,content
 "Introduction",,,,intro
 "Some Concepts",,,,concepts
+"Poverty",,,,poverty
+"Inequality",,,,inequality
 "Individuals, Families and Households",,,,households
 "Inequality of What?",,,,income_wealth_welfare
-I"Poverty",,,,poverty
-"Inequality",,,,inequality
 "Incentives",,,,incentives
 "A Tax Benefit Model",,,,tax-benefit-intro
 "Welcome to Unicoria",,,,welcome-to-unicornia
 "Who is this for?",,,,roles-and-results
 "Budget Constraints - Introduction",bc-output,tax-only-form-zero,zbc,bc-intro
-"Budget Constraints - Adding Benefits",bc-output-500,benefits-only-form,ztbc,bc-cash-benefits
+"Budget Constraints - Adding Benefits",bc-output-500,benefits-only-form,zbc,bc-cash-benefits
 "Budget Constraints - Putting things together",bc-output,main-form,bc,bc-full
 "The Main Model",main-output,main-form,stb,tax-benefit-tour
 "Modelling Direct Taxation",main-output,tax-only-form,stb,tax-benefit-direct-taxation
