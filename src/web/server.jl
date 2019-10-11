@@ -99,7 +99,7 @@ function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS )
    tbparams.benefit1 = get_if_set("benefit1", querydict, tbparams.benefit1)
    tbparams.benefit2 = get_if_set("benefit2", querydict, tbparams.benefit2)
    tbparams.ben2_min_hours = get_if_set("ben2_min_hours", querydict, tbparams.ben2_min_hours)
-   tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper, operation=d100)
+   tbparams.ben2_taper = ge9t_if_set("ben2_taper", querydict, tbparams.ben2_taper, operation=d100)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
    tbparams.basic_income = get_if_set("basic_income", querydict, tbparams.basic_income)
    println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
@@ -113,7 +113,17 @@ example_names, num_households, num_people = load_data( load_examples = true, loa
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 
 const BASE_RESULTS = create_base_results( num_households, num_people )
-const ZERO_DEFAULT_BC =local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
+
+function makeztparams()
+   pars = deepcopy( MiniTB.DEFAULT_PARAMS )
+   pars.it_rate = [0.0,0.0]
+   pars
+end
+
+const ZERO_TAX_PARAMS = makeztparams()
+const ZERO_DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
+const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS )
+
 
 
 function web_doonerun( req :: Dict )
@@ -136,6 +146,14 @@ function web_makezbc( req  :: Dict )
    JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
 end
 
+function web_makeztbc( req  :: Dict )
+   settings =  deepcopy(DEFAULT_SETTINGS)
+   settings.maxgross = 400.0 # shorted bc
+   tbparams = web_map_params( req, MiniTB.ZERO_TAX_PARAMS )
+   bc =  local_makebc( DEFAULT_PERSON, tbparams )
+   JSON.json((base = ZERO_TAX_BC, changed = bc))
+end
+
 #
 # from diffeq thingy instead of Mux.defaults
 #
@@ -149,6 +167,7 @@ end
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> with_headers( web_makebc(req), req )),
    page("/zbc", req -> with_headers( web_makezbc(req), req )),
+   page("/ztbc", req -> with_headers( web_makeztbc(req), req )),
    page("/stb", req -> with_headers( web_doonerun(req), req )),
 
    Mux.notfound(),

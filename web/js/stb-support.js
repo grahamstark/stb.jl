@@ -559,7 +559,7 @@ stb.runModel = function( which_action ){
              // var r = JSON.parse( ""+result );
              if( which_action == "stb" ){ // main model
                  stb.createMainOutputs( result );
-             } else if(( which_action == "bc" ) || ( which_action == "zbc" )){
+             } else if(( which_action == "bc" ) || ( which_action == "zbc" ) || (which_action == "ztbc")){
                  stb.createBCOutputs( result ); // bc model
              } else {
                  console.log( "unknown instruction " + which_action )
