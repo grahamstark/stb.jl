@@ -154,6 +154,10 @@ function web_makeztbc( req  :: Dict )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
 
+function web_doineq( req  :: Dict )
+   JSON.json((ineq = [123]))
+end
+
 #
 # from diffeq thingy instead of Mux.defaults
 #
@@ -169,6 +173,7 @@ end
    page("/zbc", req -> with_headers( web_makezbc(req), req )),
    page("/ztbc", req -> with_headers( web_makeztbc(req), req )),
    page("/stb", req -> with_headers( web_doonerun(req), req )),
+   page("/ineq", req -> with_headers( web_doineq(req), req )),
 
    Mux.notfound(),
 )

@@ -524,6 +524,10 @@ stb.createBCOutputs = function( result ){
     vegaEmbed('#output', budget_vg );
 }
 
+function createInequalityTable( result ){
+    console.log( "xxx");
+}
+
 stb.runModel = function( which_action ){
     console.log( "run model called");
     var it_allow = $("#it_allow").val();
@@ -561,6 +565,8 @@ stb.runModel = function( which_action ){
                  stb.createMainOutputs( result );
              } else if(( which_action == "bc" ) || ( which_action == "zbc" ) || (which_action == "ztbc")){
                  stb.createBCOutputs( result ); // bc model
+             } else if( which_action == "ineq" ){
+                 stb.createInequalityTable( result ); // bc model
              } else {
                  console.log( "unknown instruction " + which_action )
              }

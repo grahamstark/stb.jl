@@ -2,7 +2,7 @@ title,output,form,model,content
 "Introduction",,,,intro
 "Some Concepts",,,,concepts
 "Poverty",,,,poverty
-"Inequality",inequality-output,inequality-input,,inequality
+"Inequality",inequality-output,inequality-input,inequality,inequality
 "Individuals, Families and Households",,,,households
 "Inequality of What?",,,,income_wealth_welfare
 "Incentives",,,,incentives
