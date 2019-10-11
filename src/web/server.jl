@@ -148,7 +148,7 @@ end
 
 function web_makeztbc( req  :: Dict )
    bcs = BCSettings( maxgross=500 )
-   tbparams = web_map_params( req, MiniTB.ZERO_TAX_PARAMS )
+   tbparams = web_map_params( req, ZERO_TAX_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams, bcs )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
