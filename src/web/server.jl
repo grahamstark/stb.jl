@@ -120,10 +120,12 @@ function makeztparams()
    pars
 end
 
+const BC_500_SETTINGS = BCSettings( maxgross=500 )
+
+
 const ZERO_TAX_PARAMS = makeztparams()
 const ZERO_DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
-const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS )
-
+const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_SETTINGS )
 
 
 function web_doonerun( req :: Dict )
@@ -147,9 +149,8 @@ function web_makezbc( req  :: Dict )
 end
 
 function web_makeztbc( req  :: Dict )
-   bcs = BCSettings( maxgross=500 )
    tbparams = web_map_params( req, ZERO_TAX_PARAMS )
-   bc =  local_makebc( DEFAULT_PERSON, tbparams, bcs )
+   bc =  local_makebc( DEFAULT_PERSON, tbparams, BC_500_SETTINGS )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
 
