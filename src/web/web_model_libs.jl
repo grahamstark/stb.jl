@@ -258,9 +258,12 @@ function local_getnet(data :: Dict, gross::Real)::Real
    return rc[:netincome]
 end
 
-function local_makebc( person :: MiniTB.Person, tbparams :: MiniTB.Parameters ) :: NamedTuple
+function local_makebc(
+    person :: MiniTB.Person,
+    tbparams :: MiniTB.Parameters,
+    settings :: BCSettings = DEFAULT_SETTINGS ) :: NamedTuple
    data = Dict( :person=>person, :params=>tbparams )
-   bc = TBComponents.makebc( data, local_getnet )
+   bc = TBComponents.makebc( data, local_getnet, settings )
    annotations = annotate_bc( bc )
    ( points = pointstoarray( bc ), annotations = annotations )
 end
