@@ -113,7 +113,7 @@ example_names, num_households, num_people = load_data( load_examples = true, loa
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 
 const BASE_RESULTS = create_base_results( num_households, num_people )
-const ZERO_DEFAULT_BC = (points=[[0,2000.0],[0,2000.0]],annotations=["",""]) # oaraneterisze 2000
+const ZERO_DEFAULT_BC =local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
 
 
 function web_doonerun( req :: Dict )
