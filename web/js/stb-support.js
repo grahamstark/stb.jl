@@ -532,36 +532,41 @@ stb.loadInequalityTable = function( result ){
     var cuminc=[];
     var cumpop=[]
     for( var i = 0; i < NUM_INC_BANDS; i++ ){
-        pops += result.data[i][0];
-        incs += result.data[i][1];
+        pops += result.data[0][i];
+        incs += result.data[1][i];
         cumpop.push(pops);
         cuminc.push(incs);
     }
     var sharepop=[];
     var shareinc=[];
     for( var i = 0; i < NUM_INC_BANDS; i++ ){
-        sharepop.push( cumpop[i]/cumpop[9]);
-        shareinc.push( cuminc[i]/cuminc[9]);
+        var shp = numeral(100.0*cumpop[i]/cumpop[9]).format( '0,0.00')
+        var shi = numeral(100.0*cuminc[i]/cuminc[9]).format( '0,0.00')
+        sharepop.push( shp );
+        shareinc.push( shi );
     }
+    console.log( "sharepop="+JSON.stringify(sharepop));
+    console.log( "shareinc="+JSON.stringify(shareinc));
+
     for( var i = 1; i <= NUM_INC_BANDS; i++ ){
-        $( "#pop-"+i ).val( result.data[i][0] )
-        $( "#inc-"+i ).val( result.data[i][1] )
-        $( "#share-pop-"+i ).html( sharepop[i] );
-        $( "#share-inc-"+i ).html( shareinc[i] );
-        $( "#cum-pop-"+i ).html( cumpopp[i] );
-        $( "#cum-inc-"+i ).html( cuminc[i] );
+        $( "#pop-"+i ).val( result.data[0][i-1] )
+        $( "#inc-"+i ).val( result.data[1][i-1] )
+        $( "#cum-pop-"+i ).html( cumpop[i-1] );
+        $( "#cum-inc-"+i ).html( cuminc[i-1] );
+        $( "#share-pop-"+i ).html( sharepop[i-1] );
+        $( "#share-inc-"+i ).html( shareinc[i-1] );
     }
 }
 
 const NUM_INC_BANDS = 10;
 
 stb.sortByInc = function( a, b ){
-    a["inc"]-b["inc"];
+    return a["inc"]-b["inc"];
 }
 
 stb.runInequality = function( ){
     console.log( "runInequality called");
-    var data = [];
+    var data=[];
     for( var i = 1; i <= NUM_INC_BANDS; i++ ){
         var pop = parseFloat($("#pop-"+i).val());
         var inc = parseFloat($("#inc-"+i).val());
@@ -571,8 +576,7 @@ stb.runInequality = function( ){
     data.sort( stb.sortByInc );
     var inca=[];
     var popa=[];
-
-    for( var i = 1; i <= NUM_INC_BANDS; i++ ){
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
         popa.push(data[i]["pop"]);
         inca.push(data[i]["inc"]);
     }
