@@ -526,6 +526,31 @@ stb.createBCOutputs = function( result ){
 
 stb.loadInequalityTable = function( result ){
     console.log( "createInequalityTable");
+    console.log( "result="+JSON.stringify(result));
+    var pops = 0;
+    var incs = 0;
+    var cuminc=[];
+    var cumpop=[]
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
+        pops += result.data[i][0];
+        incs += result.data[i][1];
+        cumpop.push(pops);
+        cuminc.push(incs);
+    }
+    var sharepop=[];
+    var shareinc=[];
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
+        sharepop.push( cumpop[i]/cumpop[9]);
+        shareinc.push( cuminc[i]/cuminc[9]);
+    }
+    for( var i = 1; i <= NUM_INC_BANDS; i++ ){
+        $( "#pop-"+i ).val( result.data[i][0] )
+        $( "#inc-"+i ).val( result.data[i][1] )
+        $( "#share-pop-"+i ).html( sharepop[i] );
+        $( "#share-inc-"+i ).html( shareinc[i] );
+        $( "#cum-pop-"+i ).html( cumpopp[i] );
+        $( "#cum-inc-"+i ).html( cuminc[i] );
+    }
 }
 
 const NUM_INC_BANDS = 10;
@@ -537,28 +562,19 @@ stb.sortByInc = function( a, b ){
 stb.runInequality = function( ){
     console.log( "runInequality called");
     var data = [];
-    var inca=[];
-    var popa=[];
     for( var i = 1; i <= NUM_INC_BANDS; i++ ){
         var pop = parseFloat($("#pop-"+i).val());
         var inc = parseFloat($("#inc-"+i).val());
-        var item = {pop:pop, inc:inc, cumpop:0, cuminc:0, sharepop:0, shareinc:0}
+        var item = {pop:pop, inc:inc}
         data.push( item );
-        popa.push(pop);
-        inca.push(inc);
     }
     data.sort( stb.sortByInc );
-    var pops = 0;
-    var incs = 0;
-    for( var i = 0; i < NUM_INC_BANDS; i++ ){
-        incs += data[i]["inc"];
-        pops += data[i]["pop"];
-        data[i]["cuminc"] = incs;
-        data[i]["cumpop"] = pops;
-    }
-    for( var i = 0; i < NUM_INC_BANDS; i++ ){
-        data[i]["sharepop"] = data[i]["cumpop"]/data[9]["cumpop"];
-        data[i]["shareinc"] = data[i]["cuminc"]/data[9]["cuminc"];
+    var inca=[];
+    var popa=[];
+
+    for( var i = 1; i <= NUM_INC_BANDS; i++ ){
+        popa.push(data[i]["pop"]);
+        inca.push(data[i]["inc"]);
     }
     console.log( "incomes="+JSON.stringify(inca));
     $.ajax(
@@ -590,7 +606,7 @@ stb.runInequality = function( ){
          success: function( result ){
              console.log( "stb; call OK");
              console.log( "result " + result );
-             stb.loadInequalityTable( result );
+             stb.loadInequalityTable( result, data );
          }
      });
  }
