@@ -259,7 +259,7 @@ stb.createTargetting = function( result ){
 
 const GOLDEN_RATIO = 1.618
 
-stb.createLorenzCurve = function( targetId, result, thumbnail ){
+stb.createLorenzCurve = function( targetId, result, thumbnail, includepost=true ){
     var height = 400;
     var xtitle = "Population Share";
     var ytitle = "Income Share";
@@ -278,8 +278,10 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
     // var data_post= [];
-    for( var i = 0; i < result.deciles[1][0].length; i++){
-        data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
+    if( includepost ){
+        for( var i = 0; i < result.deciles[1][0].length; i++){
+            data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
+        }
     }
     data.push( {"popn3":0.0, "base":0.0});
     data.push( {"popn3":1.0, "base":1.0});
