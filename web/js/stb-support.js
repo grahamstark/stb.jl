@@ -556,6 +556,12 @@ stb.loadInequalityTable = function( result ){
         $( "#share-pop-"+i ).html( sharepop[i-1] );
         $( "#share-inc-"+i ).html( shareinc[i-1] );
     }
+    $( "#mean" ).html( result.ineq.average_income );
+    $( "#median" ).html( result.ineq.median );
+    $( "#gini" ).html( result.ineq.gini );
+    $( "#theil" ).html( result.ineq.theil[0] ); // CHECK!!
+    $( "#palma" ).html( result.ineq.palma );
+
 }
 
 const NUM_INC_BANDS = 10;
