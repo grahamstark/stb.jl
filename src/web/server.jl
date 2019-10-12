@@ -157,9 +157,10 @@ end
 function web_doineq( req  :: Dict )
    querydict = req[:parsed_querystring]
    println( querydict )
-   ineq = querydict["data"]
-   println(querydict)
-   JSON.json( ineq )
+   data = JSON.parse(querydict["data"])
+   #df = DataFrame( data )
+   println(data)
+   JSON.json( ( data=data, results='xx' ))
 end
 
 #

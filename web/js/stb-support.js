@@ -538,8 +538,8 @@ stb.runInequality = function( ){
     console.log( "runInequality called");
     var data = [];
     for( var i = 1; i <= NUM_INC_BANDS; i++ ){
-        var pop = $("#pop-"+i).val();
-        var inc = $("#inc-"+i).val();
+        var pop = parseFloat($("#pop-"+i).val());
+        var inc = parseFloat($("#inc-"+i).val());
         var item = {pop:pop, inc:inc, cum_pop:0, cum_inc:0, share_pop:0, share_inc:0}
         data.push( item );
     }
@@ -568,7 +568,7 @@ stb.runInequality = function( ){
              console.log( "result " + result );
              stb.loadInequalityTable( result );
          }
-     );
+     });
  }
 
 stb.runModel = function( which_action ){
