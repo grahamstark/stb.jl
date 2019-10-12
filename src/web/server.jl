@@ -156,7 +156,8 @@ end
 
 function web_doineq( req  :: Dict )
    querydict = req[:parsed_querystring]
-   println( querydict )
+   println( "req=$req" )
+   println( "querydict=$querydict" )
    incomes = JSON.parse(querydict["incomes"])
    population = JSON.parse(querydict["population"])
    data = hcat( population, incomes )

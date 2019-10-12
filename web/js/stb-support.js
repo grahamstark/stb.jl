@@ -560,6 +560,7 @@ stb.runInequality = function( ){
         data[i]["sharepop"] = data[i]["cumpop"]/data[9]["cumpop"];
         data[i]["shareinc"] = data[i]["cuminc"]/data[9]["cuminc"];
     }
+    console.log( "incomes="+JSON.stringify(inca));
     $.ajax(
         { url: "http://oustb.mazegreenyachts.com:8000/ineq/",
          method: 'get',
