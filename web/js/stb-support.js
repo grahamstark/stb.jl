@@ -528,29 +528,31 @@ stb.loadInequalityTable = function( result ){
     console.log( "createInequalityTable");
 }
 
-stb.sortByInc( a, b ){
+const NUM_INC_BANDS = 10;
+
+stb.sortByInc = function( a, b ){
     a["inc"]-b["inc"];
 }
 
 stb.runInequality = function( ){
     console.log( "runInequality called");
     var data = [];
-    for( var i = 1; i <= 10; i++ ){
+    for( var i = 1; i <= NUM_INC_BANDS; i++ ){
         var pop = $("#pop-"+i).val();
         var inc = $("#inc-"+i).val();
         var item = {pop:pop, inc:inc, cum_pop:0, cum_inc:0, share_pop:0, share_inc:0}
         data.push( item );
     }
     data.sort( stb.sortByInc );
-    var ps = 0;
+    var pops = 0;
     var incs = 0;
-    for( var i = 0; i < 10; i++ ){
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
         incs += data[i]["inc"];
         pops += data[i]["pop"];
         data[i]["cum_inc"] = incs;
         data[i]["cum_pop"] = pops;
     }
-    for( var i = 0; i < 10; i++ ){
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
         data[i]["share_pop"] = data[i]["cum_pop"]/data[9]["cum_pop"];
         data[i]["share_inc"] = data[i]["cum_inc"]/data[9]["cum_inc"];
     }
