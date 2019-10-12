@@ -537,11 +537,15 @@ stb.sortByInc = function( a, b ){
 stb.runInequality = function( ){
     console.log( "runInequality called");
     var data = [];
+    var inca=[];
+    var popa=[];
     for( var i = 1; i <= NUM_INC_BANDS; i++ ){
         var pop = parseFloat($("#pop-"+i).val());
         var inc = parseFloat($("#inc-"+i).val());
         var item = {pop:pop, inc:inc, cumpop:0, cuminc:0, sharepop:0, shareinc:0}
         data.push( item );
+        popa.push(pop);
+        inca.push(inc);
     }
     data.sort( stb.sortByInc );
     var pops = 0;
@@ -561,7 +565,8 @@ stb.runInequality = function( ){
          method: 'get',
          dataType: 'json',
          data: {
-             data:data
+             population:popa,
+             incomes:inca
          },
          success: function( result ){
              console.log( "stb; call OK");

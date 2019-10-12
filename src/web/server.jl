@@ -157,10 +157,13 @@ end
 function web_doineq( req  :: Dict )
    querydict = req[:parsed_querystring]
    println( querydict )
-   data = JSON.parse(querydict["data"])
-   #df = DataFrame( data )
+   incomes = JSON.parse(querydict["incomes"])
+   population = JSON.parse(querydict["population"])
+   data = hcat( population, incomes )
+   ineq =TBComponents.makeinequality(data, 1, 2)
    println(data)
-   JSON.json( ( data=data, results='xx' ))
+   println(ineq)
+   JSON.json( ( data=data, ineq=ineq ))
 end
 
 #
