@@ -155,6 +155,8 @@ function web_makeztbc( req  :: Dict )
 end
 
 function web_doineq( req  :: Dict )
+   querydict = req[:parsed_querystring]
+   println(querydict)
    JSON.json((ineq = [123]))
 end
 

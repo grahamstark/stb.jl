@@ -524,9 +524,50 @@ stb.createBCOutputs = function( result ){
     vegaEmbed('#output', budget_vg );
 }
 
-function createInequalityTable( result ){
-    console.log( "xxx");
+stb.loadInequalityTable = function( result ){
+    console.log( "createInequalityTable");
 }
+
+stb.sortByInc( a, b ){
+    a["inc"]-b["inc"];
+}
+
+stb.runInequality = function( ){
+    console.log( "runInequality called");
+    var data = [];
+    for( var i = 1; i <= 10; i++ ){
+        var pop = $("#pop-"+i).val();
+        var inc = $("#inc-"+i).val();
+        var item = {pop:pop, inc:inc, cum_pop:0, cum_inc:0, share_pop:0, share_inc:0}
+        data.push( item );
+    }
+    data.sort( stb.sortByInc );
+    var ps = 0;
+    var incs = 0;
+    for( var i = 0; i < 10; i++ ){
+        incs += data[i]["inc"];
+        pops += data[i]["pop"];
+        data[i]["cum_inc"] = incs;
+        data[i]["cum_pop"] = pops;
+    }
+    for( var i = 0; i < 10; i++ ){
+        data[i]["share_pop"] = data[i]["cum_pop"]/data[9]["cum_pop"];
+        data[i]["share_inc"] = data[i]["cum_inc"]/data[9]["cum_inc"];
+    }
+    $.ajax(
+        { url: "http://oustb.mazegreenyachts.com:8000/ineq/",
+         method: 'get',
+         dataType: 'json',
+         data: {
+             data:data
+         },
+         success: function( result ){
+             console.log( "stb; call OK");
+             console.log( "result " + result );
+             stb.loadInequalityTable( result );
+         }
+     );
+ }
 
 stb.runModel = function( which_action ){
     console.log( "run model called");
