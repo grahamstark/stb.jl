@@ -565,9 +565,27 @@ stb.runInequality = function( ){
         { url: "http://oustb.mazegreenyachts.com:8000/ineq/",
          method: 'get',
          dataType: 'json',
-         data: {
-             population:popa,
-             incomes:inca
+         data: { // can't get Julia to parse an json array correctly, so..
+             pop_1:popa[0],
+             pop_2:popa[1],
+             pop_3:popa[2],
+             pop_4:popa[3],
+             pop_5:popa[4],
+             pop_6:popa[5],
+             pop_7:popa[6],
+             pop_8:popa[7],
+             pop_9:popa[8],
+             pop_10:popa[9],
+             inc_1:inca[0],
+             inc_2:inca[1],
+             inc_3:inca[2],
+             inc_4:inca[3],
+             inc_5:inca[4],
+             inc_6:inca[5],
+             inc_7:inca[6],
+             inc_8:inca[7],
+             inc_9:inca[8],
+             inc_10:inca[9]
          },
          success: function( result ){
              console.log( "stb; call OK");

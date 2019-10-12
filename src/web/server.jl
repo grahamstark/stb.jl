@@ -156,11 +156,15 @@ end
 
 function web_doineq( req  :: Dict )
    querydict = req[:parsed_querystring]
+   inc=[]
+   pop=[]
+   for i in 1:10 # can's see how to pass a json array from js to this, so ...
+      push!( inc, get_if_set("inc_$i", querydict, 0 ))
+      push!( pop, get_if_set("pop_$i", querydict, 0 ))
+   end
    println( "req=$req" )
    println( "querydict=$querydict" )
-   incomes = JSON.parse(querydict["incomes"])
-   population = JSON.parse(querydict["population"])
-   data = hcat( population, incomes )
+   data = hcat( pop, inc )
    ineq =TBComponents.makeinequality(data, 1, 2)
    println(data)
    println(ineq)
