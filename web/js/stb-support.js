@@ -540,7 +540,7 @@ stb.runInequality = function( ){
     for( var i = 1; i <= NUM_INC_BANDS; i++ ){
         var pop = parseFloat($("#pop-"+i).val());
         var inc = parseFloat($("#inc-"+i).val());
-        var item = {pop:pop, inc:inc, cum_pop:0, cum_inc:0, share_pop:0, share_inc:0}
+        var item = {pop:pop, inc:inc, cumpop:0, cuminc:0, sharepop:0, shareinc:0}
         data.push( item );
     }
     data.sort( stb.sortByInc );
@@ -549,12 +549,12 @@ stb.runInequality = function( ){
     for( var i = 0; i < NUM_INC_BANDS; i++ ){
         incs += data[i]["inc"];
         pops += data[i]["pop"];
-        data[i]["cum_inc"] = incs;
-        data[i]["cum_pop"] = pops;
+        data[i]["cuminc"] = incs;
+        data[i]["cumpop"] = pops;
     }
     for( var i = 0; i < NUM_INC_BANDS; i++ ){
-        data[i]["share_pop"] = data[i]["cum_pop"]/data[9]["cum_pop"];
-        data[i]["share_inc"] = data[i]["cum_inc"]/data[9]["cum_inc"];
+        data[i]["sharepop"] = data[i]["cumpop"]/data[9]["cumpop"];
+        data[i]["shareinc"] = data[i]["cuminc"]/data[9]["cuminc"];
     }
     $.ajax(
         { url: "http://oustb.mazegreenyachts.com:8000/ineq/",
