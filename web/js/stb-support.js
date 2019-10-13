@@ -608,7 +608,7 @@ stb.loadInequalityTable = function( result ){
     var sharepop=[];
     var shareinc=[];
     for( var i = 0; i < NUM_INC_BANDS; i++ ){
-        var shp = numeral(100.0*cumpop[i]/cumpop[9]).format( '0,0.00')
+        var shp = numeral(100.0*cumpop[i]/cumpop[9]).format( '0,0')
         var shi = numeral(100.0*cuminc[i]/cuminc[9]).format( '0,0.00')
         sharepop.push( shp );
         shareinc.push( shi );
@@ -626,9 +626,9 @@ stb.loadInequalityTable = function( result ){
     }
     $( "#mean" ).html( numeral(result.ineq.average_income).format('0,0.0'));
     $( "#median" ).html( numeral(result.ineq.median).format('0,0.0') );
-    $( "#gini" ).html( numeral(result.ineq.gini).format('0,0.0') );
-    $( "#theil" ).html( numeral(result.ineq.theil[0]).format('0,0.0') ); // CHECK!!
-    $( "#palma" ).html( numeral(result.ineq.palma).format('0,0.0') );
+    $( "#gini" ).html( numeral(result.ineq.gini).format('0,0.000') );
+    $( "#theil" ).html( numeral(result.ineq.theil[0]).format('0,0.000') ); // CHECK!!
+    $( "#palma" ).html( numeral(result.ineq.palma).format('0,0.00') );
     stb.createOneLorenz( "#lorenz", result.ineq.deciles, false );
 }
 
