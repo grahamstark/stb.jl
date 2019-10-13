@@ -76,3 +76,7 @@ body{
     border:0'
 
 }
+
+.small-numeric-input{
+    width:3em;
+}
