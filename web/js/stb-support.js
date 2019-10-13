@@ -624,11 +624,11 @@ stb.loadInequalityTable = function( result ){
         $( "#share-pop-"+i ).html( sharepop[i-1] );
         $( "#share-inc-"+i ).html( shareinc[i-1] );
     }
-    $( "#mean" ).html( result.ineq.average_income );
-    $( "#median" ).html( result.ineq.median );
-    $( "#gini" ).html( result.ineq.gini );
-    $( "#theil" ).html( result.ineq.theil[0] ); // CHECK!!
-    $( "#palma" ).html( result.ineq.palma );
+    $( "#mean" ).html( numeral(result.ineq.average_income).format('0,0.0'));
+    $( "#median" ).html( numeral(result.ineq.median).format('0,0.0') );
+    $( "#gini" ).html( numeral(result.ineq.gini).format('0,0.0') );
+    $( "#theil" ).html( numeral(result.ineq.theil[0]).format('0,0.0') ); // CHECK!!
+    $( "#palma" ).html( numeral(result.ineq.palma).format('0,0.0') );
     stb.createOneLorenz( "#lorenz", result.ineq.deciles, false );
 }
 
