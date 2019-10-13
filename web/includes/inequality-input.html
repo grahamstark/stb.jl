@@ -1,4 +1,4 @@
-<div id='params' class='params-block'>
+<div id='params-block'>
     <table>
         <tr>
             <td>
@@ -7,18 +7,15 @@
         <caption>A Income Distribution Example</caption>
         <thead>
           <tr>
-            <th colspan='2'></th><th colspan='2'>Cumulative</th><th colspan='2'>Shares</th>
+            <th></th><th colspan='2'>Cumulative</th><th colspan='2'>Shares</th>
           </tr>
           <tr>
-            <th>Population</th><th>Income</th><th>Population</th><th>Income</th><th>Population</th><th>Income</th>
+            <th>Income</th><th>Population</th><th>Income</th><th>Population</th><th>Income</th>
           </tr>
         </thead>
         <tbody>
 
           <tr  id='row-1'>
-            <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-1' id='pop-1'/>
-            </td>
             <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-1' id='inc-1'/>
             </td>
@@ -38,9 +35,6 @@
 
           <tr  id='row-2'>
             <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-2' id='pop-2'/>
-            </td>
-            <td>
                 <input type='number' min='1' max='99999' size='2' value='2' name='inc-2' id='inc-2'/>
             </td>
             <td>
@@ -57,9 +51,6 @@
             </td>
           </tr>
           <tr  id='row-3'>
-            <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-3' id='pop-3'/>
-            </td>
             <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-3' id='inc-3'/>
             </td>
@@ -78,9 +69,6 @@
           </tr>
           <tr  id='row-4'>
             <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-4' id='pop-4'/>
-            </td>
-            <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-4' id='inc-4'/>
             </td>
             <td>
@@ -97,9 +85,6 @@
             </td>
           </tr>
           <tr  id='row-5'>
-            <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-5' id='pop-5'/>
-            </td>
             <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-5' id='inc-5'/>
             </td>
@@ -118,9 +103,6 @@
           </tr>
           <tr  id='row-6'>
             <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-6' id='pop-6'/>
-            </td>
-            <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-6' id='inc-6'/>
             </td>
             <td>
@@ -137,9 +119,6 @@
             </td>
           </tr>
           <tr  id='row-7'>
-            <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-7' id='pop-7'/>
-            </td>
             <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-7' id='inc-7'/>
             </td>
@@ -158,9 +137,6 @@
           </tr>
           <tr  id='row-8'>
             <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-8' id='pop-8'/>
-            </td>
-            <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-8' id='inc-8'/>
             </td>
             <td>
@@ -178,9 +154,6 @@
           </tr>
           <tr  id='row-9'>
             <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-9' id='pop-9'/>
-            </td>
-            <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-9' id='inc-9'/>
             </td>
             <td>
@@ -197,9 +170,6 @@
             </td>
           </tr>
           <tr  id='row-10'>
-            <td>
-                <input type='number' min='1' max='999' size='2' value='1' name='pop-10' id='pop-10'/>
-            </td>
             <td>
                 <input type='number' min='1' max='999999' size='2' value='2' name='inc-10' id='inc-10'/>
             </td>
@@ -219,6 +189,17 @@
 
         </tbody>
       </table>
+      <input type='hidden' name='pop-1' id='pop-1'  value='1'/>
+      <input type='hidden' name='pop-2' id='pop-2'  value='1'/>
+      <input type='hidden' name='pop-3' id='pop-3'  value='1'/>
+      <input type='hidden' name='pop-4' id='pop-4'  value='1'/>
+      <input type='hidden' name='pop-5' id='pop-5'  value='1'/>
+      <input type='hidden' name='pop-6' id='pop-6'  value='1'/>
+      <input type='hidden' name='pop-7' id='pop-7'  value='1'/>
+      <input type='hidden' name='pop-8' id='pop-8'  value='1'/>
+      <input type='hidden' name='pop-9' id='pop-9'  value='1'/>
+      <input type='hidden' name='pop-10' id='pop-10'  value='1'/>
+
       <button id='runbutton' name='runbutton' type="button">Recalculate</button>
     </form>
 </td>
@@ -228,7 +209,6 @@
         <tr>
             <td>Mean</td>
             <td id='mean'></td>
-            <td rowspan='5' id='lorenz'></td>
         </tr>
         <tr>
             <td>Median</td>
@@ -246,8 +226,12 @@
             <td>Palma Index</td>
             <td id='palma'></td>
         </tr>
+        <tr>
+            <td id='lorenz' colspan="2"></td>
+        </tr>
 
     </table>
+    </tr>
 </td>
 </tr>
 </table>

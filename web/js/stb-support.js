@@ -259,7 +259,7 @@ stb.createTargetting = function( result ){
 
 const GOLDEN_RATIO = 1.618
 
-stb.createLorenzCurve = function( targetId, result, thumbnail, includepost=true ){
+stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var height = 400;
     var xtitle = "Population Share";
     var ytitle = "Income Share";
@@ -278,10 +278,8 @@ stb.createLorenzCurve = function( targetId, result, thumbnail, includepost=true 
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
     // var data_post= [];
-    if( includepost ){
-        for( var i = 0; i < result.deciles[1][0].length; i++){
-            data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
-        }
+    for( var i = 0; i < result.deciles[1][0].length; i++){
+        data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
     }
     data.push( {"popn3":0.0, "base":0.0});
     data.push( {"popn3":1.0, "base":1.0});
@@ -526,6 +524,69 @@ stb.createBCOutputs = function( result ){
     vegaEmbed('#output', budget_vg );
 }
 
+// singles series version of above - FIXME really refactor these ..
+stb.createOneLorenz = function( targetId, deciles, thumbnail ){
+    var height = 400;
+    var xtitle = "Population Share";
+    var ytitle = "Income Share";
+    var title = "Lorenz Curve"
+    if( thumbnail ){
+        var height = 70;
+        xtitle = "";
+        ytitle = "";
+        title = "";
+    }
+    var width = Math.trunc( GOLDEN_RATIO*height);
+    var data=[];
+    console.log( "deciles="+JSON.stringify(deciles));
+    console.log( "deciles[0] length" + deciles[0].length );
+    for( var i = 0; i < deciles[0].length; i++){
+        data.push( {"popn":deciles[0][i], "income":deciles[1][i] });
+    }
+    // diagonal in grey
+    data.push( {"popn_tot":0.0, "income_tot":0.0});
+    data.push( {"popn_tot":1.0, "income_tot":1.0});
+    var gini_vg = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "title": title,
+        "width": width,
+        "height": height,
+        "description": title,
+        "data": {"values": data }, // , "post":data_post
+        "layer":[
+            {
+                "mark": "line",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "popn",
+                           "axis":{
+                               "title": xtitle
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "income",
+                           "axis":{
+                              "title": ytitle
+                           } },
+                    "color": {"value":"blue"}
+                } // encoding
+            }, // pre layer line
+          { // diagonal in grey
+               "mark": "line",
+               "encoding":{
+                   "x": { "type": "quantitative",
+                          "field": "popn_tot" },
+                   "y": { "type": "quantitative",
+                          "field": "income_tot" },
+                   "color": {"value":"#ccc"},
+                   "strokeWidth": {"value": 1.0}
+                   // "strokeDash":
+               } // encoding
+           },
+        ]
+    }
+    vegaEmbed( targetId, gini_vg );
+}
+
 stb.loadInequalityTable = function( result ){
     console.log( "createInequalityTable");
     console.log( "result="+JSON.stringify(result));
@@ -563,7 +624,7 @@ stb.loadInequalityTable = function( result ){
     $( "#gini" ).html( result.ineq.gini );
     $( "#theil" ).html( result.ineq.theil[0] ); // CHECK!!
     $( "#palma" ).html( result.ineq.palma );
-
+    stb.createOneLorenz( "#lorenz", result.ineq.deciles, false );
 }
 
 const NUM_INC_BANDS = 10;
