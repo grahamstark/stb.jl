@@ -274,10 +274,13 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var data=[];
     console.log( "deciles" + result.deciles.toString());
     console.log( "deciles[0][0] length" + result.deciles[0][0].length );
+    // deciles levels are rhs. so push a 0,0
+    data.push( {"popn1":0, "pre":0 });
     for( var i = 0; i < result.deciles[0][0].length; i++){
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
     // var data_post= [];
+    data.push( {"popn2":0, "post":0 });
     for( var i = 0; i < result.deciles[1][0].length; i++){
         data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
     }
@@ -540,6 +543,8 @@ stb.createOneLorenz = function( targetId, deciles, thumbnail ){
     var data=[];
     console.log( "deciles="+JSON.stringify(deciles));
     console.log( "deciles[0] length" + deciles[0].length );
+    // deciles levels are rhs. so push a 0,0
+    data.push( {"popn":0, "income":0 });
     for( var i = 0; i < deciles[0].length; i++){
         data.push( {"popn":deciles[0][i], "income":deciles[1][i] });
     }
