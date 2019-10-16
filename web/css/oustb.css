@@ -80,3 +80,11 @@ body{
 .small-numeric-input{
     width:3em;
 }
+
+/*
+    kill the title block written by pandoc from the metadata
+    see: https://pandoc.org/MANUAL.html#extension-yaml_metadata_block
+*/
+.title{
+    display:none;
+}

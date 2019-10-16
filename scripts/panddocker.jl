@@ -4,6 +4,7 @@ using DataFrames
 DD226_DIR="/home/graham_s/OU/DD226/docs/"
 MD_DIR = "$DD226_DIR/sections/"
 BIB_FILE = "$DD226_DIR/data/DD226.bib"
+META_FILE = "$DD226_DIR/data/DD226-metadata.yaml"
 OUT_DIR = "/var/www/ou/stb/"
 INCLUDE_DIR = "/home/graham_s/VirtualWorlds/projects/ou/stb.jl/web/includes/"
 PANDOC_DIR = "/home/graham_s/pandoc_data/"
@@ -17,11 +18,12 @@ const DEFAULT_OPTS = Dict(
                 "/css/oustb.css"
             ],
     "include-in-header" => [ "$INCLUDE_DIR/ou-js-headers.html" ],
-    "from"              => "markdown",
+    "from"              => "markdown+yaml_metadata_block",
     "section-divs"      => true,
     "standalone"        => true,
     # "number-sections"   => true,
-    "bibliography"      =>  BIB_FILE,
+    "bibliography"      => BIB_FILE,
+    "metadata-file"     => META_FILE,
     "default-image-extension"=>"svg",
     "csl"               => "$PANDOC_DIR/chicago-note-bibliography.csl",
     "to"                => "html5",
@@ -87,7 +89,7 @@ function addone(
     # end
     opts["include-before-body"] = includes
     opts["o"] = "$(OUT_DIR)$(content).html"
-    opts["metadata"] = "title:$title"
+    # opts["metadata"] = "title:$title"
     links = []
 
     if ! ismissing( prev_content )
@@ -101,6 +103,8 @@ function addone(
 
     push!(optsarr, "$(MD_DIR)$(content).md" )
     push!(optsarr, "$(MD_DIR)footnotes.md" )
+
+
     cmd=`/usr/bin/pandoc $optsarr`
     println( cmd )
     # println( cmd )
