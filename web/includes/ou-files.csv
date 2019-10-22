@@ -14,8 +14,8 @@ title,output,form,model,content
 "Budget Constraints - Introduction",bc-output,tax-only-form-zero,zbc,bc-intro
 "Budget Constraints - Adding Benefits",bc-output-500,benefits-only-form,zbc,bc-cash-benefits
 "Budget Constraints - Putting things together",bc-output,main-form,bc,bc-full
-"The Main Model",main-output,main-form,stb,tax-benefit-tour
 "Welcome to Unicoria",,,,welcome-to-unicornia
+"The Main Model",main-output,main-form,stb,tax-benefit-tour
 "Modelling Direct Taxation",main-output,tax-only-form,stb,tax-benefit-direct-taxation
 "Modelling Benefits",main-output,benefits-only-form,stb,tax-benefit-benefits
 "Modelling Spending Taxes",main-output,main-form,stb,tax-benefit-indirect-taxation
