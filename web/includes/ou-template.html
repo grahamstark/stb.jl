@@ -68,6 +68,9 @@ $table-of-contents$
 </nav>
 $endif$
 $body$
+
+<hr/>
+
 $for(include-after)$
 $include-after$
 $endfor$
@@ -75,8 +78,8 @@ $endfor$
 <footer>
   <nav>
   <a href="/intro.html">Home</a>
-  |&nbsp;
   $if(prev)$
+   |&nbsp;
     <a href='$prev$'>Prev</a>
   $endif$
   |&nbsp;
