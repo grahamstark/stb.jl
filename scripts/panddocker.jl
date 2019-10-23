@@ -116,7 +116,7 @@ df = CSV.File( "$INCLUDE_DIR/ou-files.csv") |> DataFrame
 # addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
 
 npages = size( df )[1]
-outfile = "$(MD_DIR)$alltext.md"
+outfile = "$(MD_DIR)/alltext.md"
 outf = open( outfile,"w")
 for i in 1:npages
     prev = missing
@@ -131,8 +131,10 @@ for i in 1:npages
     addone( i, npages, page.title, page.output, page.form, page.content, page.model, prev, next )
 
     filecont = read("$(MD_DIR)$(page.content).md")
-    write( outf, "##$(page.title)\n\n")
+    # write( outf, "##$(page.title)\n\n")
     write( outf, filecont )
+    write( outf, "\n\n" )
+
 end
 
 close( outf )
