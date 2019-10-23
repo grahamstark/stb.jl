@@ -116,7 +116,7 @@ df = CSV.File( "$INCLUDE_DIR/ou-files.csv") |> DataFrame
 # addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
 
 npages = size( df )[1]
-outfile = "/home/graham_s/tmp/alltext.md"
+outfile = "$(MD_DIR)$alltext.md"
 outf = open( outfile,"w")
 for i in 1:npages
     prev = missing
