@@ -18,8 +18,6 @@ title,output,form,model,content
 "The Main Model",main-output,main-form,stb,tax-benefit-tour
 "Modelling Direct Taxation",main-output,tax-only-form,stb,tax-benefit-direct-taxation
 "Modelling Benefits",main-output,benefits-only-form,stb,tax-benefit-benefits
-"Modelling Spending Taxes",main-output,main-form,stb,tax-benefit-indirect-taxation
-"Modelling Minimum Wages",main-output,main-form,stb,tax-benefit-minimum-wages
 "Putting the model to work",,,,policy-intro
 "Who is this for?",,,,roles-and-results
 "You are the Finance Secretary 1: Attacking Poverty",main-output,main-form,stb,tax-benefit-package-1-poverty
