@@ -88,3 +88,23 @@ body{
 .title{
     display:none;
 }
+
+
+/**
+small hacks since we're appending notes and references to every page.
+**/
+.references{
+    border-top: 2px solid silver;
+}
+
+.references:before{
+    font-weight:bold;
+    font-size:110%;
+    content: 'References'
+}
+
+.footnotes{
+    border-top: 1px dashed silver;
+    color: #444;
+    font-size: 90%;
+}
