@@ -249,14 +249,14 @@ stb.createTargetting = function( result ){
     if( Math.abs( result.totals[2].total_benefits ) > 0.01 ){ // any change in total benefits
         if(result.targetting_total_benefits[2] > 0.0 ){
             targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
-            cutOrInc = "increases"
+            cutOrInc = "increases";
         } else {
             targetted = numeral(-1*result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
-            cutOrInc = "cuts"
+            cutOrInc = "cuts";
         }
         var view = {
-            targetted: targetted;
-            cut_or_inc: cutOrInc;
+            targetted: targetted,
+            cut_or_inc: cutOrInc
         };
         output = Mustache.render( "<p>% of benefit {{cut_or_inc}} targetted on poor: {{targetted}}.</p>", view );
     }
@@ -444,7 +444,7 @@ stb.createBCOutputs = function( result ){
     for( var i = 0; i < n; i++){
         var annotation = "";
         if( i < (n-1)){
-            annotation = stb.annotationToString(changed.annotations[i])
+            annotation = stb.annotationToString(changed.annotations[i]);
         }
         data.push( {"gross2":changed.points[0][i], "post":changed.points[1][i], "ann_post":annotation })
     }
