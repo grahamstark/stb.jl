@@ -247,11 +247,10 @@ stb.createTargetting = function( result ){
     var cutOrInc = "";
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
     if( Math.abs( result.totals[2].total_benefits ) > 0.01 ){ // any change in total benefits
+        targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
         if(result.totals[2].total_benefits[2] > 0.0 ){ // net increase in spending
-            targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
             cutOrInc = "increases";
         } else {  // net cuts
-            targetted = numeral(-1*result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
             cutOrInc = "cuts";
         }
         var view = {
