@@ -81,7 +81,7 @@ function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item
     end
     # targetting[3] = targetting[2]-targetting[1]
     for sys in 1:3
-        if total_spend[sys] > 0
+        if !(total_spend[sys] ≈ 0)
             targetting[sys] /= total_spend[sys]
             targetting[sys] *= 100.0
         end

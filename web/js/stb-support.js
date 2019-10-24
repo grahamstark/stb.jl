@@ -258,7 +258,7 @@ stb.createTargetting = function( result ){
             targetted: targetted,
             cut_or_inc: cutOrInc
         };
-        output = Mustache.render( "<p>% of benefit {{cut_or_inc}} targetted on poor: {{targetted}}.</p>", view );
+        output = Mustache.render( "<p>proportion of benefit {{cut_or_inc}} targetted on poor: {{targetted}}.</p>", view );
     }
     $( "#targetting" ).html( output );
 }
