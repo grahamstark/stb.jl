@@ -242,16 +242,23 @@ stb.createPoverty = function( result ){
 }
 
 stb.createTargetting = function( result ){
-    var output = "<p>NA</p>"
+    var output = "<p>NA</p>";
+    var targetted = "";
+    var cutOrInc = "";
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
     if( Math.abs( result.totals[2].total_benefits ) > 0.01 ){ // any change in total benefits
         if(result.targetting_total_benefits[2] > 0.0 ){
             targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
+            cutOrInc = "increases"
+        } else {
+            targetted = numeral(-1*result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
+            cutOrInc = "cuts"
         }
         var view = {
-            targetted: targetted
+            targetted: targetted;
+            cut_or_inc: cutOrInc;
         };
-        output = Mustache.render( "<p>Proportion of benefit changes targetted on poor: {{targetted}}.</p>", view );
+        output = Mustache.render( "<p>% of benefit {{cut_or_inc}} targetted on poor: {{targetted}}.</p>", view );
     }
     $( "#targetting" ).html( output );
 }
