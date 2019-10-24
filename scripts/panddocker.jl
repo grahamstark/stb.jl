@@ -1,7 +1,10 @@
 using CSV
 using DataFrames
 
-MD_DIR = "/home/graham_s/OU/DD226/docs/sections/"
+DD226_DIR="/home/graham_s/OU/DD226/docs/"
+MD_DIR = "$DD226_DIR/sections/"
+BIB_FILE = "$DD226_DIR/data/DD226.bib"
+META_FILE = "$DD226_DIR/data/DD226-metadata.yaml"
 OUT_DIR = "/var/www/ou/stb/"
 INCLUDE_DIR = "/home/graham_s/VirtualWorlds/projects/ou/stb.jl/web/includes/"
 PANDOC_DIR = "/home/graham_s/pandoc_data/"
@@ -15,11 +18,12 @@ const DEFAULT_OPTS = Dict(
                 "/css/oustb.css"
             ],
     "include-in-header" => [ "$INCLUDE_DIR/ou-js-headers.html" ],
-    "from"              => "markdown",
+    "from"              => "markdown+yaml_metadata_block",
     "section-divs"      => true,
     "standalone"        => true,
     # "number-sections"   => true,
-    # "bibliography"      => "$INCLUDE_DIR/DD226.bib",
+    "bibliography"      => BIB_FILE,
+    "metadata-file"     => META_FILE,
     "default-image-extension"=>"svg",
     "csl"               => "$PANDOC_DIR/chicago-note-bibliography.csl",
     "to"                => "html5",
@@ -71,21 +75,21 @@ function addone(
 
     opts = deepcopy( DEFAULT_OPTS )
     includes = []
-    if ! ismissing(output)
-        push!( includes, "$(INCLUDE_DIR)/$(output).html" )
-    end
     if ! ismissing(form)
         push!( includes, "$(INCLUDE_DIR)/$(form).html" )
+    end
+    if ! ismissing(output)
+        push!( includes, "$(INCLUDE_DIR)/$(output).html" )
     end
     if ! ismissing(model)
         opts["include-after-body"] = [ "$(INCLUDE_DIR)/run-$model-js.html" ]
     end
-    if pos > 1
-        opts["number-offset"]=(pos-1)
-    end
+    # if pos > 1
+    #     opts["number-offset"]=(pos-1)
+    # end
     opts["include-before-body"] = includes
     opts["o"] = "$(OUT_DIR)$(content).html"
-    opts["metadata"] = "title:$title"
+    # opts["metadata"] = "title:$title"
     links = []
 
     if ! ismissing( prev_content )
@@ -98,6 +102,9 @@ function addone(
     optsarr = makeoptarray( opts )
 
     push!(optsarr, "$(MD_DIR)$(content).md" )
+    push!(optsarr, "$(MD_DIR)footnotes.md" )
+
+
     cmd=`/usr/bin/pandoc $optsarr`
     println( cmd )
     # println( cmd )
@@ -109,7 +116,8 @@ df = CSV.File( "$INCLUDE_DIR/ou-files.csv") |> DataFrame
 # addone( 1, 2, "Introduction",missing,missing,"intro",missing,missing)
 
 npages = size( df )[1]
-
+outfile = "$(MD_DIR)/alltext.md"
+outf = open( outfile,"w")
 for i in 1:npages
     prev = missing
     if i > 1
@@ -121,4 +129,12 @@ for i in 1:npages
     end
     page = df[i,:]
     addone( i, npages, page.title, page.output, page.form, page.content, page.model, prev, next )
+
+    filecont = read("$(MD_DIR)$(page.content).md")
+    # write( outf, "##$(page.title)\n\n")
+    write( outf, filecont )
+    write( outf, "\n\n" )
+
 end
+
+close( outf )

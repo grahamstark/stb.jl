@@ -81,7 +81,7 @@ function add_targetting( results :: DataFrame, total_spend:: AbstractArray, item
     end
     # targetting[3] = targetting[2]-targetting[1]
     for sys in 1:3
-        if total_spend[sys] > 0
+        if !(total_spend[sys] ≈ 0)
             targetting[sys] /= total_spend[sys]
             targetting[sys] *= 100.0
         end
@@ -109,7 +109,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         end
     end
 
-    CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
+    # CSV.write( "/home/graham_s/tmp/stb_test_results.tab", results, delim='\t')
 
     deciles = []
     push!( deciles, TBComponents.binify( results, 10, :weight_1, :net_income_1 ))
@@ -258,9 +258,12 @@ function local_getnet(data :: Dict, gross::Real)::Real
    return rc[:netincome]
 end
 
-function local_makebc( person :: MiniTB.Person, tbparams :: MiniTB.Parameters ) :: NamedTuple
+function local_makebc(
+    person :: MiniTB.Person,
+    tbparams :: MiniTB.Parameters,
+    settings :: BCSettings = DEFAULT_SETTINGS ) :: NamedTuple
    data = Dict( :person=>person, :params=>tbparams )
-   bc = TBComponents.makebc( data, local_getnet )
+   bc = TBComponents.makebc( data, local_getnet, settings )
    annotations = annotate_bc( bc )
    ( points = pointstoarray( bc ), annotations = annotations )
 end

@@ -213,32 +213,51 @@ stb.createPoverty = function( result ){
     var hcv = result.poverty[2].headcount;
     var udclass = stb.propToString( -hcv );
     var headcount_post = numeral( 100.*result.poverty[1].headcount ).format( '0,0.0')+"%";
-    var headcount_change = numeral( 100.0*result.poverty[2].headcount ).format( '0,0.0');
+    var headcount_change = numeral( 100.*result.poverty[2].headcount ).format( '0,0.0')+"%";
+    var gap_post = numeral( 100.0*result.poverty[1].gap ).format( '0,0.0');
+    var gap_change = numeral( 100.0*result.poverty[2].gap ).format( '0,0.0');
+    var fgt_post = numeral( 100.0*result.poverty[1].foster_greer_thorndyke[4]).format( '0,0.0');
+    var fgt_change = numeral( 100.0*result.poverty[2].foster_greer_thorndyke[4] ).format( '0,0.0');
+
     var view = {
         headcount_post: headcount_post,
         headcount_change:headcount_change,
+        gap_post: gap_post,
+        gap_change:gap_change,
+        fgt_post: fgt_post,
+        fgt_change:fgt_change,
+
         udclass: udclass,
         arrow: ARROWS_2[ stb.propToString(hcv) ]
     };
     if( udclass == 'nonsig'){
         view.headcount_change = '-';
     }
-    var output = Mustache.render( "<p class='{{udclass}}'>{{{headcount_post}}}</strong> ({{{arrow}}} {{{headcount_change}}}) </p>", view );
+    var output = Mustache.render( "<ul class='{{udclass}}'>"+
+      "<li>Headcount: {{{headcount_post}}} ({{{arrow}}} {{{headcount_change}}}) </li>"+
+      "<li>Poverty Gap: {{{gap_post}}} ({{{arrow}}} {{{gap_change}}}) </li>"+
+      "<li>Severity (FGT): {{{fgt_post}}} ({{{arrow}}} {{{fgt_change}}}) </li>"+
+      "</ul>", view );
     $( "#poverty" ).html( output );
-    stb.createLorenzCurve( "#lorenz", result, true );
 }
 
 stb.createTargetting = function( result ){
-    var output = "<p>NA</p>"
+    var output = "<p>NA</p>";
+    var targetted = "";
+    var cutOrInc = "";
     console.log( "result.targetting_total_benefits[2]="+result.targetting_total_benefits[2]);
-    if( Math.abs( result.totals[2][1]) > 0.01 ){ // any change in total benefits
-        if(result.targetting_total_benefits[2] > 0.0 ){
-            targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
+    if( Math.abs( result.totals[2].total_benefits ) > 0.01 ){ // any change in total benefits
+        targetted = numeral(result.targetting_total_benefits[2]).format('0,0.0' )+"%"; // already in %
+        if(result.totals[2].total_benefits[2] > 0.0 ){ // net increase in spending
+            cutOrInc = "increases";
+        } else {  // net cuts
+            cutOrInc = "cuts";
         }
         var view = {
-            targetted: targetted
+            targetted: targetted,
+            cut_or_inc: cutOrInc
         };
-        output = Mustache.render( "<p>Proportion of benefit changes targetted on poor: {{targetted}}.</p>", view );
+        output = Mustache.render( "<p>proportion of benefit {{cut_or_inc}} targetted on poor: {{targetted}}.</p>", view );
     }
     $( "#targetting" ).html( output );
 }
@@ -261,10 +280,13 @@ stb.createLorenzCurve = function( targetId, result, thumbnail ){
     var data=[];
     console.log( "deciles" + result.deciles.toString());
     console.log( "deciles[0][0] length" + result.deciles[0][0].length );
+    // deciles levels are rhs. so push a 0,0
+    data.push( {"popn1":0, "pre":0 });
     for( var i = 0; i < result.deciles[0][0].length; i++){
         data.push( {"popn1":result.deciles[0][0][i], "pre":result.deciles[0][1][i] });
     }
     // var data_post= [];
+    data.push( {"popn2":0, "post":0 });
     for( var i = 0; i < result.deciles[1][0].length; i++){
         data.push( {"popn2":result.deciles[1][0][i], "post":result.deciles[1][1][i] });
     }
@@ -421,7 +443,7 @@ stb.createBCOutputs = function( result ){
     for( var i = 0; i < n; i++){
         var annotation = "";
         if( i < (n-1)){
-            annotation = stb.annotationToString(changed.annotations[i])
+            annotation = stb.annotationToString(changed.annotations[i]);
         }
         data.push( {"gross2":changed.points[0][i], "post":changed.points[1][i], "ann_post":annotation })
     }
@@ -511,6 +533,168 @@ stb.createBCOutputs = function( result ){
     vegaEmbed('#output', budget_vg );
 }
 
+// singles series version of above - FIXME really refactor these ..
+stb.createOneLorenz = function( targetId, deciles, thumbnail ){
+    var height = 400;
+    var xtitle = "Population Share";
+    var ytitle = "Income Share";
+    var title = "Lorenz Curve"
+    if( thumbnail ){
+        var height = 70;
+        xtitle = "";
+        ytitle = "";
+        title = "";
+    }
+    var width = Math.trunc( GOLDEN_RATIO*height);
+    var data=[];
+    console.log( "deciles="+JSON.stringify(deciles));
+    console.log( "deciles[0] length" + deciles[0].length );
+    // deciles levels are rhs. so push a 0,0
+    data.push( {"popn":0, "income":0 });
+    for( var i = 0; i < deciles[0].length; i++){
+        data.push( {"popn":deciles[0][i], "income":deciles[1][i] });
+    }
+    // diagonal in grey
+    data.push( {"popn_tot":0.0, "income_tot":0.0});
+    data.push( {"popn_tot":1.0, "income_tot":1.0});
+    var gini_vg = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "title": title,
+        "width": width,
+        "height": height,
+        "description": title,
+        "data": {"values": data }, // , "post":data_post
+        "layer":[
+            {
+                "mark": "line",
+                "encoding":{
+                    "x": { "type": "quantitative",
+                           "field": "popn",
+                           "axis":{
+                               "title": xtitle
+                           }},
+                    "y": { "type": "quantitative",
+                           "field": "income",
+                           "axis":{
+                              "title": ytitle
+                           } },
+                    "color": {"value":"blue"}
+                } // encoding
+            }, // pre layer line
+          { // diagonal in grey
+               "mark": "line",
+               "encoding":{
+                   "x": { "type": "quantitative",
+                          "field": "popn_tot" },
+                   "y": { "type": "quantitative",
+                          "field": "income_tot" },
+                   "color": {"value":"#ccc"},
+                   "strokeWidth": {"value": 1.0}
+                   // "strokeDash":
+               } // encoding
+           },
+        ]
+    }
+    vegaEmbed( targetId, gini_vg );
+}
+
+stb.loadInequalityTable = function( result ){
+    console.log( "createInequalityTable");
+    console.log( "result="+JSON.stringify(result));
+    var pops = 0;
+    var incs = 0;
+    var cuminc=[];
+    var cumpop=[]
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
+        pops += result.data[0][i];
+        incs += result.data[1][i];
+        cumpop.push(pops);
+        cuminc.push(incs);
+    }
+    var sharepop=[];
+    var shareinc=[];
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
+        var shp = numeral(100.0*cumpop[i]/cumpop[9]).format( '0,0')
+        var shi = numeral(100.0*cuminc[i]/cuminc[9]).format( '0,0.00')
+        sharepop.push( shp );
+        shareinc.push( shi );
+    }
+    console.log( "sharepop="+JSON.stringify(sharepop));
+    console.log( "shareinc="+JSON.stringify(shareinc));
+
+    for( var i = 1; i <= NUM_INC_BANDS; i++ ){
+        $( "#pop-"+i ).val( result.data[0][i-1] )
+        $( "#inc-"+i ).val( result.data[1][i-1] )
+        $( "#cum-pop-"+i ).html( cumpop[i-1] );
+        $( "#cum-inc-"+i ).html( cuminc[i-1] );
+        $( "#share-pop-"+i ).html( sharepop[i-1] );
+        $( "#share-inc-"+i ).html( shareinc[i-1] );
+    }
+    $( "#mean" ).html( numeral(result.ineq.average_income).format('0,0.0'));
+    $( "#median" ).html( numeral(result.ineq.median).format('0,0.0') );
+    $( "#gini" ).html( numeral(result.ineq.gini).format('0,0.000') );
+    $( "#theil" ).html( numeral(result.ineq.theil[0]).format('0,0.000') ); // CHECK!!
+    $( "#palma" ).html( numeral(result.ineq.palma).format('0,0.00') );
+    stb.createOneLorenz( "#lorenz", result.ineq.deciles, false );
+}
+
+const NUM_INC_BANDS = 10;
+
+stb.sortByInc = function( a, b ){
+    return a["inc"]-b["inc"];
+}
+
+stb.runInequality = function( ){
+    console.log( "runInequality called");
+    var data=[];
+    for( var i = 1; i <= NUM_INC_BANDS; i++ ){
+        var pop = parseFloat($("#pop-"+i).val());
+        var inc = parseFloat($("#inc-"+i).val());
+        var item = {pop:pop, inc:inc}
+        data.push( item );
+    }
+    data.sort( stb.sortByInc );
+    var inca=[];
+    var popa=[];
+    for( var i = 0; i < NUM_INC_BANDS; i++ ){
+        popa.push(data[i]["pop"]);
+        inca.push(data[i]["inc"]);
+    }
+    console.log( "incomes="+JSON.stringify(inca));
+    $.ajax(
+        { url: "http://oustb.mazegreenyachts.com:8000/ineq/",
+         method: 'get',
+         dataType: 'json',
+         data: { // can't get Julia to parse an json array correctly, so..
+             pop_1:popa[0],
+             pop_2:popa[1],
+             pop_3:popa[2],
+             pop_4:popa[3],
+             pop_5:popa[4],
+             pop_6:popa[5],
+             pop_7:popa[6],
+             pop_8:popa[7],
+             pop_9:popa[8],
+             pop_10:popa[9],
+             inc_1:inca[0],
+             inc_2:inca[1],
+             inc_3:inca[2],
+             inc_4:inca[3],
+             inc_5:inca[4],
+             inc_6:inca[5],
+             inc_7:inca[6],
+             inc_8:inca[7],
+             inc_9:inca[8],
+             inc_10:inca[9]
+         },
+         success: function( result ){
+             console.log( "stb; call OK");
+             console.log( "result " + result );
+             stb.loadInequalityTable( result, data );
+         }
+     });
+ }
+
 stb.runModel = function( which_action ){
     console.log( "run model called");
     var it_allow = $("#it_allow").val();
@@ -546,8 +730,10 @@ stb.runModel = function( which_action ){
              // var r = JSON.parse( ""+result );
              if( which_action == "stb" ){ // main model
                  stb.createMainOutputs( result );
-             } else if( which_action == "bc" ){
+             } else if(( which_action == "bc" ) || ( which_action == "zbc" ) || (which_action == "ztbc")){
                  stb.createBCOutputs( result ); // bc model
+             } else if( which_action == "ineq" ){
+                 stb.createInequalityTable( result ); // bc model
              } else {
                  console.log( "unknown instruction " + which_action )
              }

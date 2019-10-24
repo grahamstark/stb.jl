@@ -34,17 +34,19 @@
     font-weight: bold;
 }
 
-.output-block{
-    display: block;
-    float: left;
-    width: 48%;
+#input-section-if-any{
+    /*width:100%;*/
+    display:inline-grid;
+    padding: 10px;
+    grid-template-columns: 35% auto;
+    /*min-height:600px;*/
+}
+
+#output-block{
     min-height:600px;
 }
 
-.params-block{
-    display: block;
-    float: left;
-    width: 48%;
+#params-block{
     min-height:600px;
 }
 
@@ -56,11 +58,6 @@
 
 .stb-table td{
     min-height: 150px;
-}
-
-div.input-section-if-any{
-    width:100%;
-    display:block;
 }
 
 section{
@@ -78,4 +75,42 @@ body{
     border-collapse:collapse;
     border:0'
 
+}
+
+.small-numeric-input{
+    width:3em;
+}
+
+/*
+    kill the title block written by pandoc from the metadata
+    see: https://pandoc.org/MANUAL.html#extension-yaml_metadata_block
+*/
+.title{
+    display:none;
+}
+
+
+/**
+small hacks since we're appending notes and references to every page.
+**/
+.references{
+    border-top: 2px solid silver;
+}
+
+.references:before{
+    font-weight:bold;
+    font-size:110%;
+    content: 'References'
+}
+
+.footnotes{
+    border-top: 1px dashed silver;
+    color: #444;
+    font-size: 90%;
+}
+
+#topnav, #bottomnav{
+    size: 110%;
+    font-weight: bold;
+    text-align: center;
 }

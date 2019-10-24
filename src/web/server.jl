@@ -89,9 +89,9 @@ function d100( v :: Number ) :: Number
    v/100.0
 end
 
-function web_map_params( req  :: Dict )
+function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS )
    querydict = req[:parsed_querystring]
-   tbparams = deepcopy(MiniTB.DEFAULT_PARAMS)
+   tbparams = deepcopy( defaults )
    tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow, operation=weeklyise )
    tbparams.it_rate[1] = get_if_set("it_rate_1", querydict, tbparams.it_rate[1], operation=d100 )
    tbparams.it_rate[2] = get_if_set("it_rate_2", querydict, tbparams.it_rate[2], operation=d100 )
@@ -114,6 +114,19 @@ const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 
 const BASE_RESULTS = create_base_results( num_households, num_people )
 
+function makeztparams()
+   pars = deepcopy( MiniTB.DEFAULT_PARAMS )
+   pars.it_rate = [0.0,0.0]
+   pars
+end
+
+const BC_500_SETTINGS = BCSettings( maxgross=500 )
+
+
+const ZERO_TAX_PARAMS = makeztparams()
+const ZERO_DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
+const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_SETTINGS )
+
 
 function web_doonerun( req :: Dict )
    tbparams = web_map_params( req )
@@ -129,6 +142,36 @@ function web_makebc( req  :: Dict )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
+function web_makezbc( req  :: Dict )
+   tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
+   bc =  local_makebc( DEFAULT_PERSON, tbparams )
+   JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
+end
+
+function web_makeztbc( req  :: Dict )
+   tbparams = web_map_params( req, ZERO_TAX_PARAMS )
+   bc =  local_makebc( DEFAULT_PERSON, tbparams, BC_500_SETTINGS )
+   JSON.json((base = ZERO_TAX_BC, changed = bc))
+end
+
+function web_doineq( req  :: Dict )
+   querydict = req[:parsed_querystring]
+   inc=[]
+   pop=[]
+   for i in 1:10 # can's see how to pass a json array from js to this, so ...
+      push!( inc, get_if_set("inc_$i", querydict, 0 ))
+      push!( pop, get_if_set("pop_$i", querydict, 0 ))
+   end
+   println( "querydict=$querydict" )
+   println( "inc=$inc" )
+   println( "pop=$pop" )
+   data = hcat( pop, inc )
+   println("data=$data")
+   ineq = TBComponents.makeinequality(data, 1, 2)
+   println(ineq)
+   JSON.json( ( data=data, ineq=ineq ))
+end
+
 #
 # from diffeq thingy instead of Mux.defaults
 #
@@ -141,7 +184,11 @@ end
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> with_headers( web_makebc(req), req )),
+   page("/zbc", req -> with_headers( web_makezbc(req), req )),
+   page("/ztbc", req -> with_headers( web_makeztbc(req), req )),
    page("/stb", req -> with_headers( web_doonerun(req), req )),
+   page("/ineq", req -> with_headers( web_doineq(req), req )),
+
    Mux.notfound(),
 )
 
