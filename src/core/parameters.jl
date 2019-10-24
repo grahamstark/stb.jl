@@ -1,7 +1,6 @@
 #
 using TBComponents
-
-include( "definitions.jl" )
+using Definitions
 
 mutable struct IncomeTax
 
