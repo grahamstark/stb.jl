@@ -108,3 +108,9 @@ small hacks since we're appending notes and references to every page.
     color: #444;
     font-size: 90%;
 }
+
+#topnav, #bottomnav{
+    size: 110%;
+    font-weight: bold;
+    text-align: center;
+}
