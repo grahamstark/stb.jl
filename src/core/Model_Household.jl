@@ -8,5 +8,5 @@ module Model_Household
   export uprate!
   export equivalence_scale
   export oldest_person
-
+  export default_bu_allocation
 end
