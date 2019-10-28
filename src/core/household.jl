@@ -169,7 +169,7 @@ function default_bu_allocation( hh :: Household ) :: BUAllocation
     end
     ## sort people in each by pid
     for buno in 1:nbus
-        sort!( bua[buno], lt=(left,right)->isless(right.pno,left.pno))
+        sort!( bua[buno], lt=(left,right)->isless(right.age,left.age))
     end
     bua
 end

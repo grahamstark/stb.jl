@@ -40,9 +40,13 @@ end
                 pers = bus[buno][i]
                 # sorted right way
                 if i > 1
-                    @test pers.pid < bus[buno][i-1].pid
-                    @test pers.pno < bus[buno][i-1].pno
-                    if pers.age > bus[buno][i-1].age
+                    lastpid = bus[buno][i-1].pid
+                    # @test pers.pid < lastpid
+                    lastpno =  bus[buno][i-1].pno
+                    # @test pers.pno < lastpno
+                    lastage = bus[buno][i-1].age
+                    if pers.age > lastage
+                        println( "pno=$(pers.pno) lastpno=$lastpno pers.age=$(pers.age) ; lastage = $lastage")
                         num_wrong_age += 1
                     end
                 end
