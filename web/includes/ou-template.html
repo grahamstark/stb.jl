@@ -39,6 +39,17 @@ $for(header-includes)$
 $endfor$
 </head>
 <body>
+<nav id='topnav'>
+<a href="/intro.html">Home</a>
+$if(prev)$
+ |&nbsp;
+  <a href='$prev$'>Prev</a>
+$endif$
+|&nbsp;
+$if(next)$
+   <a href='$next$'>Next</a>
+$endif$
+  </nav>
 <div id="ou-org">
 $if(title)$
 <header>
@@ -76,7 +87,7 @@ $include-after$
 $endfor$
 
 <footer>
-  <nav>
+  <nav  id='bottomnav'>
   <a href="/intro.html">Home</a>
   $if(prev)$
    |&nbsp;

@@ -151,3 +151,34 @@ function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Ty
     end
     get_equivalence_scales( eqp )
 end
+
+PeopleArray = Vector{Person}
+BUAllocation = Vector{PeopleArray}
+
+#
+# This creates a array of references to each person in the houshold, broken into
+# benefit units using the default FRS/EFS benefit unit number.
+#
+function default_bu_allocation( hh :: Household ) :: BUAllocation
+    bua = BUAllocation()
+    nbus = 0
+    # how many bus
+    for (pid,person) in hh.people
+        nbus = max( nbus, person.default_benefit_unit )
+    end
+    ## create benefit units
+    for buno in 1:nbus
+        push!( bua, PeopleArray())
+    end
+    sz = size( bua )[1]
+    ## allocate people to them
+    for (pid,person) in hh.people
+        pp = bua[person.default_benefit_unit]
+        push!( pp, person )
+    end
+    ## sort people in each by pid
+    for buno in 1:nbus
+        sort!( bua[buno], lt=(left,right)->isless(right.age,left.age))
+    end
+    bua
+end
