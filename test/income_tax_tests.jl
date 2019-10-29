@@ -138,7 +138,7 @@ end # example1 ch3
     names = Example_Household_Getter.initialise()
     scot = Example_Household_Getter.get_household( "mel_c2_scot" ) # scots are a married couple
     head = scot.people[SCOT_HEAD]
-    head = scot.people[SCOT_SPOUSE]
+    spouse = scot.people[SCOT_SPOUSE]
     head.income[self_employment_income] = 110_520.00
     tax_due = 33_812.00
     head.income[self_employment_income] += 100.0
