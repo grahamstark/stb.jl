@@ -83,3 +83,63 @@ end # example 5
     tax_due_ruk = 93_825.75
     tax_due_scotland = 97_397.17
 end # example 6
+
+@testset "ch2 example 7; savings calc" begin
+    names = Example_Household_Getter.initialise()
+    ruk = Example_Household_Getter.get_household( "mel_c2" )
+    pers = ruk.people[RUK_PERSON]
+    pers.income[self_employment_income] = 10_000.00
+    pers.income[bank_interest] = 3_380.00
+    pers.income[other_investment_income] = 36_680.00/0.8 # gross up at basic
+    tax_due_ruk = 10_092.00 # inc already deducted at source
+    tax_due_scotland = 10_092.00
+end # example 7
+
+#
+# dividends
+#
+
+@testset "ch2 example 8; simple dividends" begin
+    names = Example_Household_Getter.initialise()
+    ruk = Example_Household_Getter.get_household( "mel_c2" )
+    pers = ruk.people[RUK_PERSON]
+    pers.income[property] = 28_590.00
+    pers.income[bank_interest] = 1_050.00
+    pers.income[dividends] = 204_100.0 # gross up at basic
+    tax_due_ruk = 74_834.94 # inc already deducted at source
+    tax_due_scotland = 74_834.94+140.97
+end # example 8
+
+@testset "ch2 example 9; simple dividends" begin
+    names = Example_Household_Getter.initialise()
+    ruk = Example_Household_Getter.get_household( "mel_c2" )
+    pers = ruk.people[RUK_PERSON]
+    pers.income[private_pensions] = 17_750.00
+    pers.income[bank_interest] = 195.00
+    pers.income[dividends] = 1_600.0 # gross up at basic
+    tax_due_ruk = 1_050.00 # inc already deducted at source
+    tax_due_scotland = 1_050.00-20.49
+end # example 9
+
+
+@testset "ch3 personal allowances ex 1 - hr allowance withdrawal" begin
+    names = Example_Household_Getter.initialise()
+    ruk = Example_Household_Getter.get_household( "mel_c2" )
+    pers = ruk.people[RUK_PERSON]
+    pers.income[self_employment_income] = 110_520.00
+    tax_due = 33_812.00
+    pers.income[self_employment_income] += 100.0
+    tax_due_ruk = 33_812.00+60.0
+    tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
+end # example1 ch3
+
+@testset "ch3 personal allowances ex 2 - marriage allowance" begin
+    names = Example_Household_Getter.initialise()
+    ruk = Example_Household_Getter.get_household( "mel_c2" )
+    pers = ruk.people[RUK_PERSON]
+    pers.income[self_employment_income] = 110_520.00
+    tax_due = 33_812.00
+    pers.income[self_employment_income] += 100.0
+    tax_due_ruk = 33_812.00+60.0
+    tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
+end # example 2 ch3
