@@ -5,7 +5,8 @@ using Example_Household_Getter
 using Definitions
 
 const RUK_PERSON = 100000001001
-const SCOT_PERSON = 100000001002
+const SCOT_HEAD = 100000001002
+const SCOT_SPOUSE = 100000001003
 
 @testset "Melville 2019 ch2 examples 1; basic calc Scotland vs RUK" begin
     # BASIC IT Calcaulation on
@@ -135,11 +136,12 @@ end # example1 ch3
 
 @testset "ch3 personal allowances ex 2 - marriage allowance" begin
     names = Example_Household_Getter.initialise()
-    ruk = Example_Household_Getter.get_household( "mel_c2" )
-    pers = ruk.people[RUK_PERSON]
-    pers.income[self_employment_income] = 110_520.00
+    scot = Example_Household_Getter.get_household( "mel_c2_scot" ) # scots are a married couple
+    head = scot.people[SCOT_HEAD]
+    head = scot.people[SCOT_SPOUSE]
+    head.income[self_employment_income] = 110_520.00
     tax_due = 33_812.00
-    pers.income[self_employment_income] += 100.0
+    head.income[self_employment_income] += 100.0
     tax_due_ruk = 33_812.00+60.0
     tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
 end # example 2 ch3
