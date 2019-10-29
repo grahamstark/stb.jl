@@ -53,6 +53,7 @@ mutable struct Person
 end
 
 People_Dict = Dict{BigInt,Person}
+Pid_Array = Vector{BigInt}
 
 mutable struct Household
     sequence::Integer # position in current generated dataset
@@ -119,6 +120,14 @@ function oldest_person( people :: People_Dict ) :: NamedTuple
         end
     end
     oldest
+end
+
+struct BenUnit
+    pids :: Pid_Array
+end
+
+function default_get_ben_units( hh :: Household )::Vector{BenUnit}
+
 end
 
 function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Type,Real}
