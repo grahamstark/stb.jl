@@ -131,8 +131,6 @@ for i in 1:npages
     page = df[i,:]
     addone( i, npages, page.title, page.output, page.form, page.content, page.model, prev, next )
 
-    content = read( page.content )
-
     filecont = read("$(MD_DIR)$(page.content).md")
     write( outf, "##$(page.title)\n\n")
     write( outf, filecont )
