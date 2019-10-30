@@ -145,3 +145,33 @@ end # example1 ch3
     tax_due_ruk = 33_812.00+60.0
     tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
 end # example 2 ch3
+
+@testset "ch3 blind person" begin
+    names = Example_Household_Getter.initialise()
+    ruk = Example_Household_Getter.get_household( "mel_c2" )
+    pers = ruk.people[RUK_PERSON]
+    pers.registered_blind = true
+    # test that tax is 2450xmr
+end
+
+@testset "ch3 tax reducers"
+    # check that mca is always 10% of amount
+    # check marriage transfer is always basic rate tax credit
+    # checl MCA only available if 1 spouse born befor 6th April  1935
+    names = Example_Household_Getter.initialise()
+    scot = Example_Household_Getter.get_household( "mel_c2_scot" ) # scots are a married couple
+    head = scot.people[SCOT_HEAD]
+    spouse = scot.people[SCOT_SPOUSE]
+    head_ages = [75,90,90,70] # after 1935
+    spouse_ages = [90,70,70,90]
+    spouse_ages  = 90 # before aprol 35
+    head_incomes = [19_100.0, 29_710.0,41_080.0,0.0]
+    spouse_incomes = [12_450.0,0,13_950.0,49_300.0]
+    for i in 1:4
+        head.income[private_pension] = head_incomes[i]
+        spouse.income[private_pension] = spouse_incomes[i]
+        head.income[private = head_incomes[i]
+        head.age = head_ages[i]
+        spouse.age = spouse_ages[i]
+    end
+end
