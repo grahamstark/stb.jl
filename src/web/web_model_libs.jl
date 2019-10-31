@@ -9,6 +9,7 @@ using TBComponents
 using Definitions
 using CSV
 using StatsBase
+using Random
 
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2015 )
    example_names = Vector{AbstractString}()
@@ -236,6 +237,16 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
         unit_count=unit_count
     )
     summary_output
+end
+
+function print_output_to_csv( output :: NamedTuple, dir :: AbstractString = "/var/tmp/" ) :: AbstractString
+    datestr = basiccensor( "$(now())")
+    randstr = randstring( 32 )
+    filename = "$dir/oustb_$(datestr)_$(randstr).tab"
+    f = open( filename, write=true )
+    #CSV.write( f, ["A","B"])
+    CSV,write( f, [1 2 3; 4 5 6])
+    filename
 end
 
 function maptoexample( modelpers :: Model_Household.Person ) :: MiniTB.Person
