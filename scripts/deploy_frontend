@@ -2,3 +2,4 @@
 /bin/cp -f web/*.html /var/www/ou/stb/
 /bin/cp -f web/js/stb-support.js /var/www/ou/stb/js/
 /bin/cp -f web/css/oustb.css /var/www/ou/stb/css/
+/bin/cp -arf /home/graham_s/OU/DD226/docs/exercises /var/www/ou/stb/
