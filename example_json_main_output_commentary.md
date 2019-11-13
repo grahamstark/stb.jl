@@ -6,7 +6,7 @@ Generally, there are 3 sets of results in the file:
 
     0 - Base results - how much taxes, benefits, etc. you get if you don't change any of the rates.
     1 - Reform results - results after the user has made changes;
-    3 - Difference - absolute differences between 2 and 1.
+    2 - Difference - absolute differences between 2 and 1.
 
 The javascript file `stb-support.jl` shows the code I've written to parse the json file. It's unsophisticated! But it might be useful as a reference.
 
