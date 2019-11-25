@@ -187,13 +187,13 @@ end
 # This is my attempt at starting a task using the 1.3 @spawn macro
 # 1st parameter is a function that returns String (probably a json string) and accepts the req Dict
 #
-function do_in_thread( the_func, req :: Dict ) :: Dict
+function do_in_thread( the_func, req :: Dict ) :: String
    response = @spawn the_func( req )
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
    println( response )
    fetch( response )
-   add_headers( response)
+   # add_headers( response)
 end
 
 #
@@ -207,11 +207,11 @@ end
    addqstrdict,
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
-   page("/bc", req -> do_in_thread( web_makebc, req )),
-   page("/zbc", req -> do_in_thread( web_makezbc, req )),
-   page("/ztbc", req -> do_in_thread( web_makeztbc, req )),
-   page("/stb", req -> do_in_thread( web_doonerun, req )),
-   page("/ineq", req -> do_in_thread( web_doineq, req )),
+   page("/bc", req -> add_headers(do_in_thread( web_makebc, req ))),
+   page("/zbc", req -> add_headers(do_in_thread( web_makezbc, req ))),
+   page("/ztbc", req -> add_headers(do_in_thread( web_makeztbc, req ))),
+   page("/stb", req -> add_headers(do_in_thread( web_doonerun, req ))),
+   page("/ineq", req -> add_headers(do_in_thread( web_doineq, req ))),
 
    Mux.notfound(),
 )
