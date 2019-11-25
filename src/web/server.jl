@@ -198,10 +198,10 @@ end
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
    page("/bc", req -> do_in_thread( web_makebc, req )),
-   page("/zbc", req -> add_headers( web_makezbc(req), req )),
-   page("/ztbc", req -> add_headers( web_makeztbc(req), req )),
-   page("/stb", req -> add_headers( web_doonerun(req), req )),
-   page("/ineq", req -> add_headers( web_doineq(req), req )),
+   page("/zbc", req -> do_in_thread( web_makezbc, req )),
+   page("/ztbc", req -> do_in_thread( web_makeztbc, req )),
+   page("/stb", req -> do_in_thread( web_doonerun, req )),
+   page("/ineq", req -> do_in_thread( web_doineq, req )),
 
    Mux.notfound(),
 )
