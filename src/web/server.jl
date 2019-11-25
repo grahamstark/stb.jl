@@ -142,44 +142,28 @@ end
 function web_doineq( req  :: Dict ) :: AbstractString
    println( "web_doineq; running on thread $(Threads.threadid())")
    querydict = req[:parsed_querystring]
-   inc=[]
-   pop=[]
+   inc=zeros(0)
+   pop=zeros(0)
    for i in 1:10 # can's see how to pass a json array from js to this, so ...
-      push!( inc, get_if_set("inc_$i", querydict, 0 ))
-      push!( pop, get_if_set("pop_$i", querydict, 0 ))
+      push!( inc, Float64(get_if_set("inc_$i", querydict, 0 )))
+      push!( pop, Float64(get_if_set("pop_$i", querydict, 0 )))
    end
-   # println( "querydict=$querydict" )
-   # println( "inc=$inc" )
-   # println( "pop=$pop" )
    data = hcat( pop, inc )
-   # println("data=$data")
-   ineq = TBComponents.makeinequality(data, 1, 2)
-   # println(ineq)
+   ineq = TBComponents.makeinequality( data, 1, 2 )
    JSON.json( ( data=data, ineq=ineq ))
 end
 
 
 # Headers -- set Access-Control-Allow-Origin for either dev or prod
 # this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
-# FIXME clean this up!
 #
-function add_headers( res :: AbstractString ) :: Dict
+function add_headers( json :: AbstractString ) :: Dict
     headers  = HttpCommon.headers()
     headers["Content-Type"] = "application/json; charset=utf-8"
     headers["Access-Control-Allow-Origin"] = "*"
-
-    # origin = get_thing(req[:headers], "Origin", "")
-    # println( req[:headers] )
-    # println( "origin $origin")
-    #if origin == "http://oustb.mazegreenyachts.com"
-    #     headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME "http://localhost:$DEFAULT_PORT/run/"
-    # else
-    #        headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME http://app.juliadiffeq.org"
-    #    end
-    # println(headers["Access-Control-Allow-Origin"])
     Dict(
        :headers => headers,
-       :body=> res
+       :body=> json
     )
 end
 
@@ -192,8 +176,8 @@ function do_in_thread( the_func, req :: Dict ) :: Dict
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
    println( response )
-   s = fetch( response )
-   add_headers( s )
+   json = fetch( response )
+   add_headers( json )
 end
 
 #
@@ -201,7 +185,6 @@ end
 #
 # ourstack = stack(Mux.todict, errorCatch, Mux.splitquery, Mux.toresponse) # from DiffEq
 #
-
 @app dd226 = (
    Mux.defaults,
    addqstrdict,
@@ -212,13 +195,6 @@ end
    page("/zbc", req -> do_in_thread( web_makezbc, req )),
    page("/ztbc", req -> do_in_thread( web_makeztbc, req )),
    page("/stb", req -> do_in_thread( web_doonerun, req )),
-   # page("/ineq", req -> add_headers(do_in_thread( web_doineq, req ))),
-   # page("/bc", req -> add_headers(do_in_thread( web_makebc, req ))),
-   # page("/zbc", req -> add_headers(do_in_thread( web_makezbc, req ))),
-   # page("/ztbc", req -> add_headers(do_in_thread( web_makeztbc, req ))),
-   # page("/stb", req -> add_headers(do_in_thread( web_doonerun, req ))),
-   # page("/ineq", req -> add_headers(do_in_thread( web_doineq, req ))),
-
    Mux.notfound(),
 )
 
