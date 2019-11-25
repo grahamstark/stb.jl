@@ -39,27 +39,6 @@ function get_thing( thing::AbstractArray, key :: AbstractString, default :: Abst
    default
 end #get
 
-# Headers -- set Access-Control-Allow-Origin for either dev or prod
-# this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
-# FIXME clean this up!
-#
-function add_headers( res :: AbstractString, req  :: Dict ) :: Dict
-    headers  = HttpCommon.headers()
-    origin = get_thing(req[:headers], "Origin", "")
-    println( req[:headers] )
-    println( "origin $origin")
-    headers["Content-Type"] = "application/json; charset=utf-8"
-    if origin == "http://oustb.mazegreenyachts.com"
-        headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME "http://localhost:$DEFAULT_PORT/run/"
-    else
-        headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME http://app.juliadiffeq.org"
-    end
-    println(headers["Access-Control-Allow-Origin"])
-    Dict(
-       :headers => headers,
-       :body=> res
-    )
-end
 
 function web_get_hh( hdstr::AbstractString )
    hid = parse(Int64, hdstr)
@@ -179,6 +158,31 @@ function web_doineq( req  :: Dict ) :: AbstractString
    JSON.json( ( data=data, ineq=ineq ))
 end
 
+
+# Headers -- set Access-Control-Allow-Origin for either dev or prod
+# this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
+# FIXME clean this up!
+#
+function add_headers( res :: AbstractString ) :: Dict
+    headers  = HttpCommon.headers()
+    headers["Content-Type"] = "application/json; charset=utf-8"
+    headers["Access-Control-Allow-Origin"] = "*"
+
+    # origin = get_thing(req[:headers], "Origin", "")
+    # println( req[:headers] )
+    # println( "origin $origin")
+    #if origin == "http://oustb.mazegreenyachts.com"
+    #     headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME "http://localhost:$DEFAULT_PORT/run/"
+    # else
+    #        headers["Access-Control-Allow-Origin"] = "*" # GKS FIXME http://app.juliadiffeq.org"
+    #    end
+    # println(headers["Access-Control-Allow-Origin"])
+    Dict(
+       :headers => headers,
+       :body=> res
+    )
+end
+
 #
 # This is my attempt at starting a task using the 1.3 @spawn macro
 # 1st parameter is a function that returns String (probably a json string) and accepts the req Dict
@@ -189,7 +193,7 @@ function do_in_thread( the_func, req :: Dict ) :: Dict
    # line below converts response to a string
    println( response )
    fetch( response )
-   add_headers( response, req )
+   add_headers( response)
 end
 
 #
