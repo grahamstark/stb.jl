@@ -131,6 +131,7 @@ const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_
 
 
 function web_doonerun( req :: Dict ) :: AbstractString
+   println( "web_doonerun; running on thread $(Threads.threadid())")
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
@@ -139,24 +140,28 @@ end # doonerun
 
 
 function web_makebc( req  :: Dict ) :: AbstractString
+   println( "web_makebc; running on thread $(Threads.threadid())")
    tbparams = web_map_params( req )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))Ashto
 end
 
 function web_makezbc( req  :: Dict ) :: AbstractString
+   println( "web_makezbc; running on thread $(Threads.threadid())")
    tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
 end
 
 function web_makeztbc( req  :: Dict ) :: AbstractString
+   println( "web_makeztbc; running on thread $(Threads.threadid())")
    tbparams = web_map_params( req, ZERO_TAX_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams, BC_500_SETTINGS )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
 
 function web_doineq( req  :: Dict ) :: AbstractString
+   println( "web_doineq; running on thread $(Threads.threadid())")
    querydict = req[:parsed_querystring]
    inc=[]
    pop=[]
@@ -182,6 +187,7 @@ function do_in_thread( the_func, req :: Dict ) :: Dict
    response = @spawn the_func( req )
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
+   println( response )
    fetch( response )
    add_headers( response, req )
 end
