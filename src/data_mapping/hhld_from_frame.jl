@@ -11,7 +11,10 @@ function map_person( model_person :: DataFrameRow )
         ikey = make_sym_for_frame("income", i)
         if ! ismissing(model_person[ikey])
             if model_person[ikey] != 0.0
-                income[i] = model_person[ikey]
+                v = model_person[ikey]
+                tv = typeof(v)
+                println( "setting ikey = $ikey to $v of type $tv")
+                income[i] = v
             end
         end
     end
