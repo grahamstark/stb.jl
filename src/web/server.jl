@@ -164,13 +164,13 @@ function web_doineq( req  :: Dict ) :: AbstractString
       push!( inc, get_if_set("inc_$i", querydict, 0 ))
       push!( pop, get_if_set("pop_$i", querydict, 0 ))
    end
-   println( "querydict=$querydict" )
-   println( "inc=$inc" )
-   println( "pop=$pop" )
+   # println( "querydict=$querydict" )
+   # println( "inc=$inc" )
+   # println( "pop=$pop" )
    data = hcat( pop, inc )
-   println("data=$data")
+   # println("data=$data")
    ineq = TBComponents.makeinequality(data, 1, 2)
-   println(ineq)
+   # println(ineq)
    JSON.json( ( data=data, ineq=ineq ))
 end
 
