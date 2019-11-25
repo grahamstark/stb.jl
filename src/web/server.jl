@@ -28,7 +28,7 @@ println("starting up")
 include( "web_model_libs.jl")
 
 # gks work round some (version?) thing in the diffeq code
-function get_thing( thing::AbstractArray, key :: String, default :: String )
+function get_thing( thing::AbstractArray, key :: AbstractString, default :: AbstractString )
    for i in thing
       if i[1] == key
          return i[2]
@@ -41,7 +41,7 @@ end #get
 # this is from https://github.com/JuliaDiffEq/DiffEqOnlineServer
 # FIXME clean this up!
 #
-function with_headers(res :: AbstractString, req  :: Dict )
+function add_headers( res :: AbstractString, req  :: Dict ) :: Dict
     headers  = HttpCommon.headers()
     origin = get_thing(req[:headers], "Origin", "")
     println( req[:headers] )
@@ -59,7 +59,7 @@ function with_headers(res :: AbstractString, req  :: Dict )
     )
 end
 
-function web_get_hh(hdstr::AbstractString)
+function web_get_hh( hdstr::AbstractString )
    hid = parse(Int64, hdstr)
    JSON.json(FRS_Household_Getter.get_household(hid))
 end
@@ -89,7 +89,7 @@ function d100( v :: Number ) :: Number
    v/100.0
 end
 
-function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS )
+function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS ) :: MiniTB.Parameters
    querydict = req[:parsed_querystring]
    tbparams = deepcopy( defaults )
    tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow, operation=weeklyise )
@@ -102,8 +102,8 @@ function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS )
    tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper, operation=d100)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
    tbparams.basic_income = get_if_set("basic_income", querydict, tbparams.basic_income)
-   println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
-   println( "tbparams\n$tbparams")
+   # println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
+   # println( "tbparams\n$tbparams")
    tbparams
 end
 
@@ -114,7 +114,7 @@ const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 
 const BASE_RESULTS = create_base_results( num_households, num_people )
 
-function makeztparams()
+function makeztparams() :: MiniTB.Parameters
    pars = deepcopy( MiniTB.DEFAULT_PARAMS )
    pars.it_rate = [0.0,0.0]
    pars
@@ -128,7 +128,7 @@ const ZERO_DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
 const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_SETTINGS )
 
 
-function web_doonerun( req :: Dict )
+function web_doonerun( req :: Dict ) :: AbstractString
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
@@ -136,25 +136,25 @@ function web_doonerun( req :: Dict )
 end # doonerun
 
 
-function web_makebc( req  :: Dict )
+function web_makebc( req  :: Dict ) :: AbstractString
    tbparams = web_map_params( req )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
-   JSON.json((base = DEFAULT_BC, changed = bc))
+   JSON.json((base = DEFAULT_BC, changed = bc))Ashto
 end
 
-function web_makezbc( req  :: Dict )
+function web_makezbc( req  :: Dict ) :: AbstractString
    tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
 end
 
-function web_makeztbc( req  :: Dict )
+function web_makeztbc( req  :: Dict ) :: AbstractString
    tbparams = web_map_params( req, ZERO_TAX_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams, BC_500_SETTINGS )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
 
-function web_doineq( req  :: Dict )
+function web_doineq( req  :: Dict ) :: AbstractString
    querydict = req[:parsed_querystring]
    inc=[]
    pop=[]
@@ -172,6 +172,12 @@ function web_doineq( req  :: Dict )
    JSON.json( ( data=data, ineq=ineq ))
 end
 
+function do_in_thread( the_func, req :: Dict ) :: Dict
+   response :: String = @spawn the_func( req )
+   fetch( response )
+   add_headers( response, req )
+end
+
 #
 # from diffeq thingy instead of Mux.defaults
 #
@@ -183,11 +189,11 @@ end
    addqstrdict,
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
-   page("/bc", req -> with_headers( web_makebc(req), req )),
-   page("/zbc", req -> with_headers( web_makezbc(req), req )),
-   page("/ztbc", req -> with_headers( web_makeztbc(req), req )),
-   page("/stb", req -> with_headers( web_doonerun(req), req )),
-   page("/ineq", req -> with_headers( web_doineq(req), req )),
+   page("/bc", req -> add_headers( web_makebc(req), req )),
+   page("/zbc", req -> add_headers( web_makezbc(req), req )),
+   page("/ztbc", req -> add_headers( web_makeztbc(req), req )),
+   page("/stb", req -> add_headers( web_doonerun(req), req )),
+   page("/ineq", req -> add_headers( web_doineq(req), req )),
 
    Mux.notfound(),
 )
