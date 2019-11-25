@@ -192,8 +192,8 @@ function do_in_thread( the_func, req :: Dict ) :: Dict
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
    println( response )
-   fetch( response )
-   add_headers( response)
+   s = fetch( response )
+   add_headers( s )
 end
 
 #
