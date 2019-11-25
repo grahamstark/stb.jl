@@ -13,7 +13,7 @@ function map_person( model_person :: DataFrameRow )
             if model_person[ikey] != 0.0
                 v = model_person[ikey] # this is a hack because in j 1.3 csv is parsing many cols as strings & I don't understand why
                 tv = typeof(v)
-                if tv == String
+                if tv == String # FIXME delete not needed
                     v = parse( Float64, v )
                 end
                 # println( "setting ikey = $ikey to $v of type $tv")
