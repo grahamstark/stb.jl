@@ -16,6 +16,8 @@ using HttpCommon
 
 import Mux.WebSockets
 
+## !!! needs Julia 1.3:w
+import Base.Threads.@spawn
 
 const DEFAULT_PORT=8000
 const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
@@ -172,8 +174,14 @@ function web_doineq( req  :: Dict ) :: AbstractString
    JSON.json( ( data=data, ineq=ineq ))
 end
 
+#
+# This is my attempt at starting a task using the 1.3 @spawn macro
+# 1st parameter is a function that returns String (probably a json string) and accepts the req Dict
+#
 function do_in_thread( the_func, req :: Dict ) :: Dict
-   response :: String = @spawn the_func( req )
+   response = @spawn the_func( req )
+   # note that the func returns a string but response is a Future type
+   # line below converts response to a string
    fetch( response )
    add_headers( response, req )
 end
@@ -189,7 +197,7 @@ end
    addqstrdict,
    page( respond("<h1>OU DD226 TB Model</h1>")),
    page( "/hhld/:hid", req -> web_get_hh((req[:params][:hid]))), # note no headers
-   page("/bc", req -> add_headers( web_makebc(req), req )),
+   page("/bc", req -> do_in_thread( web_makebc, req )),
    page("/zbc", req -> add_headers( web_makezbc(req), req )),
    page("/ztbc", req -> add_headers( web_makeztbc(req), req )),
    page("/stb", req -> add_headers( web_doonerun(req), req )),
