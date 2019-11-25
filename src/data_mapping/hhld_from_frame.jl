@@ -1,6 +1,6 @@
 using Definitions
 using DataFrames
-using CSV
+using CSVFiles
 using Model_Household
 
 
@@ -11,9 +11,12 @@ function map_person( model_person :: DataFrameRow )
         ikey = make_sym_for_frame("income", i)
         if ! ismissing(model_person[ikey])
             if model_person[ikey] != 0.0
-                v = model_person[ikey]
+                v = model_person[ikey] # this is a hack because in j 1.3 csv is parsing many cols as strings & I don't understand why
                 tv = typeof(v)
-                println( "setting ikey = $ikey to $v of type $tv")
+                if tv == String
+                    v = parse( Float64, v )
+                end
+                # println( "setting ikey = $ikey to $v of type $tv")
                 income[i] = v
             end
         end
@@ -24,6 +27,10 @@ function map_person( model_person :: DataFrameRow )
         if i != Missing_Asset_Type
             ikey = make_sym_for_asset( i )
             if ! ismissing(model_person[ikey])
+                v = model_person[ikey]
+                if typeof(v) == String
+                    v = parse( Float64, v )
+                end
                 if model_person[ikey] != 0.0
                     assets[i] = model_person[ikey]
                 end
