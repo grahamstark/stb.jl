@@ -122,7 +122,7 @@ function web_makebc( req  :: Dict ) :: AbstractString
    println( "web_makebc; running on thread $(Threads.threadid())")
    tbparams = web_map_params( req )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
-   JSON.json((base = DEFAULT_BC, changed = bc))Ashto
+   JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
 function web_makezbc( req  :: Dict ) :: AbstractString
