@@ -11,6 +11,8 @@
     - `Pkg.installed()`
     - turn into install list e.g. `~/install/all_packages_nov_2019.jl`
     - and run the install on the new julia
+    - **OR**
+    - see [this](https://discourse.julialang.org/t/julia-v1-3-0-has-been-released/31549/9?u=grahamstark): rename/copy `~.julia/environments/1.x` to `1.y`, and do Pkg.update()
 
 ## Server install
 
