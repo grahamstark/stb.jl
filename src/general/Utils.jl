@@ -108,6 +108,8 @@ function basiccensor(s::AbstractString)::AbstractString
       s = string("v_", s) # leading digit
    end
    s = replace(s, r"__" => "_")
+   s = replace(s, r"__" => "_")
+   s = replace(s, r"__" => "_") # fixme neater way?
    s = replace(s, r"^_" => "")
    s = replace(s, r"_$" => "")
    return s
