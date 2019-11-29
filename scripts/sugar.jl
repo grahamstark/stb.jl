@@ -129,3 +129,10 @@ allfood = union( good_things, sugars, bad_stuff, other_eating_out )
 for (k,v) in allfood
     println(Symbol(Utils.basiccensor(v)))
 end
+
+for (k,v) in good_things
+    println(Symbol(Utils.basiccensor(v)))
+end
+
+lcfraw = CSV.File( "/mnt/data/lcf/1718/tab/tab/dvhh_ukanon_2017-18.tab" ) |> DataFrame
+lcf = DataFrame()

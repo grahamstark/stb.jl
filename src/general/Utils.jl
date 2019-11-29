@@ -1,9 +1,11 @@
 module Utils
 
+using CSV, DataFrames
 using Base.Unicode
 
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
 export addsysnotoname, diff_between, mult_dict!
+export loadtoframe
 
 function addsysnotoname(names, sysno)::Array{Symbol,1}
    a = Array{Symbol,1}(undef, 0)
@@ -142,6 +144,17 @@ macro exported_enum(name, args...)
       end
               # $([:(export $arg) for arg in args]...)
    end)
+end
+
+"""
+load a file into a dataframe and force all the identifiers into
+lower case
+"""
+function loadtoframe(filename::AbstractString)::DataFrame
+    df = CSV.File(filename, delim = '\t') |> DataFrame
+    lcnames = Symbol.(lowercase.(string.(names(df))))
+    names!(df, lcnames)
+    df
 end
 
 end # module

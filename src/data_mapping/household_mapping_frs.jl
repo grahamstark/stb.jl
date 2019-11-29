@@ -2,7 +2,7 @@
 #
 using DataFrames
 using CSV
-
+using Utils
 using Definitions
 
 
@@ -990,12 +990,6 @@ global HBAIS = Dict(
 )
 
 
-function loadtoframe(filename::AbstractString)::DataFrame
-    df = CSV.File(filename, delim = '\t') |> DataFrame
-    lcnames = Symbol.(lowercase.(string.(names(df))))
-    names!(df, lcnames)
-    df
-end
 
 function loadfrs(which::AbstractString, year::Integer)::DataFrame
     filename = "$(FRS_DIR)/$(year)/tab/$(which).tab"
