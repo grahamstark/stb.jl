@@ -2,6 +2,17 @@ using CSV,DataFrames
 import Utils
 #
 
+
+function dsum( df::DataFrame, keys )
+    s = zeros( size( df,1 ))
+    for (k,v) in keys
+        # println( k )
+        # println( df[!,k])
+        s .+= df[!,k]
+    end
+    s
+end
+
 good_things = (
     :c11111t =>"Rice",
     :c11121t =>"Bread",
@@ -85,6 +96,19 @@ sugars = (
     :cb1124t =>"Eat Out Soft drinks"
     )
 
+sugars_at_home = (
+    :c11122t =>"Buns, crispbread and biscuits",
+    :c11141t =>"Cakes and puddings",
+    :c11811t =>"Sugar",
+    :c11821t =>"Jams, marmalades",
+    :c11831t =>"Chocolate",
+    :c11841t =>"Confectionery products",
+    :c11851t =>"Edible ices and ice cream",
+    :c11861t =>"Other sugar products",
+    :c12131t =>"Cocoa and powdered chocolate",
+    :c12221t =>"Soft drinks",
+    :c12231t =>"Fruit juices"
+    )
 
 other_eating_out = (
     :cb1111t =>"Catered food non-alcoholic drink eaten / drunk on premises",
@@ -102,6 +126,18 @@ other_eating_out = (
     :cb1311t =>"Catered food - eaten on premises",
     :cb1312t =>"Non-alcoholic drink - drunk on premises"
 )
+
+sugars_eating_out = (
+:cb1112t =>"Eat Out Confectionery eaten off premises",
+:cb1113t =>"Eat Out Ice cream eaten off premises",
+:cb1114t =>"Eat Out Takeaway Soft drinks eaten off premises",
+:cb1117t =>"Eat Out Confectionery (child)",
+:cb1118t =>"Eat Out Ice cream (child)",
+:cb1119t =>"Eat Out Soft drinks (child)",
+:cb1122t =>"Eat Out Confectionery",
+:cb1123t =>"Eat Out Ice cream",
+:cb1124t =>"Eat Out Soft drinks" )
+
 
 bad_stuff = (
     :cb111ct =>"Spirits and liqueurs (away from home)",
@@ -124,6 +160,18 @@ bad_stuff = (
     :c22131t =>"Other tobacco"
  )
 
+  # C21111t +
+  # C21211t +
+  # C21212t +
+  # C21213t +
+  # C21214t +
+  # C21221t +
+  # C21311t +
+  # C22111t +
+  # C22121t +
+  # C22131t +
+  # C23111t
+
 allfood = union( good_things, sugars, bad_stuff, other_eating_out )
 
 for (k,v) in allfood
@@ -134,5 +182,54 @@ for (k,v) in good_things
     println(Symbol(Utils.basiccensor(v)))
 end
 
-lcfraw = CSV.File( "/mnt/data/lcf/1718/tab/tab/dvhh_ukanon_2017-18.tab" ) |> DataFrame
+lcfraw = Utils.loadtoframe( "/mnt/data/lcf/1718/tab/tab/dvhh_ukanon_2017-18.tab" ) |> DataFrame
 lcf = DataFrame()
+
+
+lcf[!,:age_u_18]=lcfraw[!,:a020]+lcfraw[!,:a021]+lcfraw[!,:a022]+lcfraw[!,:a030]+lcfraw[!,:a031]+lcfraw[!,:a032]
+lcf[!,:age_18_plus]=lcfraw[!,:a049]-lcf[!,:age_u_18]
+lcf[!,:tenure_type] =  lcfraw[!,:a122]
+lcf[!,:region] =  lcfraw[!,:gorx]
+lcf[!,:economic_pos] =  lcfraw[!,:a093]
+lcf[!,:age_of_oldest] =  lcfraw[!,:a065p]
+lcf[!,:healthy_food] = dsum( lcfraw, good_things )
+lcf[!,:takeaways] = dsum( lcfraw, other_eating_out )
+lcf[!,:alcohol_tobacco] = dsum( lcfraw, bad_stuff )
+
+for (k,v) in sugars
+    sk = Symbol(Utils.basiccensor(v))
+    lcf[!,sk] = lcfraw[!,k]
+end
+
+n = names( lcfraw )
+
+lcf[!,:sumallfood] = dsum( lcfraw, allfood )
+
+
+lcf[!,:age_u_18]=lcfraw[!,:a020]+lcfraw[!,:a021]+lcfraw[!,:a022]+lcfraw[!,:a030]+lcfraw[!,:a031]+lcfraw[!,:a032]
+lcf[!,:age_18_plus]=lcfraw[!,:a049]-lcf[!,:age_u_18]
+lcf[!,:tenure_type] =  lcfraw[!,:a122]
+lcf[!,:region] =  lcfraw[!,:gorx]
+lcf[!,:economic_pos] =  lcfraw[!,:a093]
+lcf[!,:age_of_oldest] =  lcfraw[!,:a065p]
+
+lcf[!,:total_consumpt] =  lcfraw[!,:p600t]
+lcf[!,:food_and_drink] =  lcfraw[!,:p601t]
+lcf[!,:alcohol_tobacco] =  lcfraw[!,:p602t]
+lcf[!,:clothing] =  lcfraw[!,:p603t]
+lcf[!,:housing] =  lcfraw[!,:p604t]
+lcf[!,:household_goods] =  lcfraw[!,:p605t]
+lcf[!,:health] =  lcfraw[!,:p606t]
+lcf[!,:transport] =  lcfraw[!,:p607t]
+lcf[!,:communication] =  lcfraw[!,:p608t]
+lcf[!,:recreation] =  lcfraw[!,:p609t]
+lcf[!,:education] =  lcfraw[!,:p610t]
+lcf[!,:restaurants_etc] =  lcfraw[!,:p611t]
+lcf[!,:miscellaneous] =  lcfraw[!,:p612t]
+lcf[!,:non_consumption] =  lcfraw[!,:p620tp]
+lcf[!,:total_expend] =  lcfraw[!,:p630tp]
+lcf[!,:equiv_scale] =  lcfraw[!,:oecdsc]
+lcf[!,:weekly_net_inc] =  lcfraw[!,:p389p]
+
+
+allfood = union( good_things, sugars_at_home )
