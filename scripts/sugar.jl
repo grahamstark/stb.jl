@@ -231,5 +231,4 @@ lcf[!,:total_expend] =  lcfraw[!,:p630tp]
 lcf[!,:equiv_scale] =  lcfraw[!,:oecdsc]
 lcf[!,:weekly_net_inc] =  lcfraw[!,:p389p]
 
-
 allfood = union( good_things, sugars_at_home )
