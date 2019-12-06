@@ -3,8 +3,9 @@ using TBComponents
 using Definitions
 using Parameters
 using Unitful
+using JSON
 
-
+## TODO Use Unitful to have currency weekly monthly annual counts as annotations
 
 @with_kw mutable struct IncomeTaxSys
    earnings_rates :: RateBands = [19.0,20.0,21.0,41.0,46.0]./100.0
@@ -35,5 +36,10 @@ end
    ni   :: NationalInsuranceSys = NationalInsuranceSys()
 end
 
+function save( filename, sys <: TaxBenefitSystem )
+    JSON.print( filename, sys )
+end
+
 
 include( "../default_params/default2019_20.jl")
+defsys = load()

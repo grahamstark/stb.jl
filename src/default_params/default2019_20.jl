@@ -1,6 +1,6 @@
 # DEFAULT 2019/20 system
 function load()
-    sys = TaxBenefitSystem( "Scotland Default 2019/20")
+    sys = TaxBenefitSystem( name="Scotland Default 2019/20")
     sys.it.earnings_rates = [19.0,20.0,21.0,41.0,46.0]./100.0
     sys.it.earnings_bands = [2_049.0, 12_444.0, 30_930.0, 150_000.0]
     sys.it.savings_rates  = [0.0, 20.0, 40.0, 45.0]./100.0
