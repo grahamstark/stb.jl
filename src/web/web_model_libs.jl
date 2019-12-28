@@ -10,6 +10,7 @@ using Definitions
 using CSV
 using StatsBase
 using Random
+using Logging
 
 function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2015 )
    example_names = Vector{AbstractString}()
@@ -26,7 +27,7 @@ function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2015 )
             start_year = start_year )
       end
       mb = trunc(Integer, rc[3] / 1024^2)
-      println("loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready...")
+      @info "loaded data; load time $(rc[2]); memory used $(mb)mb; loaded $num_households households\nready..."
    end
    (example_names, num_households, num_people )
 end
@@ -194,9 +195,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
 
-    println( totals[1])
-    println( totals[2])
-    println( totals[3])
+    @info  "totals[1] $totals[1]"
 
     targetting_total_benefits =
         add_targetting( results,

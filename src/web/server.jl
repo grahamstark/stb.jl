@@ -13,6 +13,7 @@ using Utils
 using MiniTB
 using TBComponents
 using HttpCommon
+using Logging, LoggingExtras
 
 import Mux.WebSockets
 
@@ -25,7 +26,7 @@ const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_min_hours = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_min_hours=0&ben2_u_limit=0"
 
-println("starting up")
+@info "server starting up"
 
 include( "web_model_libs.jl")
 
@@ -55,11 +56,11 @@ function errorCatch( app, req  :: Dict )
    try
       app(req)
    catch e
-      println("Error occured!")
+      @error "Error occured!"
       io = IOBuffer()
       showerror(io, e)
       err_text = takebuf_string(io)
-      println(err_text)
+      @error err_text
       resp = withHeaders(JSON.json(Dict("message" => err_text, "error" => true)), req)
       resp[:status] = 500
       return resp
@@ -83,8 +84,8 @@ function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS ) :: Min
    tbparams.ben2_taper = get_if_set("ben2_taper", querydict, tbparams.ben2_taper, operation=d100)
    tbparams.ben2_u_limit = get_if_set("ben2_u_limit", querydict, tbparams.ben2_u_limit)
    tbparams.basic_income = get_if_set("basic_income", querydict, tbparams.basic_income)
-   # println( "DEFAULT_PARAMS\n$DEFAULT_PARAMS")
-   # println( "tbparams\n$tbparams")
+   @debug "DEFAULT_PARAMS\n$DEFAULT_PARAMS"
+   @debug "tbparams\n$tbparams"
    tbparams
 end
 
@@ -110,7 +111,7 @@ const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_
 
 
 function web_doonerun( req :: Dict ) :: AbstractString
-   println( "web_doonerun; running on thread $(Threads.threadid())")
+   @info "web_doonerun; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req )
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
@@ -119,28 +120,28 @@ end # doonerun
 
 
 function web_makebc( req  :: Dict ) :: AbstractString
-   println( "web_makebc; running on thread $(Threads.threadid())")
+   @info "web_makebc; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
 function web_makezbc( req  :: Dict ) :: AbstractString
-   println( "web_makezbc; running on thread $(Threads.threadid())")
+   @info "web_makezbc; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
 end
 
 function web_makeztbc( req  :: Dict ) :: AbstractString
-   println( "web_makeztbc; running on thread $(Threads.threadid())")
+   @info "web_makeztbc; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req, ZERO_TAX_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams, BC_500_SETTINGS )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
 
 function web_doineq( req  :: Dict ) :: AbstractString
-   println( "web_doineq; running on thread $(Threads.threadid())")
+   @info "web_doineq; running on thread $(Threads.threadid())"
    querydict = req[:parsed_querystring]
    inc=zeros(0)
    pop=zeros(0)
@@ -175,7 +176,7 @@ function do_in_thread( the_func, req :: Dict ) :: Dict
    response = @spawn the_func( req )
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
-   println( response )
+   @info "do_in_thread response is $response"
    json = fetch( response )
    add_headers( json )
 end
@@ -198,6 +199,11 @@ end
    Mux.notfound(),
 )
 
+# configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
+# and: https://github.com/oxinabox/LoggingExtras.jl
+logger = FileLogger("/var/tmp/oustb_log.txt")
+global_logger(logger)
+LogLevel( Logging.Info )
 
 port = DEFAULT_PORT
 if length(ARGS) > 0
@@ -207,6 +213,6 @@ end
 serve(dd226, port)
 
 while true # FIXME better way?
-   println( "server running on port $port")
+   @info "main loop; server running on port $port"
    sleep( 60 )
  end
