@@ -27,11 +27,6 @@ const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_ra
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_min_hours=0&ben2_u_limit=0"
 
 
-# configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
-# and: https://github.com/oxinabox/LoggingExtras.jl
-logger = FileLogger("/var/tmp/oustb_log.txt")
-global_logger(logger)
-LogLevel( Logging.Info )
 
 @info "server starting up"
 
@@ -187,6 +182,12 @@ function do_in_thread( the_func, req :: Dict ) :: Dict
    json = fetch( response )
    add_headers( json )
 end
+
+# configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
+# and: https://github.com/oxinabox/LoggingExtras.jl
+logger = FileLogger("/var/tmp/oustb_log.txt")
+global_logger(logger)
+LogLevel( Logging.Info )
 
 #
 # from diffeq thingy instead of Mux.defaults
