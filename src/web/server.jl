@@ -26,6 +26,13 @@ const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_min_hours = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_min_hours=0&ben2_u_limit=0"
 
+
+# configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
+# and: https://github.com/oxinabox/LoggingExtras.jl
+logger = FileLogger("/var/tmp/oustb_log.txt")
+global_logger(logger)
+LogLevel( Logging.Info )
+
 @info "server starting up"
 
 include( "web_model_libs.jl")
@@ -198,12 +205,6 @@ end
    page("/stb", req -> do_in_thread( web_doonerun, req )),
    Mux.notfound(),
 )
-
-# configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
-# and: https://github.com/oxinabox/LoggingExtras.jl
-logger = FileLogger("/var/tmp/oustb_log.txt")
-global_logger(logger)
-LogLevel( Logging.Info )
 
 port = DEFAULT_PORT
 if length(ARGS) > 0
