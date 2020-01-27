@@ -157,14 +157,14 @@ end
 @testset "ch3 tax reducers"
     # check that mca is always 10% of amount
     # check marriage transfer is always basic rate tax credit
-    # checl MCA only available if 1 spouse born befor 6th April  1935
+    # checl MCA only available if 1 spouse born before 6th April  1935
     names = Example_Household_Getter.initialise()
     scot = Example_Household_Getter.get_household( "mel_c2_scot" ) # scots are a married couple
     head = scot.people[SCOT_HEAD]
     spouse = scot.people[SCOT_SPOUSE]
     head_ages = [75,90,90,70] # after 1935
     spouse_ages = [90,70,70,90]
-    spouse_ages  = 90 # before aprol 35
+    spouse_ages  = 90 # before april 35
     head_incomes = [19_100.0, 29_710.0,41_080.0,0.0]
     spouse_incomes = [12_450.0,0,13_950.0,49_300.0]
     for i in 1:4
