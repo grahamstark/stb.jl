@@ -7,6 +7,9 @@ export Employee, Self_employed
 export Missing_Employment_Status
 
 export PRICES_DIR, MODEL_DATA_DIR, FRS_DIR, HBAI_DIR
+export WEEKS_PER_YEAR
+
+const WEEKS_PER_YEAR = 365.25/7.0 # 52.17857
 
 #
 # FIXME move this to some config file
