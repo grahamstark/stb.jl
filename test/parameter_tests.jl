@@ -10,7 +10,7 @@ using Utils
     @test itweekly.savings_rates == it.savings_rates
     weeklyise!( itweekly )
     annualise!( itweekly )
-    @test itweekly.earnings_bands ≈ it.earnings_bands
+    @test isapprox( itweekly.earnings_bands, it.earnings_bands, rtol=0.00001 )
     @test itweekly.mca_minimum ≈ it.mca_minimum
     it_s = JSON.json( it )
     itj_dic = JSON.parse( it_s )

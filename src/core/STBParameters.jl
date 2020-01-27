@@ -70,6 +70,7 @@ module STBParameters
    Map from
    """
    function fromJSON( json :: Dict ) :: IncomeTaxSys
+      it = IncomeTaxSys()
       it.earnings_rates = convert( RateBands, json["earnings_rates"] )
       it.earnings_bands  = convert( RateBands, json["earnings_bands"] )
       it.savings_rates = convert( RateBands, json["savings_rates"] )
