@@ -1,10 +1,4 @@
 #
-using TBComponents
-using Definitions
-using Parameters
-using Unitful
-using Utils
-using JSON
 
 ## TODO Use Unitful to have currency weekly monthly annual counts as annotations
 
@@ -29,7 +23,7 @@ function annualise!( it :: IncomeTaxSys )
    it.savings_rates .*= 100.0
    it.savings_bands .*= 100.0
    it.dividend_rates .*= 100.0
-   it.earnings_bands .*= Utils.WEEKS_PER_YEAR
+   it.earnings_bands .*= Definitions.WEEKS_PER_YEAR
    it.savings_bands .*= Utils.WEEKS_PER_YEAR
    it.dividend_bands .*= Utils.WEEKS_PER_YEAR
    it.personal_allowance *= Utils.WEEKS_PER_YEAR

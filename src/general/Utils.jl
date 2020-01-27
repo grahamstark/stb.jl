@@ -7,7 +7,6 @@ using Base.Unicode
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
 export addsysnotoname, diff_between, mult_dict!
 export loadtoframe, age_in_years
-
 function addsysnotoname(names, sysno)::Array{Symbol,1}
    a = Array{Symbol,1}(undef, 0)
    for n in names
