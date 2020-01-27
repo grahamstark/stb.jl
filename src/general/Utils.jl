@@ -1,11 +1,12 @@
 module Utils
 
 using CSV, DataFrames
+using Dates
 using Base.Unicode
 
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
 export addsysnotoname, diff_between, mult_dict!
-export loadtoframe
+export loadtoframe, age_in_years
 
 function addsysnotoname(names, sysno)::Array{Symbol,1}
    a = Array{Symbol,1}(undef, 0)
@@ -155,6 +156,24 @@ function loadtoframe(filename::AbstractString)::DataFrame
     lcnames = Symbol.(lowercase.(string.(names(df))))
     names!(df, lcnames)
     df
+end
+
+"""
+Age now for someone with this birthday.
+This isn't quite right, but is near enough ...
+If today is 2020-01-27 then:
+
+   * dob(1958-09-26) = 62
+   * dob(1958-09-27) = 62
+   * dob(1958-09-28) = 61
+
+And so on. There are likely some cases where this calc is wrong though...
+"""
+function age_in_years(
+   dob :: Dates.TimeType,
+   to_date :: Dates.TimeType = Dates.now() ) :: Integer
+   @assert dob <= to_date
+   Int( (ceil(Dates.days(Dates.Date(to_date)-dob)+1)÷365.25))
 end
 
 end # module
