@@ -1,6 +1,6 @@
 module STBParameters
 
-   using TBComponents
+   import TBComponents: RateBands, WEEKS_PER_YEAR
    using Definitions
    using Parameters
    using Unitful
@@ -55,7 +55,7 @@ module STBParameters
       it.savings_rates ./= 100.0
       it.savings_bands ./= 100.0
       it.dividend_rates ./= 100.0
-      it.earnings_bands ./= TBComponents.WEEKS_PER_YEAR
+      it.earnings_bands ./= WEEKS_PER_YEAR
       it.savings_bands ./= WEEKS_PER_YEAR
       it.dividend_bands ./= WEEKS_PER_YEAR
       it.personal_allowance /= WEEKS_PER_YEAR
