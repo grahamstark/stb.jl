@@ -1,4 +1,3 @@
-#
 
 ## TODO Use Unitful to have currency weekly monthly annual counts as annotations
 
@@ -23,15 +22,15 @@ function annualise!( it :: IncomeTaxSys )
    it.savings_rates .*= 100.0
    it.savings_bands .*= 100.0
    it.dividend_rates .*= 100.0
-   it.earnings_bands .*= Definitions.WEEKS_PER_YEAR
-   it.savings_bands .*= Utils.WEEKS_PER_YEAR
-   it.dividend_bands .*= Utils.WEEKS_PER_YEAR
-   it.personal_allowance *= Utils.WEEKS_PER_YEAR
-   it.blind_persons_allowance *= Utils.WEEKS_PER_YEAR
-   it.married_couples_allowance *= Utils.WEEKS_PER_YEAR
-   it.mca_minimum *= Utils.WEEKS_PER_YEAR
-   it.marriage_allowance *= Utils.WEEKS_PER_YEAR
-   it.personal_savings_allowance *= Utils.WEEKS_PER_YEAR
+   it.earnings_bands .*= WEEKS_PER_YEAR
+   it.savings_bands .*= WEEKS_PER_YEAR
+   it.dividend_bands .*= WEEKS_PER_YEAR
+   it.personal_allowance *= WEEKS_PER_YEAR
+   it.blind_persons_allowance *= WEEKS_PER_YEAR
+   it.married_couples_allowance *= WEEKS_PER_YEAR
+   it.mca_minimum *= WEEKS_PER_YEAR
+   it.marriage_allowance *= WEEKS_PER_YEAR
+   it.personal_savings_allowance *= WEEKS_PER_YEAR
 end
 
 function weeklyise!( it :: IncomeTaxSys )
@@ -41,16 +40,15 @@ function weeklyise!( it :: IncomeTaxSys )
    it.savings_rates ./= 100.0
    it.savings_bands ./= 100.0
    it.dividend_rates ./= 100.0
-   it.earnings_bands ./= Utils.WEEKS_PER_YEAR
-   it.savings_bands ./= Utils.WEEKS_PER_YEAR
-   it.dividend_bands ./= Utils.WEEKS_PER_YEAR
-   it.personal_allowance /= Utils.WEEKS_PER_YEAR
-   it.blind_persons_allowance /= Utils.WEEKS_PER_YEAR
-   it.married_couples_allowance /= Utils.WEEKS_PER_YEAR
-   it.mca_minimum /= Utils.WEEKS_PER_YEAR
-   it.marriage_allowance /= Utils.WEEKS_PER_YEAR
-   it.personal_savings_allowance /= Utils.WEEKS_PER_YEAR
-
+   it.earnings_bands ./= WEEKS_PER_YEAR
+   it.savings_bands ./= WEEKS_PER_YEAR
+   it.dividend_bands ./= WEEKS_PER_YEAR
+   it.personal_allowance /= WEEKS_PER_YEAR
+   it.blind_persons_allowance /= WEEKS_PER_YEAR
+   it.married_couples_allowance /= WEEKS_PER_YEAR
+   it.mca_minimum /= WEEKS_PER_YEAR
+   it.marriage_allowance /= WEEKS_PER_YEAR
+   it.personal_savings_allowance /= WEEKS_PER_YEAR
 end
 
 """

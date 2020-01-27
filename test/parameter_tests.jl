@@ -7,7 +7,7 @@ using Utils
 
     it = IncomeTaxSys()
     itweekly = deepcopy(it)
-    @test itweekly == it
+    @test itweekly.savings_rates == it.savings_rates
     weeklyise!( itweekly )
     annualise!( itweekly )
     @test itweekly.earnings_bands ≈ it.earnings_bands
