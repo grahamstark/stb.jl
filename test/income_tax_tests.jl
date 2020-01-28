@@ -1,9 +1,10 @@
 using Test
-using Model_Household
-using FRS_Household_Getter
-using Example_Household_Getter
+import Model_Household: Household, Person, People_Dict, default_bu_allocation
+import FRS_Household_Getter
+import Example_Household_Getter
 using Definitions
-using Dates
+import Dates: Date
+import IncomeTaxCalculations: old_enough_for_mca
 
 const RUK_PERSON = 100000001001
 const SCOT_HEAD = 100000001002
