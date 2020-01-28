@@ -7,6 +7,8 @@ using Base.Unicode
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
 export addsysnotoname, diff_between, mult_dict!
 export loadtoframe, age_in_years
+
+
 function addsysnotoname(names, sysno)::Array{Symbol,1}
    a = Array{Symbol,1}(undef, 0)
    for n in names
@@ -184,7 +186,6 @@ function age_in_years(
       age -= 1
    end
    age
-   # Int( (ceil(Dates.days(Dates.Date(to_date)-dob)+1)÷365.25))
 end
 
 end # module
