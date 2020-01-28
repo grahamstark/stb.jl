@@ -159,20 +159,32 @@ end
 
 """
 Age now for someone with this birthday.
-This isn't quite right, but is near enough ...
 If today is 2020-01-27 then:
 
    * dob(1958-09-26) = 62
    * dob(1958-09-27) = 62
    * dob(1958-09-28) = 61
 
-And so on. There are likely some cases where this calc is wrong though...
+And so on.
 """
 function age_in_years(
    dob :: Dates.TimeType,
    to_date :: Dates.TimeType = Dates.now() ) :: Integer
    @assert dob <= to_date
-   Int( (ceil(Dates.days(Dates.Date(to_date)-dob)+1)÷365.25))
+   y_to = year(to_date)
+   m_to = month(to_date)
+   d_to = day(to_date)
+   y_dob = year(dob)
+   m_dob = month(dob)
+   d_dob = day(dob)
+   age = y_to - y_dob
+   if m_dob > m_to
+      age -= 1
+   elseif (m_dob == m_to ) && (d_dob > d_to )
+      age -= 1
+   end
+   age
+   # Int( (ceil(Dates.days(Dates.Date(to_date)-dob)+1)÷365.25))
 end
 
 end # module
