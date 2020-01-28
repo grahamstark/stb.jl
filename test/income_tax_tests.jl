@@ -176,3 +176,11 @@ end
         spouse.age = spouse_ages[i]
     end
 end
+
+@testset "Crude MCA Age Check" begin
+    # cut-off for jan 2010 should be age 85
+    d = Date( 2020, 1, 28 )
+    @test old_enough_for_mca( 85, d )
+    @test ! old_enough_for_mca( 84, d )
+    @test old_enough_for_mca( 86, d )
+end

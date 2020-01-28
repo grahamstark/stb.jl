@@ -1,20 +1,18 @@
 module STBParameters
 
    import TBComponents: RateBands, WEEKS_PER_YEAR
+   import Parameters: with_kw # FIXME maybe use Base.kwdef; see: https://github.com/JuliaLang/julia/pull/29316
+
+   import Utils
+   import JSON
+
    using Definitions
-   using Parameters
-   using Unitful
-   using Utils
-   using JSON
-
-
-   # include( "stb_parameters.jl" )
 
    export IncomeTaxSys, NationalInsuranceSys, TaxBenefitSystem
    export weeklyise!, annualise!, fromJSON
 
-
    ## TODO Use Unitful to have currency weekly monthly annual counts as annotations
+   # using Unitful
 
    @with_kw mutable struct IncomeTaxSys
       earnings_rates :: RateBands = [19.0,20.0,21.0,41.0,46.0]
