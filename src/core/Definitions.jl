@@ -720,7 +720,7 @@ export Disability_Type,
 end
 Disability_Dict = Dict{Disability_Type,Bool}
 
-export Incomes_Type, Incomes_Dict
+export Incomes_Type, Incomes_Dict, Incomes_Set, Expenses
 
 export wages,
        self_employment_income,
@@ -895,8 +895,24 @@ export wages,
 end
 
 Incomes_Dict = Dict{Incomes_Type,Real}
+Incomes_Set = Set{Incomes_Type}
 
-export Asset_Type, Asset_Dict
+const Expenses = Incomes_Set([
+   health_insurance,
+   alimony_and_child_support_paid,
+   care_insurance,
+   trade_unions_etc,
+   friendly_societies,
+   work_expenses,
+   avcs,
+   other_deductions,
+   loan_repayments,
+   student_loan_repayments
+])
+
+
+
+export Asset_Type, Asset_Dict, Asset_Set
 
 export A_Current_account,
        A_NSB_Ordinary_account,
@@ -956,7 +972,7 @@ end
 
 
 Asset_Dict = Dict{Asset_Type,Real}
-
+Asset_Set = Set{Asset_Type}
 
 export Relationship  # mapped from relhrp
 export

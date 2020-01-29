@@ -180,7 +180,7 @@ function age_in_years(
    m_dob = month(dob)
    d_dob = day(dob)
    age = y_to - y_dob
-   if m_dob > m_to
+   if m_dob > m_to # check if you've not yet had your birthday .. 
       age -= 1
    elseif (m_dob == m_to ) && (d_dob > d_to )
       age -= 1
