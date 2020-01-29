@@ -898,6 +898,7 @@ Incomes_Dict = Dict{Incomes_Type,Real}
 Incomes_Set = Set{Incomes_Type}
 
 const Expenses = Incomes_Set([
+   permanent_health_insurance,
    health_insurance,
    alimony_and_child_support_paid,
    care_insurance,

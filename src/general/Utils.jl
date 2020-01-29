@@ -163,9 +163,9 @@ end
 Age now for someone with this birthday.
 If today is 2020-01-27 then:
 
-   * dob(1958-09-26) = 62
-   * dob(1958-09-27) = 62
-   * dob(1958-09-28) = 61
+   * dob(1958-01-26) = 62
+   * dob(1958-01-27) = 62
+   * dob(1958-01-28) = 61
 
 And so on.
 """
@@ -180,7 +180,7 @@ function age_in_years(
    m_dob = month(dob)
    d_dob = day(dob)
    age = y_to - y_dob
-   if m_dob > m_to # check if you've not yet had your birthday .. 
+   if m_dob > m_to # check if you've not yet had your birthday ..
       age -= 1
    elseif (m_dob == m_to ) && (d_dob > d_to )
       age -= 1
