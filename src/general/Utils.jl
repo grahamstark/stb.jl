@@ -184,7 +184,6 @@ function age_in_years(
       age -= 1
    end
    age
-   # Int( (ceil(Dates.days(Dates.Date(to_date)-dob)+1)÷365.25))
 end
 
 end # module
