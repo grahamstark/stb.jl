@@ -1,5 +1,6 @@
 using Test
-using Utils
+import Utils: date_in_years
+import Dates: Date
 
 @testset "Dates and Times" begin
     nw = Date( 2020, 01, 27)

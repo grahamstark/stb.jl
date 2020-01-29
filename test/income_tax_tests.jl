@@ -1,9 +1,10 @@
 using Test
-using Model_Household
-using FRS_Household_Getter
-using Example_Household_Getter
+import Model_Household: Household, Person, People_Dict, default_bu_allocation
+import FRS_Household_Getter
+import Example_Household_Getter
 using Definitions
-using Dates
+import Dates: Date
+import IncomeTaxCalculations: old_enough_for_mca
 
 const RUK_PERSON = 100000001001
 const SCOT_HEAD = 100000001002
@@ -174,4 +175,12 @@ end
         head.age = head_ages[i]
         spouse.age = spouse_ages[i]
     end
+end
+
+@testset "Crude MCA Age Check" begin
+    # cut-off for jan 2010 should be age 85
+    d = Date( 2020, 1, 28 )
+    @test old_enough_for_mca( 85, d )
+    @test ! old_enough_for_mca( 84, d )
+    @test old_enough_for_mca( 86, d )
 end

@@ -102,7 +102,7 @@ function load_prices() :: DataFrame
     nrows = size(obr)[1]
     ncols = size(obr)[2]
     lcnames = Symbol.(basiccensor.(string.(names(obr))))
-    names!(obr, lcnames)
+    rename!(obr, lcnames)
 
     obr[!,:year] = zeros(Int64, nrows)
     obr[!,:q] = zeros(Int8, nrows) #zeros(Union{Int64,Missing},np)
