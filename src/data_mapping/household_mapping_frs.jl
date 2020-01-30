@@ -54,7 +54,7 @@ function initialise_person(n::Integer)::DataFrame
         income_bank_interest = Vector{Union{Real,Missing}}(missing, n),
         income_stocks_shares = Vector{Union{Real,Missing}}(missing, n),
         income_individual_savings_account = Vector{Union{Real,Missing}}(missing, n),
-        income_dividends = Vector{Union{Real,Missing}}(missing, n), # FIXME not used needs deleted use stocks_shares instead
+        # income_dividends = Vector{Union{Real,Missing}}(missing, n), # FIXME not used needs deleted use stocks_shares instead
         income_property = Vector{Union{Real,Missing}}(missing, n),
         income_royalties = Vector{Union{Real,Missing}}(missing, n),
         income_bonds_and_gilts = Vector{Union{Real,Missing}}(missing, n),
@@ -654,6 +654,7 @@ function create_adults(
     endowmnt::DataFrame,
     job::DataFrame,
     hbai_adults::DataFrame
+    override_se_and_employment_with_hbai :: Bool = true
 )::DataFrame
 
     num_adults = size(frs_adults)[1]
@@ -669,6 +670,8 @@ function create_adults(
         frs_person = frs_adults[pn, :]
         sernum = frs_person.sernum
         ad_hbai = hbai_adults[((hbai_adults.year.==hbai_year).&(hbai_adults.sernum.==sernum).&(hbai_adults.person.==frs_person.person).&(hbai_adults.benunit.==frs_person.benunit)), :]
+
+
         nhbai = size(ad_hbai)[1]
         @assert nhbai in [0, 1]
 
@@ -676,6 +679,7 @@ function create_adults(
             adno += 1
                 ## also for children
             model_adult = adult_model[adno, :]
+            model_hbai = ad_hbai[1,:]
             model_adult.pno = frs_person.person
             model_adult.hid = frs_person.sernum
             model_adult.pid = get_pid(FRS, year, frs_person.sernum, frs_person.person)
@@ -685,6 +689,12 @@ function create_adults(
             model_adult.age = frs_person.age80
             model_adult.sex = safe_assign(frs_person.sex)
             model_adult.ethnic_group = safe_assign(frs_person.ethgr3)
+            # plan 'B' wages and SE from HBAI; first work out hd/spouse so we can extract right ones
+            is_hbai_spouse = ( model_hbai.personsp == model_hbai.person )
+            is_hbai_head = ( model_hbai.personhd == model_hbai.person )
+            @assert is_hbai_head || is_hbai_spouse  "neither head nor spouse"
+            hbai_wages = coalesce( is_hbai_head ? model_hbai.esgjobhd : model_hbai.esgjobsp, 0.0 )
+            hbai_se = coalesce( is_hbai_head ? model_hbai.esgrsehd : model_hbai.esgrsehd, 0.0 )
 
             ## adult only
             a_job = job[((job.sernum.==frs_person.sernum).&(job.benunit.==frs_person.benunit).&(job.person.==frs_person.person)), :]
@@ -712,6 +722,12 @@ function create_adults(
             model_adult.occupational_classification = safe_assign(frs_person.soc2010)
 
             process_job_rec!(model_adult, a_job)
+
+            if( override_se_and_employment_with_hbai )
+
+
+            end
+
 
             penstuff = process_pensions(a_pension)
             model_adult.income_private_pensions = penstuff.pension
