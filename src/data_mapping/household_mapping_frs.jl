@@ -54,7 +54,7 @@ function initialise_person(n::Integer)::DataFrame
         income_bank_interest = Vector{Union{Real,Missing}}(missing, n),
         income_stocks_shares = Vector{Union{Real,Missing}}(missing, n),
         income_individual_savings_account = Vector{Union{Real,Missing}}(missing, n),
-        income_dividends = Vector{Union{Real,Missing}}(missing, n),
+        income_dividends = Vector{Union{Real,Missing}}(missing, n), # FIXME not used needs deleted use stocks_shares instead
         income_property = Vector{Union{Real,Missing}}(missing, n),
         income_royalties = Vector{Union{Real,Missing}}(missing, n),
         income_bonds_and_gilts = Vector{Union{Real,Missing}}(missing, n),

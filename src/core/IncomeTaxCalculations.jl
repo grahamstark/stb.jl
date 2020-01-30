@@ -10,17 +10,18 @@ using Definitions
 
 export calc_income_tax, old_enough_for_mca
 
+## FIXME all these constants should ultimately be parameters
 const MCA_DATE = Date(1935,4,6) # fixme make this a parameter
 
 const SAVINGS_INCOME = Incomes_Dict(
     bank_interest => 1.0,
-    stocks_shares => 1.0,
     bonds_and_gilts => 1.0,
     other_investment_income => 1.0
 )
 
 const DIVIDENDS = Incomes_Dict(
-    dividends => 1.0
+    dividends => 1.0, # FIXME not used needs deleted
+    stocks_shares => 1.0
 )
 const Exempt_Income = Incomes_Dict(
     individual_savings_account=>1.0,
@@ -57,7 +58,7 @@ const Exempt_Income = Incomes_Dict(
     personal_independence_payment_mobility => 1.0 )
 
 function make_all_taxable()::Incomes_Dict
-    eis = union(Set( keys( Exempt_Income )), Expenses )
+    eis = union(Set( keys( Exempt_Income )), Definitions.Expenses )
     all_t = Incomes_Dict()
     for i in instances(Incomes_Type)
         if ! (i ∈ eis )
@@ -69,7 +70,7 @@ end
 
 function make_non_savings()::Incomes_Dict
     excl = union(Set(keys(DIVIDENDS)), Set( keys(SAVINGS_INCOME)))
-    nsi = all_taxable()
+    nsi = make_all_taxable()
     for i in excl
         delete!( nsi, i )
     end

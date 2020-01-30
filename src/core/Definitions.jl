@@ -817,7 +817,7 @@ export wages,
    bank_interest = 8
    stocks_shares = 9
    individual_savings_account = 10
-   dividends = 11
+   dividends = 11 ### FIXME NOT USED NEEDS DELETED. Use stocks_shares instead
    property = 12
    royalties = 13
    bonds_and_gilts = 14
@@ -904,6 +904,7 @@ const Expenses = Incomes_Set([
    care_insurance,
    trade_unions_etc,
    friendly_societies,
+   self_employment_expenses,
    work_expenses,
    avcs,
    other_deductions,
