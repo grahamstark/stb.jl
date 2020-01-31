@@ -1,6 +1,6 @@
 # Main budget constraint output
 
-this is the JSON used to create the chart on [this page](http://oustb.mazegreenyachts.com/bc-intro.html) and the following ones.
+this is the JSON used to create the chart on [this page](http://oustb.virtual-worlds.scot/bc-intro.html) and the following ones.
 
 The graph shows the relationship between how much you earn and how much you take home after taxes paid and benefits received.
 

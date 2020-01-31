@@ -446,7 +446,7 @@ function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
 
         # alimony_and_child_support_paid  = safe_inc( alimony_and_child_support_paid , a_job[j,udeduc0X])
         # care_insurance  = safe_inc( care_insurance , a_job[j,:othded0X]
-
+        # note these are *Usual* deductions
         pension_contributions = safe_inc(pension_contributions, a_job[j, :udeduc1])
         avcs = safe_inc(avcs, a_job[j, :udeduc2])
         trade_unions_etc = safe_inc(trade_unions_etc, a_job[j, :udeduc3])
@@ -631,6 +631,7 @@ function map_child_care( year :: Integer, care ) :: Integer
     care
 end
 
+## FIXME add Oddjobs here for non-hbai case
 
 function create_adults(
     year::Integer,
@@ -653,7 +654,7 @@ function create_adults(
     benefits::DataFrame,
     endowmnt::DataFrame,
     job::DataFrame,
-    hbai_adults::DataFrame
+    hbai_adults::DataFrame,
     override_se_and_employment_with_hbai :: Bool = true
 )::DataFrame
 
@@ -765,11 +766,15 @@ function create_adults(
             model_adult.income_odd_jobs /= 4.0 # since it's monthly
 
             ## TODO babysitting,chartities (secure version only??)
-            ## TODO alimony and childcare PAID ??
-            ## TODO allowances from absent spouses
+            ## TODO alimony and childcare PAID ?? // 2015/6 only
+            ## TODO allowances from absent spouses apamt apdamt
 
             ## TODO income_education_allowances
             ## TODO income_foster_care_payments
+
+            model_adult.income_foster_care_payments = coalesce(frs_person.allpd3,0.0)
+
+
             ## TODO income_student_grants
             ## TODO income_student_loans
             ## TODO income_income_tax

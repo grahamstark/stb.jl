@@ -2,7 +2,7 @@
 
 The main results give lots of summary output from a microsimulation tax-benefit model of Scotland. The outout is reasonably final, with one exception (tables of gainers and losers, which will be expanded when I have time). Not all of the output is to be displayed - a lot of it comes from standard library routines, but I'm thinking of including a fuller output option, maybe by dumping everything in a `csv` file students could put in a spreasheet.
 
-It's used to produce the output on [this page](http://oustb.mazegreenyachts.com/tax-benefit-tour.html), and the ones that follow.
+It's used to produce the output on [this page](http://oustb.virtual-worlds.scot/tax-benefit-tour.html), and the ones that follow.
 
 All the code used is on [GITHub](https://github.com/grahamstark/stb.jl/).
 
