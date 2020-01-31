@@ -62,7 +62,7 @@ function make_all_taxable()::Incomes_Dict
     all_t = Incomes_Dict()
     for i in instances(Incomes_Type)
         if ! (i ∈ eis )
-         all_t[i]=1.0
+            all_t[i]=1.0
         end
     end
     all_t

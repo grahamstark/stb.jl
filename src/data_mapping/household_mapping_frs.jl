@@ -1,6 +1,7 @@
 #
 using DataFrames
 using CSV
+using CSVFiles # use this over CSV because of this bug: https://github.com/JuliaData/CSV.jl/issues/568
 using Utils
 using Definitions
 
@@ -1106,5 +1107,11 @@ for year in 2015:2017
 
 end
 
-CSV.write("$(MODEL_DATA_DIR)model_households.tab", model_households, delim = "\t")
-CSV.write("$(MODEL_DATA_DIR)model_people.tab", model_people, delim = "\t")
+#  see this bug CSV.write("$(MODEL_DATA_DIR)model_households.tab", model_households, delim = "\t")
+# CSV.write("$(MODEL_DATA_DIR)model_households.tab", model_households, delim = "\t")
+# CSV.write("$(MODEL_DATA_DIR)model_people.tab", model_people, delim = "\t")
+#
+CSVFiles.save( File( format"CSV", "$(MODEL_DATA_DIR)model_households.tab" ),
+    model_households, delim = "\t",  nastring="")
+CSVFiles.save( File( format"CSV", "$(MODEL_DATA_DIR)model_people.tab" ),
+    model_people, delim = "\t",  nastring="")
