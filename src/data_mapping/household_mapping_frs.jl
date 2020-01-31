@@ -1,4 +1,3 @@
-isaisa#
 #
 using DataFrames
 using CSV
@@ -789,15 +788,15 @@ function create_adults(
             model_adult.registered_partially_sighted = (frs_person.spcreg2 == 1 ? 1 : 0)
             model_adult.registered_deaf = (frs_person.spcreg3 == 1 ? 1 : 0)
 
-            model_adult.dindividual_savings_accountbility_vision = (frs_person.disd01 == 1 ? 1 : 0) # cdisd kids ..
-            model_adult.dindividual_savings_accountbility_hearing = (frs_person.disd02 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_mobility = (frs_person.disd03 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_dexterity = (frs_person.disd04 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_learning = (frs_person.disd05 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_memory = (frs_person.disd06 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_mental_health = (frs_person.disd07 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_stamina = (frs_person.disd08 == 1 ? 1 : 0)
-            model_adult.dindividual_savings_accountbility_socially = (frs_person.disd09 == 1 ? 1 : 0)
+            model_adult.disability_vision = (frs_person.disd01 == 1 ? 1 : 0) # cdisd kids ..
+            model_adult.disability_hearing = (frs_person.disd02 == 1 ? 1 : 0)
+            model_adult.disability_mobility = (frs_person.disd03 == 1 ? 1 : 0)
+            model_adult.disability_dexterity = (frs_person.disd04 == 1 ? 1 : 0)
+            model_adult.disability_learning = (frs_person.disd05 == 1 ? 1 : 0)
+            model_adult.disability_memory = (frs_person.disd06 == 1 ? 1 : 0)
+            model_adult.disability_mental_health = (frs_person.disd07 == 1 ? 1 : 0)
+            model_adult.disability_stamina = (frs_person.disd08 == 1 ? 1 : 0)
+            model_adult.disability_socially = (frs_person.disd09 == 1 ? 1 : 0)
             # dindividual_savings_accountbility_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
             model_adult.health_status = safe_assign(frs_person.heathad)
             model_adult.hours_of_care_received = safe_inc(0.0, frs_person.hourcare)
