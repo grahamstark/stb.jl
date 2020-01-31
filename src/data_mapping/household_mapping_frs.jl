@@ -655,7 +655,7 @@ function create_adults(
     endowmnt::DataFrame,
     job::DataFrame,
     hbai_adults::DataFrame,
-    override_se_and_employment_with_hbai :: Bool = true
+    override_se_and_wage_with_hbai :: Bool = true
 )::DataFrame
 
     num_adults = size(frs_adults)[1]
