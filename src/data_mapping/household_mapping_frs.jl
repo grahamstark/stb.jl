@@ -1,4 +1,4 @@
-#
+isaisa#
 #
 using DataFrames
 using CSV
@@ -94,11 +94,11 @@ function initialise_person(n::Integer)::DataFrame
         ),
         income_armed_forces_compensation_scheme = Vector{Union{Real,Missing}}(missing, n),
         income_war_widows_or_widowers_pension = Vector{Union{Real,Missing}}(missing, n),
-        income_severe_dindividual_savings_accountbility_allowance = Vector{Union{Real,Missing}}(missing, n),
+        income_severe_disability_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_attendence_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_carers_allowance = Vector{Union{Real,Missing}}(missing, n),
         income_jobseekers_allowance = Vector{Union{Real,Missing}}(missing, n),
-        income_industrial_injury_dindividual_savings_accountblement_benefit = Vector{Union{Real,Missing}}(
+        income_industrial_injury_disablement_benefit = Vector{Union{Real,Missing}}(
             missing,
             n
         ),
@@ -185,7 +185,7 @@ function initialise_person(n::Integer)::DataFrame
         asset_national_savings_deposit_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_first_option_bonds = Vector{Union{Real,Missing}}(missing, n),
         asset_yearly_plan = Vector{Union{Real,Missing}}(missing, n),
-        asset_individual_savings_account = Vector{Union{Real,Missing}}(missing, n),
+        asset_isa = Vector{Union{Real,Missing}}(missing, n),
         asset_fixd_rate_svngs_bonds_or_grntd_incm_bonds_or_grntd_growth_bonds = Vector{Union{
             Real,
             Missing
@@ -201,16 +201,16 @@ function initialise_person(n::Integer)::DataFrame
         registered_blind = Vector{Union{Integer,Missing}}(missing, n),
         registered_partially_sighted = Vector{Union{Integer,Missing}}(missing, n),
         registered_deaf = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_vision = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_hearing = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_mobility = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_dexterity = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_learning = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_memory = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_mental_health = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_stamina = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_socially = Vector{Union{Integer,Missing}}(missing, n),
-        dindividual_savings_accountbility_other_difficulty = Vector{Union{Integer,Missing}}(missing, n),
+        disability_vision = Vector{Union{Integer,Missing}}(missing, n),
+        disability_hearing = Vector{Union{Integer,Missing}}(missing, n),
+        disability_mobility = Vector{Union{Integer,Missing}}(missing, n),
+        disability_dexterity = Vector{Union{Integer,Missing}}(missing, n),
+        disability_learning = Vector{Union{Integer,Missing}}(missing, n),
+        disability_memory = Vector{Union{Integer,Missing}}(missing, n),
+        disability_mental_health = Vector{Union{Integer,Missing}}(missing, n),
+        disability_stamina = Vector{Union{Integer,Missing}}(missing, n),
+        disability_socially = Vector{Union{Integer,Missing}}(missing, n),
+        disability_other_difficulty = Vector{Union{Integer,Missing}}(missing, n),
         health_status = Vector{Union{Integer,Missing}}(missing, n),
         is_informal_carer = Vector{Union{Integer,Missing}}(missing, n),
         receives_informal_care_from_non_householder = Vector{Union{Integer,Missing}}(
@@ -850,15 +850,15 @@ function create_children(
         model_child.registered_partially_sighted = (frs_person.spcreg2 == 1 ? 1 : 0)
         model_child.registered_deaf = (frs_person.spcreg3 == 1 ? 1 : 0)
 
-        model_child.dindividual_savings_accountbility_vision = (frs_person.cdisd01 == 1 ? 1 : 0) # cdisd kids ..
-        model_child.dindividual_savings_accountbility_hearing = (frs_person.cdisd02 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_mobility = (frs_person.cdisd03 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_dexterity = (frs_person.cdisd04 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_learning = (frs_person.cdisd05 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_memory = (frs_person.cdisd06 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_mental_health = (frs_person.cdisd07 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_stamina = (frs_person.cdisd08 == 1 ? 1 : 0)
-        model_child.dindividual_savings_accountbility_socially = (frs_person.cdisd09 == 1 ? 1 : 0)
+        model_child.disability_vision = (frs_person.cdisd01 == 1 ? 1 : 0) # cdisd kids ..
+        model_child.disability_hearing = (frs_person.cdisd02 == 1 ? 1 : 0)
+        model_child.disability_mobility = (frs_person.cdisd03 == 1 ? 1 : 0)
+        model_child.disability_dexterity = (frs_person.cdisd04 == 1 ? 1 : 0)
+        model_child.disability_learning = (frs_person.cdisd05 == 1 ? 1 : 0)
+        model_child.disability_memory = (frs_person.cdisd06 == 1 ? 1 : 0)
+        model_child.disability_mental_health = (frs_person.cdisd07 == 1 ? 1 : 0)
+        model_child.disability_stamina = (frs_person.cdisd08 == 1 ? 1 : 0)
+        model_child.disability_socially = (frs_person.cdisd09 == 1 ? 1 : 0)
         # dindividual_savings_accountbility_other_difficulty = Vector{Union{Real,Missing}}(missing, n),
         model_child.health_status = safe_assign(frs_person.heathch)
         model_child.income_wages = safe_inc( 0.0, frs_person.chearns )
