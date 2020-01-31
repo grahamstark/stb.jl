@@ -1022,8 +1022,8 @@ end
 hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
 # hbai_household = loadtoframe("$(HBAI_DIR)/tab/h1718_all.tab")
 
-prices = loadPrices("/mnt/data/prices/mm23/mm23_edited.csv")
-gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
+# prices = loadPrices("/mnt/data/prices/mm23/mm23_edited.csv")
+# gdpdef = loadGDPDeflator("/mnt/data/prices/gdpdef.csv")
 
 model_households = initialise_household(0)
 model_people = initialise_person(0)
