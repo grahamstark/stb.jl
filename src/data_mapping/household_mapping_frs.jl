@@ -48,7 +48,7 @@ function initialise_person(n::Integer)::DataFrame
         income_self_employment_income = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_expenses = Vector{Union{Real,Missing}}(missing, n),
         income_self_employment_losses = Vector{Union{Real,Missing}}(missing, n),
-        income_odd_jobs = Vector{Union{Real,Missing}}(missing, n),
+        income_odd_jobs = Vector{Union{Real,Missing}}(missing, n), # FIXME UNUSED
         income_private_pensions = Vector{Union{Real,Missing}}(missing, n),
         income_national_savings = Vector{Union{Real,Missing}}(missing, n),
         income_bank_interest = Vector{Union{Real,Missing}}(missing, n),
@@ -693,8 +693,6 @@ function create_adults(
             is_hbai_spouse = ( model_hbai.personsp == model_hbai.person )
             is_hbai_head = ( model_hbai.personhd == model_hbai.person )
             @assert is_hbai_head || is_hbai_spouse  "neither head nor spouse"
-            hbai_wages = coalesce( is_hbai_head ? model_hbai.esgjobhd : model_hbai.esgjobsp, 0.0 )
-            hbai_se = coalesce( is_hbai_head ? model_hbai.esgrsehd : model_hbai.esgrsehd, 0.0 )
 
             ## adult only
             a_job = job[((job.sernum.==frs_person.sernum).&(job.benunit.==frs_person.benunit).&(job.person.==frs_person.person)), :]
@@ -723,9 +721,13 @@ function create_adults(
 
             process_job_rec!(model_adult, a_job)
 
-            if( override_se_and_employment_with_hbai )
-
-
+            if( override_se_and_wage_with_hbai )
+                hbai_wages = coalesce( is_hbai_head ? model_hbai.esgjobhd : model_hbai.esgjobsp, 0.0 )
+                hbai_se = coalesce( is_hbai_head ? model_hbai.esgrsehd : model_hbai.esgrsesp, 0.0 )
+                model_adult.income_wages = hbai_wages
+                model_adult.income_self_employment_income = hbai_se
+                model_adult.income_self_employment_losses = 0.0
+                model_adult.income_self_employment_expenses = 0.0
             end
 
 

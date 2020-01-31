@@ -35,7 +35,7 @@ function initialise(
     nyears = 2018 - start_year
     hh_dataset[!,:weight] ./= nyears
     # people_dataset = CSV.File("$(MODEL_DATA_DIR)/$(people_name).tab", delim='\t', datarow=start_pers_row) |> DataFrame
-    people_dataset =CSVFiles.load( File(format"CSV", "$(MODEL_DATA_DIR)/$(people_name).tab" ),delim='\t' ) |> DataFrame
+    people_dataset = CSVFiles.load( File(format"CSV", "$(MODEL_DATA_DIR)/$(people_name).tab" ),delim='\t' ) |> DataFrame
     npeople = size( people_dataset)[1]
     nhhlds = size( hh_dataset )[1]
     MODEL_HOUSEHOLDS = Vector{Union{Missing,Household}}(missing,nhhlds)

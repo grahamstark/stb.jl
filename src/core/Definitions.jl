@@ -732,7 +732,7 @@ export wages,
        bank_interest,
        stocks_shares,
        individual_savings_account,
-       dividends,
+       # dividends,
        property,
        royalties,
        bonds_and_gilts,
@@ -817,7 +817,7 @@ export wages,
    bank_interest = 8
    stocks_shares = 9
    individual_savings_account = 10
-   dividends = 11 ### FIXME NOT USED NEEDS DELETED. Use stocks_shares instead
+   # dividends = 11 ### FIXME NOT USED NEEDS DELETED. Use stocks_shares instead
    property = 12
    royalties = 13
    bonds_and_gilts = 14
