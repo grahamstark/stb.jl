@@ -1,7 +1,7 @@
 module STBParameters
 
    import TBComponents: RateBands, WEEKS_PER_YEAR
-   import Parameters: with_kw # FIXME maybe use Base.kwdef; see: https://github.com/JuliaLang/julia/pull/29316
+   import Parameters: @with_kw # FIXME maybe use Base.kwdef; see: https://github.com/JuliaLang/julia/pull/29316
 
    import Utils
    import JSON

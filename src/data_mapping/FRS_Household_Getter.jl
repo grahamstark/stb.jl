@@ -1,7 +1,7 @@
 module FRS_Household_Getter
 
-using CSVFiles
-using DataFrames
+import CSVFiles
+import DataFrames: DataFrame
 using Definitions
 
 include( "hhld_from_frame.jl" )

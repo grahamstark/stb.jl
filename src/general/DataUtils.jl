@@ -1,9 +1,53 @@
-import DataFrames: DataFrame
-import Statistics: mean, median, std, quantile
-
 module DataUtils
 
-export summarise_over_positive
+import DataFrames: DataFrame
+import Statistics: mean, median, std, quantile
+import Parameters: @with_kw
+using Definitions
+
+export summarise_over_positive, add_to!
+export initialise, MinMaxes, show
+
+function initialise( n :: Real = 0.0 )::Incomes_Dict
+    dict = Incomes_Dict()
+    for i in instances( Incomes_Type )
+        dict[i] = n
+    end
+    dict
+end
+
+@with_kw struct MinMaxes
+    max ::Incomes_Dict=initialise( -99999999999999999.9)
+    min ::Incomes_Dict=initialise( 99999999999999.999 )
+    sum ::Incomes_Dict=initialise( 0.0 )
+    n :: Integer = 0
+end
+
+function add_to!( mms :: MinMaxes, addn :: Incomes_Dict )
+    kys = keys( addn )
+    mms.n += 1
+    for k in kys
+        mms.max[k] = max( mms.max[k], addn[k] )
+        mms.min[k] = min( mms.min[k], addn[k] )
+        mms.sum[k] += addn[k]
+    end
+end
+
+import Base.show
+
+function show( io::IO, mms :: MinMaxes )
+    s = ""
+    for i in instances( Incomes_Type )
+        maxx = mms.max[i]
+        minx = mms.min[i]
+        mean = mms.sum[i] / mms.n
+        show( io, "$i = (max=$(maxx), min=$(minx), mean=$mean)\n");
+    end
+end
+
+function show( mms :: MinMaxes )
+    show( stdout, mms )
+end
 
 """
 Means, etc. over just the positive and non-missing elements of a df column

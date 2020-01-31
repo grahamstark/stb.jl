@@ -1,8 +1,9 @@
-using Test
-using Model_Household
-using FRS_Household_Getter
-using Example_Household_Getter
-
+import Test: @testset, @test
+import Model_Household: Household
+import FRS_Household_Getter
+import Example_Household_Getter
+import DataUtils: MinMaxes, add_to!, print
+using Definitions
 
 
 @testset "Example Households" begin
@@ -28,6 +29,7 @@ end
     npers_from_bus = 0
     num_wrong_age = 0
     num_bus = 0
+    mxm :: MinMaxes = MinMaxes()
     @time for hno in 1:nhhs
         hh = FRS_Household_Getter.get_household( hno )
         bus = default_bu_allocation( hh )
@@ -49,6 +51,7 @@ end
                         println( "pno=$(pers.pno) lastpno=$lastpno pers.age=$(pers.age) ; lastage = $lastage")
                         num_wrong_age += 1
                     end
+                    add_to!(mxm, pers.incomes )
                 end
                 npers_from_bus += 1
             end
@@ -59,6 +62,7 @@ end
             println()
         end
     end
+    print( mxm )
     println( "num HHss = $nhhs")
     println( "num BUs = $num_bus")
     println( "num people = $npeople")

@@ -31,7 +31,7 @@ function make_uprate_types() :: Dict
             national_savings,
             bank_interest,
             individual_savings_account,
-            dividends,
+            # dividends,
             property,
             royalties,
             bonds_and_gilts,
