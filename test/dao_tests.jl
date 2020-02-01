@@ -29,7 +29,7 @@ end
     npers_from_bus = 0
     num_wrong_age = 0
     num_bus = 0
-    mxm :: MinMaxes = MinMaxes()
+    mxm = DataUtils.MinMaxes()
     @time for hno in 1:nhhs
         hh = FRS_Household_Getter.get_household( hno )
         bus = default_bu_allocation( hh )
@@ -51,7 +51,7 @@ end
                         println( "pno=$(pers.pno) lastpno=$lastpno pers.age=$(pers.age) ; lastage = $lastage")
                         num_wrong_age += 1
                     end
-                    add_to!(mxm, pers.incomes )
+                    DataUtils.add_to!(mxm, pers.income )
                 end
                 npers_from_bus += 1
             end

@@ -16,11 +16,12 @@ function initialise( n :: Real = 0.0 )::Incomes_Dict
     dict
 end
 
-@with_kw struct MinMaxes
+@with_kw mutable struct MinMaxes
     max ::Incomes_Dict=initialise( -99999999999999999.9)
     min ::Incomes_Dict=initialise( 99999999999999.999 )
     sum ::Incomes_Dict=initialise( 0.0 )
     n :: Integer = 0
+    poscounts ::Incomes_Dict = Incomes_Dict=initialise( 0.0 )
 end
 
 function add_to!( mms :: MinMaxes, addn :: Incomes_Dict )
@@ -30,6 +31,9 @@ function add_to!( mms :: MinMaxes, addn :: Incomes_Dict )
         mms.max[k] = max( mms.max[k], addn[k] )
         mms.min[k] = min( mms.min[k], addn[k] )
         mms.sum[k] += addn[k]
+        if addn[k]>0
+            mms.poscounts[k]+= 1.0
+        end
     end
 end
 
@@ -37,11 +41,16 @@ import Base.show
 
 function show( io::IO, mms :: MinMaxes )
     s = ""
-    for i in instances( Incomes_Type )
-        maxx = mms.max[i]
-        minx = mms.min[i]
-        mean = mms.sum[i] / mms.n
-        show( io, "$i = (max=$(maxx), min=$(minx), mean=$mean)\n");
+    for k in instances( Incomes_Type )
+        maxx = mms.max[k]
+        minx = mms.min[k]
+        pc = mms.poscounts[k]
+        if pc>0
+            mean = mms.sum[k] / pc
+        else
+            mean = 0.0
+        end
+        show( io, "$k = (max=$(maxx), min=$(minx), mean=$mean poscounts=$pc) \n");
     end
 end
 
