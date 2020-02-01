@@ -736,7 +736,8 @@ function create_adults(
             model_adult.income_private_pensions = penstuff.pension
             model_adult.income_income_tax += penstuff.tax
 
-            model_adult.income_pension_contributions = process_penprovs(a_penprov)
+            # FIXME CHECK THIS - adding PENCONT and also from work pension contributions - double counting?
+            model_adult.income_pension_contributions += process_penprovs(a_penprov)
 
             map_investment_income!(model_adult, an_account)
             model_adult.income_property = safe_inc(0.0, frs_person.royyr1)

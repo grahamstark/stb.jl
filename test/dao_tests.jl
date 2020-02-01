@@ -40,6 +40,7 @@ end
             np = size( bus[buno])[1]
             for i in 1:np
                 pers = bus[buno][i]
+                DataUtils.add_to!(mxm, pers.income )
                 # sorted right way
                 if i > 1
                     lastpid = bus[buno][i-1].pid
@@ -51,7 +52,6 @@ end
                         println( "pno=$(pers.pno) lastpno=$lastpno pers.age=$(pers.age) ; lastage = $lastage")
                         num_wrong_age += 1
                     end
-                    DataUtils.add_to!(mxm, pers.income )
                 end
                 npers_from_bus += 1
             end

@@ -50,7 +50,8 @@ function show( io::IO, mms :: MinMaxes )
         else
             mean = 0.0
         end
-        show( io, "$k = (max=$(maxx), min=$(minx), mean=$mean poscounts=$pc) \n");
+        #show( io, "$k = (max=$(maxx), min=$(minx), mean=$mean poscounts=$pc) \n");
+        println( io, "$k = (max=$(maxx), min=$(minx), mean=$mean poscounts=$pc)");
     end
 end
 
