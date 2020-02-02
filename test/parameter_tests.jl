@@ -2,10 +2,13 @@ using Test
 using STBParameters
 using JSON
 using Utils
+import TBComponents: WEEKS_PER_YEAR
 
 @testset "IT Parameter Tests" begin
     itsysdir :: IncomeTaxSys = get_default_it_system( year=2019, scotland=true)
-
+    itsyseng :: IncomeTaxSys = get_default_it_system( year=2019, scotland=false)
+    @test itsyseng.non_savings_rates[1]≈0.20
+    @test itsyseng.non_savings_bands[2]≈150_000/WEEKS_PER_YEAR
     it = IncomeTaxSys()
     itweekly = deepcopy(it)
     @test itweekly.savings_rates == it.savings_rates

@@ -49,9 +49,7 @@ module STBParameters
    function weeklyise!( it :: IncomeTaxSys )
 
       it.non_savings_rates ./= 100.0
-      it.non_savings_bands ./= 100.0
       it.savings_rates ./= 100.0
-      it.savings_bands ./= 100.0
       it.dividend_rates ./= 100.0
       it.non_savings_bands ./= WEEKS_PER_YEAR
       it.savings_bands ./= WEEKS_PER_YEAR
@@ -69,14 +67,17 @@ module STBParameters
       year     :: Integer=2019,
       scotland :: Bool = true )::Union{Nothing,IncomeTaxSys}
       it = nothing
-      if scotland
-         if year == 2019
-            it = IncomeTaxSys()
+      if year == 2019
+         it = IncomeTaxSys()
+         if ! scotland
+            it.non_savings_rates = [20.0,40.0,45.0]
+            it.non_savings_bands = [37_500, 150_000.0]
          end
          weeklyise!( it )
       end
       it
    end
+
    """
    Map from
    """
