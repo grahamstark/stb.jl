@@ -1,5 +1,5 @@
 import Test: @testset, @test
-import Model_Household: Household
+import Model_Household: Household,default_bu_allocation
 import FRS_Household_Getter
 import Example_Household_Getter
 import DataUtils: MinMaxes, add_to!, print
@@ -29,7 +29,9 @@ end
     npers_from_bus = 0
     num_wrong_age = 0
     num_bus = 0
-    mxm = DataUtils.MinMaxes()
+    incomes_sum = MinMaxes{Incomes_Type}()
+    assets_sum = MinMaxes{Asset_Type}()
+
     @time for hno in 1:nhhs
         hh = FRS_Household_Getter.get_household( hno )
         bus = default_bu_allocation( hh )
@@ -40,7 +42,8 @@ end
             np = size( bus[buno])[1]
             for i in 1:np
                 pers = bus[buno][i]
-                DataUtils.add_to!(mxm, pers.income )
+                add_to!(incomes_sum, pers.income )
+                add_to!(assets_sum, pers.assets )
                 # sorted right way
                 if i > 1
                     lastpid = bus[buno][i-1].pid
@@ -62,7 +65,10 @@ end
             println()
         end
     end
-    print( mxm )
+    println( "incomes:")
+    print( incomes_sum )
+    println( "assets:")
+    print( assets_sum )
     println( "num HHss = $nhhs")
     println( "num BUs = $num_bus")
     println( "num people = $npeople")

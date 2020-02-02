@@ -4,7 +4,7 @@ using CSV
 using CSVFiles # use this over CSV because of this bug: https://github.com/JuliaData/CSV.jl/issues/568
 using Utils
 using Definitions
-
+import TBComponents: RateBands, WEEKS_PER_YEAR
 
 global MONTHS = Dict(
     "JAN" => 1,
@@ -312,6 +312,45 @@ function process_pensions(a_pens::DataFrame)::NamedTuple
     return (pension = private_pension, tax = tax)
 end
 
+const NS_RATE = 0.01/WEEKS_PER_YEAR
+
+#     | 2016 | accounts | nsamt         | 1     | Jan-50                                                       | Jan_50                                                             |    0
+#     | 2016 | accounts | nsamt         | 2     | 51 - 100                                                     | v_51_100                                                           |    0
+#     | 2016 | accounts | nsamt         | 3     | 101 - 250                                                    | v_101_250                                                          |    0
+#     | 2016 | accounts | nsamt         | 4     | 251 - 500                                                    | v_251_500                                                          |    0
+#     | 2016 | accounts | nsamt         | 5     | 501 - 1000                                                   | v_501_1000                                                         |    0
+#     | 2016 | accounts | nsamt         | 6     | 1001 - 2000                                                  | v_1001_2000                                                        |    0
+#     | 2016 | accounts | nsamt         | 7     | 2001 - 3000                                                  | v_2001_3000                                                        |    0
+#     | 2016 | accounts | nsamt         | 8     | 3001 - 5000                                                  | v_3001_5000                                                        |    0
+#     | 2016 | accounts | nsamt         | 9     | 5001 - 10,000                                                | v_5001_10_000                                                      |    0
+#     | 2016 | accounts | nsamt         | 10    | 10,001 - 20,000                                              | v_10_001_20_000                                                    |    0
+#     | 2016 | accounts | nsamt         | 11    | 20,001 - 30,000                                              | v_20_001_30_000                                                    |    0
+#     | 2016 | accounts | nsamt         | 12    | 30,001 or over                                               | v_30_001_or_over                                                   |    0
+const NSAMT_ENUM_MIDPOINTS = [
+    25.0,
+    75.0,
+    175.0,
+    375.0,
+    750.0,
+    1_500.0,
+    2_500.0,
+    4_000.0,
+    7_500.0,
+    15_000.0,
+    25_000.0,
+    40_000.0
+]
+
+"""
+infer amounts from holdings (nsamt) assuming 1% pa interest rate
+see: https://www.nsandi.com/historical-interest-rates for rates
+why FRS records like this I have no idea
+"""
+function infer_national_savings_income( nsamt :: Integer )::Real
+    @assert ! (nsamt in [1:12]) "nsr out of range for enum: $nsamt"
+    NSAMT_ENUM_MIDPOINTS[ nsamt ]*NS_RATE
+end
+
 function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
     naccts = size(accounts)[1]
 
@@ -332,27 +371,40 @@ function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
             v /= 0.8
         end
         # FIXME building society - check with other models
+        # FIXME go over assignment to broad types against income
+        # tax book
         atype = Account_Type(accounts[i, :account])
-        if atype in [
+        nsamt = accounts[i, :nsamt]
+        #
+        # for national savings, amount held is recorded
+        # for the rest acctoint = interest pw from account
+        if nsamt > 0
+            model_adult.income_national_savings +=
+                infer_national_savings_income( nsamt ) # FIXME appears to be all zero!
+        elseif atype in [
             Current_account,
             Basic_Account,
             NSB_Investment_account,
             NSB_Direct_Saver
+
         ]
             model_adult.income_bank_interest += v
         elseif atype in [
             National_Savings_capital_bonds,
             Index_Linked_National_Savings_Certificates,
             Fixed_Interest_National_Savings_Certificates,
-            Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds,
-            First_Option_bonds,
             National_Savings_income_bonds,
-            National_Savings_deposit_bonds,
-            Pensioners_Guaranteed_Bonds
+            National_Savings_deposit_bonds
         ]
-            model_adult.income_national_savings += v# FIXME appears to be all zero!
-        elseif atype in [Stocks_Shares_Bonds_etc, Member_of_Share_Club]
-            model_adult.income_stocks_shares += v
+            ## this should never happen given, but does..
+            # the weird way the FRS records National Savings as stocks
+            # nsamt should always be set for these records & handled above.
+            # @assert false
+            println( "atype = $atype but nsamt is $nsamt" )
+        elseif atype in [
+            Stocks_Shares_Bonds_etc,
+            Member_of_Share_Club]
+            model_adult.income_stocks_shares = safe_inc( model_adult.income_stocks_shares, v )
         elseif atype in [ISA]
             model_adult.income_individual_savings_account += v
         elseif atype in [
@@ -365,10 +417,15 @@ function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
             Yearly_Plan,
             Premium_bonds,
             Company_Share_Option_Plans,
-            Post_Office_Card_Account
+            Post_Office_Card_Account,
+            Pensioners_Guaranteed_Bonds
         ]
             model_adult.income_other_investment_income += v
-        elseif atype in [Guaranteed_Equity_Bond, Government_Gilt_Edged_Stock]
+        elseif atype in [
+            Guaranteed_Equity_Bond,
+            Fixed_Rate_Savings_or_Guaranteed_Income_or_Guaranteed_Growth_Bonds,
+            First_Option_bonds,
+            Government_Gilt_Edged_Stock]
             model_adult.income_bonds_and_gilts += v
         else
             @assert false "failed to map $atype"

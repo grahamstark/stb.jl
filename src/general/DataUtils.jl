@@ -1,5 +1,7 @@
 module DataUtils
-
+#
+# FIXME messing with Generics and Show() in particular
+#
 import DataFrames: DataFrame
 import Statistics: mean, median, std, quantile
 import Parameters: @with_kw
@@ -8,23 +10,28 @@ using Definitions
 export summarise_over_positive, add_to!
 export initialise, MinMaxes, show
 
-function initialise( n :: Real = 0.0 )::Incomes_Dict
-    dict = Incomes_Dict()
-    for i in instances( Incomes_Type )
-        dict[i] = n
+"""
+FIXME passing a type like this can't be idiomatic ...
+d needs to be some type of enum (something which instances can work with)
+"""
+function initialise( x :: Real, d :: DataType )
+    dict = Dict{d,Real}()
+    for i in instances( d )
+        dict[i] = x
     end
     dict
 end
 
-@with_kw mutable struct MinMaxes
-    max ::Incomes_Dict=initialise( -99999999999999999.9)
-    min ::Incomes_Dict=initialise( 99999999999999.999 )
-    sum ::Incomes_Dict=initialise( 0.0 )
+@with_kw mutable struct MinMaxes{T}
+    ## FIXME I don't think passing T is idiomatic ..
+    max ::Dict{T,Real}=initialise( -99999999999999999.9, T )
+    min ::Dict{T,Real}=initialise( 99999999999999.999, T )
+    sum ::Dict{T,Real}=initialise( 0.0, T )
+    poscounts ::Dict{T,Real} = initialise( 0.0, T )
     n :: Integer = 0
-    poscounts ::Incomes_Dict = Incomes_Dict=initialise( 0.0 )
 end
 
-function add_to!( mms :: MinMaxes, addn :: Incomes_Dict )
+function add_to!( mms :: MinMaxes, addn :: Dict )
     kys = keys( addn )
     mms.n += 1
     for k in kys
@@ -39,9 +46,10 @@ end
 
 import Base.show
 
-function show( io::IO, mms :: MinMaxes )
+function show( io::IO, mms :: MinMaxes{T} ) where T
     s = ""
-    for k in instances( Incomes_Type )
+    ks = sort(collect(keys(mms.poscounts)))
+    for k in ks
         maxx = mms.max[k]
         minx = mms.min[k]
         pc = mms.poscounts[k]
@@ -55,7 +63,7 @@ function show( io::IO, mms :: MinMaxes )
     end
 end
 
-function show( mms :: MinMaxes )
+function show( mms :: MinMaxes{T} ) where T
     show( stdout, mms )
 end
 
