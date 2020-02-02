@@ -66,14 +66,14 @@ module STBParameters
 
    function get_default_it_system(
       ;
-      year     ::Integer=2019,
-      scotland :: Bool = true )::Union{nothing,IncomeTaxSys}
+      year     :: Integer=2019,
+      scotland :: Bool = true )::Union{Nothing,IncomeTaxSys}
       it = nothing
       if scotland
          if year == 2019
             it = IncomeTaxSys()
          end
-         weeklyise( it )
+         weeklyise!( it )
       end
       it
    end
