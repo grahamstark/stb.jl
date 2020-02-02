@@ -404,7 +404,7 @@ function map_investment_income!(model_adult::DataFrameRow, accounts::DataFrame)
         elseif atype in [
             Stocks_Shares_Bonds_etc,
             Member_of_Share_Club]
-            model_adult.income_stocks_shares = safe_inc( model_adult.income_stocks_shares, v )
+            model_adult.income_stocks_shares += v
         elseif atype in [ISA]
             model_adult.income_individual_savings_account += v
         elseif atype in [

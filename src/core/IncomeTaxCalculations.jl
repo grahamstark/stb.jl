@@ -5,10 +5,11 @@ import Dates: Date, now, TimeType, Year
 
 import Model_Household: Person
 import STBParameters: IncomeTaxSys
+import TBComponents: TaxResult, calctaxdue
 
 using Definitions
 
-export calc_income_tax, old_enough_for_mca
+export calc_income_tax, old_enough_for_mca, apply_allowance
 
 ## FIXME all these constants should ultimately be parameters
 const MCA_DATE = Date(1935,4,6) # fixme make this a parameter
@@ -20,7 +21,6 @@ const SAVINGS_INCOME = Incomes_Dict(
 )
 
 const DIVIDENDS = Incomes_Dict(
-    dividends => 1.0, # FIXME not used needs deleted
     stocks_shares => 1.0
 )
 const Exempt_Income = Incomes_Dict(
@@ -77,8 +77,10 @@ function make_non_savings()::Incomes_Dict
     nsi
 end
 
-const NON_SAVINGS = make_non_savings()
+const NON_SAVINGS_INCOME = make_non_savings()
 const ALL_TAXABLE = make_all_taxable()
+
+IT_Result = TaxResult{Real}
 
 """
 Very rough approximation to MCA age - ignores all months since we don't have that in a typical dataset
@@ -90,12 +92,47 @@ function old_enough_for_mca(
     (model_run_date - Year(age)) < MCA_DATE
 end
 
+function apply_allowance( allowance::Real, income::Real )::Tuple
+    r = max( 0.0, income - allowance )
+    allowance = max(0.0, allowance-income)
+    allowance,r
+end
+
 function calc_income_tax(
     pers   :: Person,
     sys    :: IncomeTaxSys,
     spouse :: Union{Person,Nothing} = nothing ) :: Real
 
-    0.0
+    total_income = ALL_TAXABLE*pers.incomes;
+    non_savings = NON_SAVINGS_INCOME*pers.income;
+    savings = SAVINGS_INCOME*pers.incomes;
+    dividends = DIVIDENDS_INCOME*pers.income;
+    allowance = sys.personal_allowance
+    # allowance reductions goes here
+
+    taxable_income = max(0.0, total_income-allowance)
+    non_savings_tax = 0.0
+    savings_tax = 0.0
+    dividends_tax = 0.0
+
+    if taxable_income > 0
+        allowance,non_savings_taxable = apply_allowance!( allowance, non_savings )
+        non_savings_tax = calctaxdue(
+            non_savings_taxable,
+            sys.non_savings_rates,
+            sys.non_savings_bands ).due
+        allowance,savings_taxable = apply_allowance!( allowance, savings )
+        savings_tax = calctaxdue(
+            savings_taxable,
+            sys.savings_rates,
+            sys.savings_bands ).due
+        allowance,dividends_taxable = apply_allowance!( allowance, dividends )
+        dividends_tax = calctaxdue(
+            dividends_taxable,
+            sys.dividends_rates,
+            sys.dividends_bands ).due
+    end
+    non_savings_tax+savings_tax+dividends_tax
 end
 
 

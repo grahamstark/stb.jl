@@ -4,7 +4,8 @@ import FRS_Household_Getter
 import Example_Household_Getter
 using Definitions
 import Dates: Date
-import IncomeTaxCalculations: old_enough_for_mca
+import IncomeTaxCalculations: old_enough_for_mca, apply_allowance
+import STBParameters: IncomeTaxSys, get_default_it_system
 
 const RUK_PERSON = 100000001001
 const SCOT_HEAD = 100000001002
@@ -13,6 +14,7 @@ const SCOT_SPOUSE = 100000001003
 @testset "Melville 2019 ch2 examples 1; basic calc Scotland vs RUK" begin
     # BASIC IT Calcaulation on
     @time names = Example_Household_Getter.initialise()
+    itsys :: IncomeTaxSys = get_default_it_system( year=2019, scotland=true) # scottish 2019/20 by default
     income = [11_730,14_493,30_000,33_150.0,58_600,231_400]
     taxes_ruk = [2_346.0,2898.60,6_000,6_630.0,15_940.00,89_130.0]
     taxes_scotland = [2_325.51,2_898.60,6_155.07, 7260.57,17_695.07,92_613.07]
@@ -20,13 +22,15 @@ const SCOT_SPOUSE = 100000001003
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     scottish = Example_Household_Getter.get_household( "mel_c2_scot" )
 
-    bus = default_bu_allocation( ruk )
+    bus = default_bu_allocation( scottish )
     nbus = size(bus)[1]
     println( bus )
     @test nbus == 1 == size( bus[1])[1]
     pers = bus[1][1]
     for i in size(income)[1]
         pers.income[wages] = income[i]
+        due = calc_income_tax( pers, itsys )
+        @test due ≈ taxes_scotland[i]
         println( ruk.people[RUK_PERSON].income )
     end
 end # example 1
@@ -99,27 +103,27 @@ end # example 6
 end # example 7
 
 #
-# dividends
+# stocks_shares
 #
 
-@testset "ch2 example 8; simple dividends" begin
+@testset "ch2 example 8; simple stocks_shares" begin
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
     pers.income[property] = 28_590.00
     pers.income[bank_interest] = 1_050.00
-    pers.income[dividends] = 204_100.0 # gross up at basic
+    pers.income[stocks_shares] = 204_100.0 # gross up at basic
     tax_due_ruk = 74_834.94 # inc already deducted at source
     tax_due_scotland = 74_834.94+140.97
 end # example 8
 
-@testset "ch2 example 9; simple dividends" begin
+@testset "ch2 example 9; simple stocks_shares" begin
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
     pers.income[private_pensions] = 17_750.00
     pers.income[bank_interest] = 195.00
-    pers.income[dividends] = 1_600.0 # gross up at basic
+    pers.income[stocks_shares] = 1_600.0 # gross up at basic
     tax_due_ruk = 1_050.00 # inc already deducted at source
     tax_due_scotland = 1_050.00-20.49
 end # example 9
@@ -183,4 +187,17 @@ end
     @test old_enough_for_mca( 85, d )
     @test ! old_enough_for_mca( 84, d )
     @test old_enough_for_mca( 86, d )
+end
+
+@testset "Apply Allowance" begin
+    allowance = 10_000
+    allowance,t1 = apply_allowance( allowance, 5_000 )
+    @test t1 == 0
+    @test allowance == 5_000
+    allowance,t2 = apply_allowance( allowance, 4_000 )
+    @test t2 == 0
+    @test allowance == 1_000
+    allowance,t3 = apply_allowance( allowance, 4_000 )
+    @test t3 == 3_000
+    @test allowance == 0
 end

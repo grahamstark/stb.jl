@@ -9,14 +9,14 @@ module STBParameters
    using Definitions
 
    export IncomeTaxSys, NationalInsuranceSys, TaxBenefitSystem
-   export weeklyise!, annualise!, fromJSON
+   export weeklyise!, annualise!, fromJSON, get_default_it_system
 
    ## TODO Use Unitful to have currency weekly monthly annual counts as annotations
    # using Unitful
 
    @with_kw mutable struct IncomeTaxSys
-      earnings_rates :: RateBands = [19.0,20.0,21.0,41.0,46.0]
-      earnings_bands :: RateBands = [2_049.0, 12_444.0, 30_930.0, 150_000.0]
+      non_savings_rates :: RateBands = [19.0,20.0,21.0,41.0,46.0]
+      non_savings_bands :: RateBands = [2_049.0, 12_444.0, 30_930.0, 150_000.0]
       savings_rates  :: RateBands = [0.0, 20.0, 40.0, 45.0]
       savings_bands  :: RateBands = [5_000.0, 37_500.0, 150_000.0]
       dividend_rates :: RateBands = [0.0, 7.5,32.5,38.1]
@@ -30,12 +30,12 @@ module STBParameters
    end
 
    function annualise!( it :: IncomeTaxSys )
-      it.earnings_rates .*= 100.0
-      it.earnings_bands .*= 100.0
+      it.non_savings_rates .*= 100.0
+      it.non_savings_bands .*= 100.0
       it.savings_rates .*= 100.0
       it.savings_bands .*= 100.0
       it.dividend_rates .*= 100.0
-      it.earnings_bands .*= WEEKS_PER_YEAR
+      it.non_savings_bands .*= WEEKS_PER_YEAR
       it.savings_bands .*= WEEKS_PER_YEAR
       it.dividend_bands .*= WEEKS_PER_YEAR
       it.personal_allowance *= WEEKS_PER_YEAR
@@ -48,12 +48,12 @@ module STBParameters
 
    function weeklyise!( it :: IncomeTaxSys )
 
-      it.earnings_rates ./= 100.0
-      it.earnings_bands ./= 100.0
+      it.non_savings_rates ./= 100.0
+      it.non_savings_bands ./= 100.0
       it.savings_rates ./= 100.0
       it.savings_bands ./= 100.0
       it.dividend_rates ./= 100.0
-      it.earnings_bands ./= WEEKS_PER_YEAR
+      it.non_savings_bands ./= WEEKS_PER_YEAR
       it.savings_bands ./= WEEKS_PER_YEAR
       it.dividend_bands ./= WEEKS_PER_YEAR
       it.personal_allowance /= WEEKS_PER_YEAR
@@ -64,17 +64,30 @@ module STBParameters
       it.personal_savings_allowance /= WEEKS_PER_YEAR
    end
 
+   function get_default_it_system(
+      ;
+      year     ::Integer=2019,
+      scotland :: Bool = true )::Union{nothing,IncomeTaxSys}
+      it = nothing
+      if scotland
+         if year == 2019
+            it = IncomeTaxSys()
+         end
+         weeklyise( it )
+      end
+      it
+   end
    """
    Map from
    """
    function fromJSON( json :: Dict ) :: IncomeTaxSys
       it = IncomeTaxSys()
-      it.earnings_rates = convert( RateBands, json["earnings_rates"] )
-      it.earnings_bands  = convert( RateBands, json["earnings_bands"] )
+      it.non_savings_rates = convert( RateBands, json["non_savings_rates"] )
+      it.non_savings_bands  = convert( RateBands, json["non_savings_bands"] )
       it.savings_rates = convert( RateBands, json["savings_rates"] )
       it.savings_bands = convert( RateBands, json["savings_bands"] )
       it.dividend_rates = convert( RateBands ,json["dividend_rates"] )
-      it.earnings_bands = convert( RateBands ,json["earnings_bands"] )
+      it.non_savings_bands = convert( RateBands ,json["non_savings_bands"] )
       it.savings_bands = convert( RateBands ,json["savings_bands"] )
       it.dividend_bands = convert( RateBands ,json["dividend_bands"] )
       it.personal_allowance = json["personal_allowance"]
