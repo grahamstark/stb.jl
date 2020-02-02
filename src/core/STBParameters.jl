@@ -31,9 +31,7 @@ module STBParameters
 
    function annualise!( it :: IncomeTaxSys )
       it.non_savings_rates .*= 100.0
-      it.non_savings_bands .*= 100.0
       it.savings_rates .*= 100.0
-      it.savings_bands .*= 100.0
       it.dividend_rates .*= 100.0
       it.non_savings_bands .*= WEEKS_PER_YEAR
       it.savings_bands .*= WEEKS_PER_YEAR
