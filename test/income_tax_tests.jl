@@ -4,7 +4,7 @@ import FRS_Household_Getter
 import Example_Household_Getter
 using Definitions
 import Dates: Date
-import IncomeTaxCalculations: old_enough_for_mca, apply_allowance
+import IncomeTaxCalculations: old_enough_for_mca, apply_allowance, calc_income_tax
 import STBParameters: IncomeTaxSys, get_default_it_system
 
 const RUK_PERSON = 100000001001
@@ -12,7 +12,7 @@ const SCOT_HEAD = 100000001002
 const SCOT_SPOUSE = 100000001003
 
 function get_tax(; scotland = false ) :: IncomeTaxSys
-    it = get_default_it_system( 2019, scotland, false )
+    it = get_default_it_system( year=2019, scotland=scotland, weekly=false )
     it.non_savings_rates ./= 100.0
     it.savings_rates ./= 100.0
     it.dividend_rates ./= 100.0

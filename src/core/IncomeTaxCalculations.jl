@@ -103,9 +103,9 @@ function calc_income_tax(
     sys    :: IncomeTaxSys,
     spouse :: Union{Person,Nothing} = nothing ) :: Real
 
-    total_income = ALL_TAXABLE*pers.incomes;
+    total_income = ALL_TAXABLE*pers.income;
     non_savings = NON_SAVINGS_INCOME*pers.income;
-    savings = SAVINGS_INCOME*pers.incomes;
+    savings = SAVINGS_INCOME*pers.income;
     dividends = DIVIDENDS_INCOME*pers.income;
     allowance = sys.personal_allowance
     # allowance reductions goes here
