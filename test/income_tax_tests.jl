@@ -11,10 +11,19 @@ const RUK_PERSON = 100000001001
 const SCOT_HEAD = 100000001002
 const SCOT_SPOUSE = 100000001003
 
+function get_tax(; scotland = false ) :: IncomeTaxSys
+    it = get_default_it_system( 2019, scotland, false )
+    it.non_savings_rates ./= 100.0
+    it.savings_rates ./= 100.0
+    it.dividend_rates ./= 100.0
+    it
+end
+
 @testset "Melville 2019 ch2 examples 1; basic calc Scotland vs RUK" begin
     # BASIC IT Calcaulation on
     @time names = Example_Household_Getter.initialise()
-    itsys :: IncomeTaxSys = get_default_it_system( year=2019, scotland=true) # scottish 2019/20 by default
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
     income = [11_730,14_493,30_000,33_150.0,58_600,231_400]
     taxes_ruk = [2_346.0,2898.60,6_000,6_630.0,15_940.00,89_130.0]
     taxes_scotland = [2_325.51,2_898.60,6_155.07, 7260.57,17_695.07,92_613.07]
@@ -29,8 +38,10 @@ const SCOT_SPOUSE = 100000001003
     pers = bus[1][1]
     for i in size(income)[1]
         pers.income[wages] = income[i]
-        due = calc_income_tax( pers, itsys )
+        due = calc_income_tax( pers, itsys_scot )
         @test due ≈ taxes_scotland[i]
+        due = calc_income_tax( pers, itsys_ruk )
+        @test due ≈ taxes_ruk[i]
         println( ruk.people[RUK_PERSON].income )
     end
 end # example 1
