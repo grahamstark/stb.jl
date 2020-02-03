@@ -16,15 +16,22 @@ function get_tax(; scotland = false ) :: IncomeTaxSys
     it.non_savings_rates ./= 100.0
     it.savings_rates ./= 100.0
     it.dividend_rates ./= 100.0
+    it.personal_allowance_withdrawal_rate /= 100.0
+
     it
 end
 
+
 @testset "Melville 2019 ch2 examples 1; basic calc Scotland vs RUK" begin
     # BASIC IT Calcaulation on
-    @time names = Example_Household_Getter.initialise()
     itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
     itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    @time names = Example_Household_Getter.initialise()
     income = [11_730,14_493,30_000,33_150.0,58_600,231_400]
+    ntests = size(income)[1]
+    for i in 1:ntests-1
+        income[i] += itsys_scot.personal_allowance # weird way this is expessed in Melville
+    end
     taxes_ruk = [2_346.0,2898.60,6_000,6_630.0,15_940.00,89_130.0]
     taxes_scotland = [2_325.51,2_898.60,6_155.07, 7260.57,17_695.07,92_613.07]
     @test size( income ) == size( taxes_ruk) == size( taxes_scotland )
@@ -36,43 +43,61 @@ end
     println( bus )
     @test nbus == 1 == size( bus[1])[1]
     pers = bus[1][1]
-    for i in size(income)[1]
+    intermediate = Dict()
+    for i in 1:ntests
         pers.income[wages] = income[i]
-        due = calc_income_tax( pers, itsys_scot )
+        due = calc_income_tax( pers, itsys_scot, intermediate )
+        println( "Scotland $i : calculated $due expected $(taxes_scotland[i])")
         @test due ≈ taxes_scotland[i]
-        due = calc_income_tax( pers, itsys_ruk )
+        due = calc_income_tax( pers, itsys_ruk, intermediate )
+        println( "rUK $i : calculated $due expected $(taxes_ruk[i])")
         @test due ≈ taxes_ruk[i]
         println( ruk.people[RUK_PERSON].income )
     end
 end # example 1
 
 @testset "Melville 2019 ch2 example 2; personal savings allowance" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     scottish = Example_Household_Getter.get_household( "mel_c2_scot" )
     income = [20_000,37_501,64_000,375_000.0]
-    psa = [1_000.0,500.0,500.0,500.0]
+    psa = [1_000.0,500.0,500.0,0.0]
     @test size( income ) == size( psa ) # same Scotland and RUK
     pers = ruk.people[RUK_PERSON] # doesn't matter S/RUK
+    intermediate = Dict()
     for i in size(income)[1]
         pers.income[wages] = income[i]
-
+        println( "case $i income = $(income[i])")
+        due = calc_income_tax( pers, itsys_ruk, intermediate )
+        @test intermediate["personal_savings_allowance"] == psa[i]
     end
 end # example 2
 
 @testset "ch2 example 3; savings calc" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
     pers.income[self_employment_income] = 40_000.00
-    pers.income[bank_interest] = 1_500.00
-
-    tax_due_ruk = 5_500.00
+    pers.income[bank_interest] = 1_250.00
+    intermediate = Dict()
     tax_due_scotland = 5680.07
-
+    due = calc_income_tax( pers, itsys_scot, intermediate )
+    println( intermediate )
+    @test due ≈ tax_due_scotland
+    due = calc_income_tax( pers, itsys_ruk, intermediate )
+    println( intermediate )
+    tax_due_ruk = 5_550.00
+    @test due ≈ tax_due_ruk
 end # example 3
 
 @testset "ch2 example 4; savings calc" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    intermediate = Dict()
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
@@ -80,9 +105,18 @@ end # example 3
     pers.income[bank_interest] = 1_100.00
     tax_due_ruk = 840.00
     tax_due_scotland = 819.51
+    due = calc_income_tax( pers, itsys_scot, intermediate )
+    println( intermediate )
+    @test due ≈ tax_due_scotland
+    due = calc_income_tax( pers, itsys_ruk, intermediate )
+    println( intermediate )
+    @test due ≈ tax_due_ruk
 end # example 4
 
 @testset "ch2 example 5; savings calc" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    intermediate = Dict()
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
@@ -90,6 +124,12 @@ end # example 4
     pers.income[bank_interest] = 980.00
     tax_due_ruk = 11_232.00
     tax_due_scotland = 12_864.57
+    due = calc_income_tax( pers, itsys_scot, intermediate )
+    println( intermediate )
+    @test due ≈ tax_due_scotland
+    due = calc_income_tax( pers, itsys_ruk, intermediate )
+    println( intermediate )
+    @test due ≈ tax_due_ruk
 end # example 5
 
 @testset "ch2 example 6; savings calc" begin

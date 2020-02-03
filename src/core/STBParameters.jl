@@ -22,6 +22,8 @@ module STBParameters
       dividend_rates :: RateBands = [0.0, 7.5,32.5,38.1]
       dividend_bands :: RateBands = [2_000.0, 37_500.0, 150_000.0]
       personal_allowance          = 12_500.00
+      personal_allowance_income_limit = 100_000.00
+      personal_allowance_withdrawal_rate = 50.0
       blind_persons_allowance     = 2_450.00
       married_couples_allowance   = 8_915.00
       mca_minimum                 = 3_450.00
@@ -33,6 +35,7 @@ module STBParameters
       it.non_savings_rates .*= 100.0
       it.savings_rates .*= 100.0
       it.dividend_rates .*= 100.0
+      it.personal_allowance_withdrawal_rate *= 100.0
       it.non_savings_bands .*= WEEKS_PER_YEAR
       it.savings_bands .*= WEEKS_PER_YEAR
       it.dividend_bands .*= WEEKS_PER_YEAR
@@ -49,6 +52,7 @@ module STBParameters
       it.non_savings_rates ./= 100.0
       it.savings_rates ./= 100.0
       it.dividend_rates ./= 100.0
+      it.personal_allowance_withdrawal_rate /= 100.0
       it.non_savings_bands ./= WEEKS_PER_YEAR
       it.savings_bands ./= WEEKS_PER_YEAR
       it.dividend_bands ./= WEEKS_PER_YEAR
@@ -93,6 +97,8 @@ module STBParameters
       it.savings_bands = convert( RateBands ,json["savings_bands"] )
       it.dividend_bands = convert( RateBands ,json["dividend_bands"] )
       it.personal_allowance = json["personal_allowance"]
+      it.personal_allowance_income_limit = json["personal_allowance_income_limit"]
+      it.personal_allowance_withdrawal_rate = json["personal_allowance_withdrawal_rate"]
       it.blind_persons_allowance = json["blind_persons_allowance"]
       it.married_couples_allowance = json["married_couples_allowance"]
       it.mca_minimum = json["mca_minimum"]
