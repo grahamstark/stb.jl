@@ -168,45 +168,41 @@ function calc_income_tax(
     toprate = size( savings_bands )[1]
     if taxable_income > 0
         # horrific savings calculation see Melville Ch2 "Savings Income" & examples 2-3
-        if toprate > 1 &&
-           sys.personal_savings_allowance >  0.0  &&
-           sys.savings_rates[1] == 0.0 # pointless otherwise
-            # delete the starting zero band if total income non-savings is greater
-            # than the width of the band
-            savings_rates, savings_bands = delete_bands_up_to(
-                rates=savings_rates, bands=savings_bands, upto=taxable_income );
-            #if( taxable_income - savings ) > savings_bands[1]
-            #   savings_bands = savings_bands[2:end]
-            #   savings_rates = savings_rates[2:end]
-           # end
-            # savings allowance (actually a zero band)
-
-            if sys.personal_savings_allowance > 0
-                psa = sys.personal_savings_allowance
-                println( "taxable income $taxable_income sys.savings_bands[2] $(sys.savings_bands[2])")
-                if taxable_income > sys.savings_bands[toprate]
-                    psa = 0.0
-                elseif taxable_income > sys.savings_bands[2] # above the basic rate
-                    psa *= 0.5 # FIXME parameterise this
-                end
-                if psa > 0 ## if we haven't deleted the zero band already, just widen it
-                    if savings_rates[1] == 0.0
-                        savings_bands[1] += psa;
-                    else ## otherwise, insert a  new one.
-                        savings_bands = vcat([psa], savings_bands )
-                        savings_rates = vcat([0.0], savings_rates )
-                    end
-                end # add personal_savings_allowance as a band
-                intermediate["personal_savings_allowance"] = psa
-                intermediate["savings_rates"] = savings_rates
-                intermediate["savings_bands"] = savings_bands
-            end # we have a personal_savings_allowance
-        end # if anything to do
         allowance,non_savings_taxable = apply_allowance( allowance, non_savings )
         non_savings_tax = calctaxdue(
             taxable=non_savings_taxable,
             rates=sys.non_savings_rates,
             bands=sys.non_savings_bands ).due
+
+            # FIXME Move to separate function
+            if toprate > 1 &&
+               sys.personal_savings_allowance >  0.0  &&
+               sys.savings_rates[1] == 0.0 # pointless otherwise
+                # delete the starting zero band if total income non-savings is greater
+                # than the width of the band
+                savings_rates, savings_bands = delete_bands_up_to(
+                    rates=savings_rates, bands=savings_bands, upto=non_savings_taxable );
+                if sys.personal_savings_allowance > 0
+                    psa = sys.personal_savings_allowance
+                    println( "taxable income $taxable_income sys.savings_bands[2] $(sys.savings_bands[2])")
+                    if taxable_income > sys.savings_bands[toprate]
+                        psa = 0.0
+                    elseif taxable_income > sys.savings_bands[2] # above the basic rate
+                        psa *= 0.5 # FIXME parameterise this
+                    end
+                    if psa > 0 ## if we haven't deleted the zero band already, just widen it
+                        if savings_rates[1] == 0.0
+                            savings_bands[1] += psa;
+                        else ## otherwise, insert a  new one.
+                            savings_bands = vcat([psa], savings_bands )
+                            savings_rates = vcat([0.0], savings_rates )
+                        end
+                    end # add personal_savings_allowance as a band
+                    intermediate["personal_savings_allowance"] = psa
+                    intermediate["savings_rates"] = savings_rates
+                    intermediate["savings_bands"] = savings_bands
+                end # we have a personal_savings_allowance
+            end # if anything to do
         allowance,savings_taxable = apply_allowance( allowance, savings )
         savings_tax = calctaxdue(
             taxable=savings_taxable,
