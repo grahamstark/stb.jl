@@ -132,7 +132,7 @@ function delete_bands_up_to( ; rates :: RateBands, bands :: RateBands, upto :: R
     bands[1] -= firstband
   elseif deleteband == -1
     rates = rates[end:end]
-    bands = [ Inf ]
+    bands :: RateBands = [ Inf ]
   end
   rates, bands
 end
