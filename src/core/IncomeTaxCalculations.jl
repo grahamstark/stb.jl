@@ -160,8 +160,8 @@ function calc_income_tax(
                 allowance -
                     sys.personal_allowance_withdrawal_rate*(
                         taxable_income - sys.personal_allowance_income_limit ))
-        println( "made allowance as $allowance")
     end
+    intermediate["allowance"]=allowance
     savings_bands = deepcopy( sys.savings_bands )
     savings_rates = deepcopy( sys.savings_rates )
     # FIXME model all this with parameters
