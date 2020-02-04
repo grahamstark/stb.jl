@@ -105,6 +105,11 @@ Mostly taken from Melville (2019) chs 2-4.
 
 FIXME this is too long and needs broken up.
 
+problems:
+
+1. we do this in strict non-savings, savings, dividends order; see 2(11) for examples where it's now advantageous to use a different order
+2.
+
 returns a single total tax liabilty, plus multiple intermediate numbers
 in the `intermediate` dict
 
@@ -206,7 +211,7 @@ function calc_income_tax(
                 upto=used_thresholds );
         if add_back_zero_band
             dividend_rates = vcat( [0.0], dividend_rates )
-            dividend_thresholds .+= zero_band # push all up 
+            dividend_thresholds .+= zero_band # push all up
             dividend_thresholds = vcat( zero_band, dividend_thresholds )
         end
         intermediate["dividend_rates"]=dividend_rates
