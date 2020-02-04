@@ -127,21 +127,26 @@ function calc_income_tax(
     allowance = sys.personal_allowance
     # allowance reductions goes here
 
-    taxable_income = max(0.0, total_income-allowance)
     non_dividends = non_savings + savings
+
+    adjusted_net_income = total_income
+    # ...
 
     non_savings_tax = 0.0
     savings_tax = 0.0
     dividend_tax = 0.0
-    if taxable_income > sys.personal_allowance_income_limit
+    if adjusted_net_income > sys.personal_allowance_income_limit
         allowance =
             max(0.0,
                 allowance -
                     sys.personal_allowance_withdrawal_rate*(
-                        taxable_income - sys.personal_allowance_income_limit ))
+                        adjusted_net_income - sys.personal_allowance_income_limit ))
     end
+    taxable_income = max(0.0, adjusted_net_income-allowance)
     intermediate["allowance"]=allowance
     intermediate["total_income"]=total_income
+    intermediate["adjusted_net_income"]=adjusted_net_income
+    intermediate["taxable_income"]=taxable_income
     intermediate["savings"]=savings
     intermediate["non_savings"]=non_savings
     intermediate["dividends"]=dividends
