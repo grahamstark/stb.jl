@@ -6,10 +6,22 @@ import Dates: Date, now, TimeType, Year
 import Model_Household: Person
 import STBParameters: IncomeTaxSys
 import TBComponents: TaxResult, calctaxdue, RateBands, delete_thresholds_up_to, *
+import Parameters: @with_kw
 
 using Definitions
 
-export calc_income_tax, old_enough_for_mca, apply_allowance
+export calc_income_tax, old_enough_for_mca, apply_allowance, ITResult
+
+@with_kw mutable struct ITResult
+    total :: Real = 0.0
+    non_savings :: Real = 0.0
+    non_savings_band :: Integer = 0
+    savings :: Real = 0.0
+    savings_band :: Integer = 0
+    dividends :: Real = 0.0
+    dividends_band :: Integer = 0
+    unused_allowance :: Real = 0.0
+end
 
 ## FIXME all these constants should ultimately be parameters
 const MCA_DATE = Date(1935,4,6) # fixme make this a parameter
@@ -118,13 +130,13 @@ function calc_income_tax(
     pers   :: Person,
     sys    :: IncomeTaxSys,
     intermediate :: Dict,
-    spouse :: Union{Person,Nothing} = nothing ) :: Real
-
+    spouse_transfer :: Real = 0.0 ) :: ITResult
+    itres :: ITResult = ITResult()
     total_income = ALL_TAXABLE*pers.income;
     non_savings = NON_SAVINGS_INCOME*pers.income;
     savings = SAVINGS_INCOME*pers.income;
     dividends = DIVIDEND_INCOME*pers.income;
-    allowance = sys.personal_allowance
+    allowance = sys.personal_allowance+spouse_transfer
     # allowance reductions goes here
 
     non_dividends = non_savings + savings
@@ -132,9 +144,10 @@ function calc_income_tax(
     adjusted_net_income = total_income
     # ...
 
-    non_savings_tax = 0.0
-    savings_tax = 0.0
-    dividend_tax = 0.0
+    non_savings_tax = TaxResult(0.0, 0)
+    savings_tax = TaxResult(0.0, 0)
+    dividend_tax = TaxResult(0.0, 0)
+
     if adjusted_net_income > sys.personal_allowance_income_limit
         allowance =
             max(0.0,
@@ -161,7 +174,7 @@ function calc_income_tax(
         non_savings_tax = calctaxdue(
             taxable=non_savings_taxable,
             rates=sys.non_savings_rates,
-            thresholds=sys.non_savings_thresholds ).due
+            thresholds=sys.non_savings_thresholds )
 
         # Savings
         # FIXME Move to separate function
@@ -194,7 +207,7 @@ function calc_income_tax(
         savings_tax = calctaxdue(
             taxable=savings_taxable,
             rates=savings_rates,
-            thresholds=savings_thresholds ).due
+            thresholds=savings_thresholds )
 
         # Dividends
         # see around example 8-9 ch2
@@ -232,13 +245,23 @@ function calc_income_tax(
         dividend_tax = calctaxdue(
             taxable=dividends_taxable,
             rates=dividend_rates,
-            thresholds=dividend_thresholds ).due
+            thresholds=dividend_thresholds )
     end
-    intermediate["non_savings_tax"]=non_savings_tax
-    intermediate["savings_tax"]=savings_tax
-    intermediate["dividend_tax"]=dividend_tax
+    intermediate["non_savings_tax"]=non_savings_tax.due
+    intermediate["savings_tax"]=savings_tax.due
+    intermediate["dividend_tax"]=dividend_tax.due
 
-    non_savings_tax+savings_tax+dividend_tax
+
+    itres.total = non_savings_tax.due+savings_tax.due+dividend_tax.due
+    itres.non_savings = non_savings_tax.due
+    itres.non_savings_band = non_savings_tax.end_band
+    itres.savings = savings_tax.due
+    itres.savings_band = savings_tax.end_band
+    itres.dividends = dividend_tax.due
+    itres.dividends_band = dividend_tax.end_band
+    itres.unused_allowance = allowance
+    itres
+
 end
 
 
