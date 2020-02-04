@@ -136,87 +136,88 @@ function calc_income_tax(
                         taxable_income - sys.personal_allowance_income_limit ))
     end
     intermediate["allowance"]=allowance
-    savings_bands = deepcopy( sys.savings_bands )
+    savings_thresholds = deepcopy( sys.savings_thresholds )
     savings_rates = deepcopy( sys.savings_rates )
     # FIXME model all this with parameters
-    toprate = size( savings_bands )[1]
+    toprate = size( savings_thresholds )[1]
     if taxable_income > 0
         # horrific savings calculation see Melville Ch2 "Savings Income" & examples 2-3
         allowance,non_savings_taxable = apply_allowance( allowance, non_savings )
         non_savings_tax = calctaxdue(
             taxable=non_savings_taxable,
             rates=sys.non_savings_rates,
-            thresholds=sys.non_savings_bands ).due
+            thresholds=sys.non_savings_thresholds ).due
 
         # Savings
         # FIXME Move to separate function
         # delete the starting bands up to non_savings taxabke icome
-        savings_rates, savings_bands = delete_thresholds_up_to(
+        savings_rates, savings_thresholds = delete_thresholds_up_to(
             rates=savings_rates,
-            thresholds=savings_bands,
+            thresholds=savings_thresholds,
             upto=non_savings_taxable );
         if sys.personal_savings_allowance > 0
             psa = sys.personal_savings_allowance
-            println( "taxable income $taxable_income sys.savings_bands[2] $(sys.savings_bands[2])")
-            if taxable_income > sys.savings_bands[toprate]
+            println( "taxable income $taxable_income sys.savings_thresholds[2] $(sys.savings_thresholds[2])")
+            if taxable_income > sys.savings_thresholds[toprate]
                 psa = 0.0
-            elseif taxable_income > sys.savings_bands[2] # above the basic rate
+            elseif taxable_income > sys.savings_thresholds[2] # above the basic rate
                 psa *= 0.5 # FIXME parameterise this
             end
             if psa > 0 ## if we haven't deleted the zero band already, just widen it
                 if savings_rates[1] == 0.0
-                    savings_bands[1] += psa;
+                    savings_thresholds[1] += psa;
                 else ## otherwise, insert a  new one.
-                    savings_bands = vcat([psa], savings_bands )
+                    savings_thresholds = vcat([psa], savings_thresholds )
                     savings_rates = vcat([0.0], savings_rates )
                 end
             end # add personal_savings_allowance as a band
             intermediate["personal_savings_allowance"] = psa
         end # we have a personal_savings_allowance
         intermediate["savings_rates"] = savings_rates
-        intermediate["savings_bands"] = savings_bands
+        intermediate["savings_thresholds"] = savings_thresholds
         allowance,savings_taxable = apply_allowance( allowance, savings )
         savings_tax = calctaxdue(
             taxable=savings_taxable,
             rates=savings_rates,
-            thresholds=savings_bands ).due
+            thresholds=savings_thresholds ).due
 
         # Dividends
         # see around example 8-9 ch2
         allowance,dividends_taxable =
             apply_allowance( allowance, dividends )
         dividend_rates=deepcopy(sys.dividend_rates)
-        dividend_thresholds=deepcopy(sys.dividend_bands )
+        dividend_thresholds=deepcopy(sys.dividend_thresholds )
         # always preserve any bottom zero rate
         add_back_zero_band = false
         zero_band = 0.0
-        used_bands = non_savings_taxable+savings_taxable
+        used_thresholds = non_savings_taxable+savings_taxable
         copy_start = 1
         # handle the zero rate
         if dividend_rates[1] == 0.0
             add_back_zero_band = true
-            zero_band = dividend_bands[1]
-            used_bands += min( zero_band, dividends_taxable )
+            zero_band = dividend_thresholds[1]
+            used_thresholds += min( zero_band, dividends_taxable )
             copy_start = 2
         end
-        dividend_rates, dividend_bands =
+        dividend_rates, dividend_thresholds =
             delete_thresholds_up_to(
                 rates=dividend_rates[copy_start:end],
-                thresholds=dividend_bands[copy_start:end],
-                upto=used_bands );
+                thresholds=dividend_thresholds[copy_start:end],
+                upto=used_thresholds );
         if add_back_zero_band
             dividend_rates = vcat( [0.0], dividend_rates )
-            dividend_bands = vcat( zero_band, dividend_bands )
+            dividend_thresholds .+= zero_band # push all up 
+            dividend_thresholds = vcat( zero_band, dividend_thresholds )
         end
         intermediate["dividend_rates"]=dividend_rates
-        intermediate["dividend_bands"]=dividend_bands
+        intermediate["dividend_thresholds"]=dividend_thresholds
         intermediate["add_back_zero_band"]=add_back_zero_band
         intermediate["dividends_taxable"]=dividends_taxable
 
         dividend_tax = calctaxdue(
             taxable=dividends_taxable,
             rates=dividend_rates,
-            thresholds=dividend_bands ).due
+            thresholds=dividend_thresholds ).due
     end
     intermediate["non_savings_tax"]=non_savings_tax
     intermediate["savings_tax"]=savings_tax

@@ -270,7 +270,7 @@ end
 
 function local_makebc(
     person :: MiniTB.Person,
-    tbparams :: MiniTB.Parameters,
+    tbparams :: MiniTB.TBParameters,
     settings :: BCSettings = DEFAULT_SETTINGS ) :: NamedTuple
    data = Dict( :person=>person, :params=>tbparams )
    bc = TBComponents.makebc( data, local_getnet, settings )
@@ -301,7 +301,7 @@ function make_results_frame( n :: Integer ) :: DataFrame
      total_indirect = Vector{Union{Real,Missing}}(missing, n))
 end
 
-function doonerun( tbparams::MiniTB.Parameters, num_households :: Integer, num_people :: Integer, num_repeats :: Integer ) :: DataFrame
+function doonerun( tbparams::MiniTB.TBParameters, num_households :: Integer, num_people :: Integer, num_repeats :: Integer ) :: DataFrame
    results = make_results_frame( num_people )
    pnum = 0
    for hhno in 1:num_households
