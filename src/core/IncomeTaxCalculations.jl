@@ -141,6 +141,11 @@ function calc_income_tax(
                         taxable_income - sys.personal_allowance_income_limit ))
     end
     intermediate["allowance"]=allowance
+    intermediate["total_income"]=total_income
+    intermediate["savings"]=savings
+    intermediate["non_savings"]=non_savings
+    intermediate["dividends"]=dividends
+
     savings_thresholds = deepcopy( sys.savings_thresholds )
     savings_rates = deepcopy( sys.savings_rates )
     # FIXME model all this with parameters
@@ -162,7 +167,7 @@ function calc_income_tax(
             upto=non_savings_taxable );
         if sys.personal_savings_allowance > 0
             psa = sys.personal_savings_allowance
-            println( "taxable income $taxable_income sys.savings_thresholds[2] $(sys.savings_thresholds[2])")
+            # println( "taxable income $taxable_income sys.savings_thresholds[2] $(sys.savings_thresholds[2])")
             if taxable_income > sys.savings_thresholds[toprate]
                 psa = 0.0
             elseif taxable_income > sys.savings_thresholds[2] # above the basic rate

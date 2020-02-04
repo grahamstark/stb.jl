@@ -218,14 +218,25 @@ end # example 9
 
 
 @testset "ch3 personal allowances ex 1 - hr allowance withdrawal" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    intermediate = Dict()
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
     pers.income[self_employment_income] = 110_520.00
-    tax_due = 33_812.00
+    tax_due_ruk = 33_812.00
+    due = calc_income_tax( pers, itsys_ruk, intermediate )
+    println( intermediate )
+    @test due ≈ tax_due_ruk
     pers.income[self_employment_income] += 100.0
+    due = calc_income_tax( pers, itsys_ruk, intermediate )
+    println( intermediate )
     tax_due_ruk = 33_812.00+60.0
-    tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
+    @test due ≈ tax_due_ruk
+
+    # tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
+
 end # example1 ch3
 
 @testset "ch3 personal allowances ex 2 - marriage allowance" begin
