@@ -6,7 +6,7 @@ using Dates
 mutable struct Person
     hid::BigInt # == sernum
     pid::BigInt # == unique id (year * 100000)+
-    pno::Integer# person number in household
+    pno::Integer # person number in household
     default_benefit_unit::Integer
     age::Integer
 
@@ -122,10 +122,6 @@ function oldest_person( people :: People_Dict ) :: NamedTuple
     oldest
 end
 
-function default_get_ben_units( hh :: Household )::Vector{BenUnit}
-
-end
-
 function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Type,Real}
     np = length(people)
     eqp = Vector{EQ_Person}()
@@ -157,13 +153,17 @@ struct BenefitUnit
     children :: Pid_Array
 end
 
+function num_people( bu :: BenefitUnit )::Integer
+    1 + ((bu.spouse > 0) ? 1 : 0 ) + size( bu.children )[1]
+end
+
 function get_head( bu :: BenefitUnit )::Person
     bu.people[bu.head]
 end
 
 function get_spouse( bu :: BenefitUnit )::Union{Nothing,Person}
     if bu.spouse <= 0
-        nothing
+        return nothing
     end
     bu.people[bu.spouse]
 end
@@ -171,6 +171,7 @@ end
 
 BenefitUnits = Vector{BenefitUnit}
 BUAllocation = Vector{PeopleArray}
+
 
 #
 # This creates a array of references to each person in the houshold, broken into
@@ -204,21 +205,84 @@ end
 # This creates a array of references to each person in the houshold, broken into
 # benefit units using the default FRS/EFS benefit unit number.
 #
-function bu_allocation_to_bus( bua :: BUAllocation ) :: BenefitUnits
-    # = default_bu_allocation( hh )
+function allocate_to_bus( bua :: BUAllocation ) :: BenefitUnits
     nbus = size(bua)[1]
-    bus :: BenefitUnits(undef,nbus)
+    bus = BenefitUnits(undef, nbus)
     for i in 1:nbus
         people = People_Dict()
         head_pid :: BigInt = -1
         spouse_pid :: BigInt = -1
         children = Pid_Array()
-        for p in bus[i]
-            people[p.pid] = p
+        npeople = size( bua[i])[1]
+        for p in 1:npeople
+            person = bua[i][p]
+            people[person.pid] = person
+            if p == 1
+                head_pid = person.pid
+            else
+                reltohead = person.relationships[head_pid]
+                if reltohead in [Spouse,Cohabitee,Civil_Partner]
+                    spouse_pid = person.pid
+                    # FIXME we need to remove these checks if
+                    # we're using a non-default allocation to bus
+                    @assert person.age >= 16
+                else
+                    @assert person.age <= 19
+                    push!( children, person.pid )
+                end
+            end
         end
         new_bu = BenefitUnit( people, head_pid, spouse_pid, children )
         bus[i] = new_bu
     end
-
     bus
+end
+
+function get_benefit_units(
+    hh :: Household,
+    allocator :: Function=default_bu_allocation ) :: BenefitUnits
+    allocate_to_bus( allocator(hh))
+end
+
+# simple diagnostic prints for testing allocation
+
+function printpids( pers :: Person )
+    println( "pid: $(pers.pid) age $(pers.age) sex $(pers.sex) default_benefit_unit $(pers.default_benefit_unit) ")
+end
+
+function printpids( bu::BenefitUnit)
+      head = get_head( bu )
+      print( "HEAD: ")
+      printpids( head )
+      spouse = get_spouse( bu )
+      if spouse != nothing
+            print( "SPOUSE: ")
+            printpids( spouse )
+
+      end
+      for chno in bu.children
+            print( "CHILD_$(chno):")
+            child = bu.people[chno]
+            printpids( child )
+      end
+end
+
+function printpids( people :: People_Dict )
+    ks = sort(collect(keys(people)))
+    for k in ks
+        print( "PERSON_$k")
+        printpids( people[k] )
+    end
+end
+
+function printpids( buas::BUAllocation )
+    nbus = size( buas )[1]
+    for i in 1:nbus
+        npeople = size( buas[i] )[1]
+        println( "bu[$i]; num_people = $npeople:")
+        for p in 1:npeople
+            print( "PERS_$(p): ")
+            printpids( buas[i][p])
+        end
+    end
 end
