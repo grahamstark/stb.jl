@@ -191,13 +191,13 @@ function calc_income_tax(
                 psa *= 0.5 # FIXME parameterise this
             end
             if psa > 0.0 ## if we haven't deleted the zero band already, just widen it
-                savings_thresholds .+= psa;
-                if savings_rates[1] > 0.0
-                    # .. insert a  new zero band if there isn't one
+                if savings_rates[1] == 0.0
+                    savings_thresholds[1] += psa;
+                else ## otherwise, insert a  new one.
                     savings_thresholds = vcat([psa], savings_thresholds )
                     savings_rates = vcat([0.0], savings_rates )
                 end
-            end # add personal_savings_allowance as a band
+            end
             intermediate["personal_savings_allowance"] = psa
         end # we have a personal_savings_allowance
         intermediate["savings_rates"] = savings_rates
