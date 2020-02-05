@@ -122,10 +122,6 @@ function oldest_person( people :: People_Dict ) :: NamedTuple
     oldest
 end
 
-struct BenUnit
-    pids :: Pid_Array
-end
-
 function default_get_ben_units( hh :: Household )::Vector{BenUnit}
 
 end
@@ -153,6 +149,26 @@ function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Ty
 end
 
 PeopleArray = Vector{Person}
+struct BenefitUnit
+    people :: People_Dict
+    head :: BigInt
+    spouse :: BigInt = 0
+    children :: Pid_Array
+end
+
+function get_head( bu :: BenefitUnit )::Person
+    bu.people[bu.head]
+end
+
+function get_spouse( bu :: BenefitUnit )::Union{Nothing,Person}
+    if bu.spouse <= 0
+        nothing
+    end
+    bu.people[bu.spouse]
+end
+
+
+BenefitUnits = Vector{BenefitUnits}
 BUAllocation = Vector{PeopleArray}
 
 #
@@ -181,4 +197,27 @@ function default_bu_allocation( hh :: Household ) :: BUAllocation
         sort!( bua[buno], lt=(left,right)->isless(right.age,left.age))
     end
     bua
+end
+
+#
+# This creates a array of references to each person in the houshold, broken into
+# benefit units using the default FRS/EFS benefit unit number.
+#
+function default_bu_allocation( hh :: Household ) :: BenefitUnits
+    bua :: BUAllocation = default_bu_allocation( hh )
+    nbus = size(bua)[1]
+    bus :: BenefitUnits(undef,nbus)
+    for i in 1:nbus
+        people = People_Dict()
+        head_pid :: BigInt = -1
+        spouse_pid :: BigInt = -1
+        children = Pid_Array()
+        for p in bus[i]
+            people[p.pid] = p
+        end
+        new_bu = BenefitUnit( people, head_pid, spouse_pid, children )
+        bus[i] = new_bu
+    end
+
+    bus
 end
