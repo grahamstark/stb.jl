@@ -152,7 +152,7 @@ PeopleArray = Vector{Person}
 struct BenefitUnit
     people :: People_Dict
     head :: BigInt
-    spouse :: BigInt = 0
+    spouse :: BigInt
     children :: Pid_Array
 end
 
@@ -168,7 +168,7 @@ function get_spouse( bu :: BenefitUnit )::Union{Nothing,Person}
 end
 
 
-BenefitUnits = Vector{BenefitUnits}
+BenefitUnits = Vector{BenefitUnit}
 BUAllocation = Vector{PeopleArray}
 
 #

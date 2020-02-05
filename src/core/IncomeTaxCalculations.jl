@@ -169,14 +169,13 @@ function calc_income_tax(
     # FIXME model all this with parameters
     toprate = size( savings_thresholds )[1]
     if taxable_income > 0
-        # horrific savings calculation see Melville Ch2 "Savings Income" & examples 2-3
         allowance,non_savings_taxable = apply_allowance( allowance, non_savings )
         non_savings_tax = calctaxdue(
             taxable=non_savings_taxable,
             rates=sys.non_savings_rates,
             thresholds=sys.non_savings_thresholds )
 
-        # Savings
+        # horrific savings calculation see Melville Ch2 "Savings Income" & examples 2-3
         # FIXME Move to separate function
         # delete the starting bands up to non_savings taxabke icome
         savings_rates, savings_thresholds = delete_thresholds_up_to(
