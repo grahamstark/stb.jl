@@ -6,5 +6,4 @@ module Model_Household
 
   include( "household.jl" )
 
-
 end

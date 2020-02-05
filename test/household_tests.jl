@@ -18,8 +18,8 @@ start_year=2015
       people_count = 0
       for hhno in 1:num_households
             hh = get_household( hhno )
-            println("people in HH")
-            printpids(hh.people)
+            # println("people in HH")
+            # printpids(hh.people)
 
             hhsize = size(collect(keys(hh.people)))[1]
             people_count += hhsize
@@ -30,12 +30,13 @@ start_year=2015
             by_bu_people_count = 0
             i = 0
             for bu in bus
-                  println( "from BU")
-                  printpids(bu)
+                  # println( "from BU")
+                  # printpids(bu)
 
                   i += 1
                   bu_people_count = 1
                   head = get_head( bu )
+                  @test head.age >= 16
                   spouse = get_spouse( bu )
                   if spouse != nothing
                         bu_people_count += 1
@@ -43,7 +44,7 @@ start_year=2015
                   end
                   for chno in bu.children
                         child = bu.people[chno]
-                        @test child.age <= 18
+                        @test child.age <= 19
                         bu_people_count += 1
                   end
                   by_bu_people_count += bu_people_count
@@ -56,8 +57,8 @@ start_year=2015
             for bua in buallocation
                   bua_people_count += size( bua )[1]
             end
-            println("BU Allocation")
-            printpids(buallocation)
+            # println("BU Allocation")
+            # printpids(buallocation)
             @test bua_people_count == hhsize
       end
       @test people_count == total_num_people
