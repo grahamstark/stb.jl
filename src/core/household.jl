@@ -225,9 +225,9 @@ function allocate_to_bus( bua :: BUAllocation ) :: BenefitUnits
                     spouse_pid = person.pid
                     # FIXME we need to remove these checks if
                     # we're using a non-default allocation to bus
-                    @assert person.age >= 16
+                    # @assert person.age >= 16
                 else
-                    @assert person.age <= 19
+                    # @assert person.age <= 19
                     push!( children, person.pid )
                 end
             end
