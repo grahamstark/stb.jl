@@ -240,15 +240,19 @@ end # example 9
 end # example1 ch3
 
 @testset "ch3 personal allowances ex 2 - marriage allowance" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    intermediate = Dict()
+    names = Example_Household_Getter.initialise()
     names = Example_Household_Getter.initialise()
     scot = Example_Household_Getter.get_household( "mel_c2_scot" ) # scots are a married couple
     head = scot.people[SCOT_HEAD]
     spouse = scot.people[SCOT_SPOUSE]
-    head.income[self_employment_income] = 110_520.00
-    tax_due = 33_812.00
-    head.income[self_employment_income] += 100.0
-    tax_due_ruk = 33_812.00+60.0
-    tax_due_scotland = 33_812.00+61.5 ## FIXME actually, check this by hand
+    head.income[self_employment_income] = 11_290.0
+    head_tax_due = 0.0
+    spouse.income[self_employment_income] = 20_000.0
+    head_tax_due_ruk = 1_250.0
+    
 end # example 2 ch3
 
 @testset "ch3 blind person" begin

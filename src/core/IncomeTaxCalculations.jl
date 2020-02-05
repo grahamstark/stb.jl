@@ -155,7 +155,7 @@ function calc_income_tax(
                     sys.personal_allowance_withdrawal_rate*(
                         adjusted_net_income - sys.personal_allowance_income_limit ))
     end
-    taxable_income = max(0.0, adjusted_net_income-allowance)
+    taxable_income = adjusted_net_income-allowance
     intermediate["allowance"]=allowance
     intermediate["total_income"]=total_income
     intermediate["adjusted_net_income"]=adjusted_net_income
@@ -245,6 +245,8 @@ function calc_income_tax(
             taxable=dividends_taxable,
             rates=dividend_rates,
             thresholds=dividend_thresholds )
+    else
+        allowance = -taxable_income # e.g. allowance - taxable_income
     end
     intermediate["non_savings_tax"]=non_savings_tax.due
     intermediate["savings_tax"]=savings_tax.due
@@ -260,8 +262,38 @@ function calc_income_tax(
     itres.dividends_band = dividend_tax.end_band
     itres.unused_allowance = allowance
     itres
-
 end
 
-
+function calc_income_tax(
+    head   :: Person,
+    spouse :: Union{Nothing,Person}
+    sys    :: IncomeTaxSys,
+    intermediate :: Dict ) :: Tuple{Union{ITResult,Nothing}}
+    head_intermed = Dict()
+    headtax = calc_income_tax( head, sys, head_intermed )
+    spousetax = nothing
+    # FIXME the transferable stuff here
+    # is not right as you can elect to transfer more than
+    # the surplus allowance in some cases.
+    # also - add in restrictions on transferring to
+    # higher rate payers.
+    if spouse != nothing
+        spouse_intermed = Dict()
+        spousetax = calc_income_tax( spouse, sys, spouse_intermed )
+        intermediate["spouse_tax"] = spouse_intermed
+        if spousetax.unused_allowance > 0.0 &&
+           headtax.unused_allowance == 0 ## && FIXME some stuff about higher rates
+                transferable_allow = min( spousetax.unused_allowance, sys.marriage_allowance )
+                headtax = calc_income_tax( head, sys, head_intermed, transferable_allow )
+                intermediate["head_tax"] = head_intermed
+                intermediate["transfer_spouse_to_head"] = transferable_allow
+        elseif headtax.unused_allowance > 0.0 &&
+            spousetax.unused_allowance == 0 ## && some stuff about higher rates
+                transferable_allow = min( headtax.unused_allowance, sys.marriage_allowance )
+                spousetax = calc_income_tax( spouse, sys, spouse_intermed, transferable_allow )
+                intermediate["spouse_tax"] = spouse_intermed
+                intermediate["transfer_head_to_spouse"] = transferable_allow
+        end
+    end
+    ( headtax, spousetax )
 end # module
