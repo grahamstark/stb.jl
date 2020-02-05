@@ -191,10 +191,10 @@ function calc_income_tax(
             elseif taxable_income > sys.savings_thresholds[2] # above the basic rate
                 psa *= 0.5 # FIXME parameterise this
             end
-            if psa > 0 ## if we haven't deleted the zero band already, just widen it
-                if savings_rates[1] == 0.0
-                    savings_thresholds[1] += psa;
-                else ## otherwise, insert a  new one.
+            if psa > 0.0 ## if we haven't deleted the zero band already, just widen it
+                savings_thresholds .+= psa;
+                if savings_rates[1] > 0.0
+                    # .. insert a  new zero band if there isn't one
                     savings_thresholds = vcat([psa], savings_thresholds )
                     savings_rates = vcat([0.0], savings_rates )
                 end
