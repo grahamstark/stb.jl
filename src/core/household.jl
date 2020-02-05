@@ -149,6 +149,7 @@ function equivalence_scale( people :: People_Dict ) :: Dict{Equivalence_Scale_Ty
 end
 
 PeopleArray = Vector{Person}
+
 struct BenefitUnit
     people :: People_Dict
     head :: BigInt
@@ -203,8 +204,8 @@ end
 # This creates a array of references to each person in the houshold, broken into
 # benefit units using the default FRS/EFS benefit unit number.
 #
-function default_bu_allocation( hh :: Household ) :: BenefitUnits
-    bua :: BUAllocation = default_bu_allocation( hh )
+function bu_allocation_to_bus( bua :: BUAllocation ) :: BenefitUnits
+    # = default_bu_allocation( hh )
     nbus = size(bua)[1]
     bus :: BenefitUnits(undef,nbus)
     for i in 1:nbus
