@@ -278,6 +278,9 @@ end
     # check that mca is always 10% of amount
     # check marriage transfer is always basic rate tax credit
     # checl MCA only available if 1 spouse born before 6th April  1935
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    intermediate = Dict()
     names = Example_Household_Getter.initialise()
     scot = Example_Household_Getter.get_household( "mel_c2_scot" ) # scots are a married couple
     head = scot.people[SCOT_HEAD]
@@ -292,6 +295,22 @@ end
         # head.income[private_pension] = head_incomes[i]
         head.age = head_ages[i]
         spouse.age = spouse_ages[i]
+        result_ruk = calc_income_tax( head, spouse, itsys_ruk, intermediate )
+        result_scot = calc_income_tax( head, spouse, itsys_scot, intermediate )
+        if i == 1
+            @test result_ruk.head.mca ≈ 891.50 ≈ result_scot.head.mca
+            @test result_ruk.spouse.mca ≈ 0 ≈ result_scot.spouse.mca
+        elseif i == 2
+            @test result_ruk.head.mca ≈ 886.00 ≈ result_scot.head.mca
+            @test result_ruk.spouse.mca ≈ 0 ≈ result_scot.spouse.mca
+        elseif i == 3
+            @test result_ruk.head.mca ≈ 345.00 ≈ result_scot.head.mca
+            @test result_ruk.spouse.mca ≈ 0 ≈ result_scot.spouse.mca
+        elseif i == 4
+            @test result_ruk.spouse.mca ≈ 345.00 ≈ result_scot.spouse.mca
+            @test result_ruk.head.mca ≈ 0 ≈ result_scot.head.mca
+        end
+
     end
 end
 

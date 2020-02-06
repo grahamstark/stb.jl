@@ -25,6 +25,8 @@ export calc_income_tax, old_enough_for_mca, apply_allowance, ITResult
     dividends :: Real = 0.0
     dividend_band :: Integer = 0
     unused_allowance :: Real = 0.0
+    mca :: Real = 0.0
+    transferred_allowance :: Real = 0.0
 end
 
 ## FIXME all these constants should ultimately be parameters
@@ -313,7 +315,7 @@ function calculate_mca( pers :: Person, tax :: ITResult, sys :: IncomeTaxSys)::R
     ## FIXME parameterise this
     mca = sys.married_couples_allowance
     if tax.adjusted_net_income > sys.mca_income_maximum
-        mca = max( sys.mca_minimum,
+        mca = max( sys.mca_minimum, mca -
            (tax.adjusted_net_income-sys.mca_income_maximum)*sys.mca_withdrawal_rate)
     end
     mca * sys.mca_credit_rate
@@ -335,31 +337,33 @@ function calc_income_tax(
     # higher rate payers.
     if spouse != nothing
         spouse_intermed = Dict()
-        spousetax = calc_income_tax( spouse, sys, spouse_intermed )
         intermediate["spouse_tax"] = spouse_intermed
-        if allowed_to_transfer_allowance( sys, from=spousetax, to=headtax )
-            transferable_allow = min( spousetax.unused_allowance, sys.marriage_allowance )
-            headtax = calc_income_tax( head, sys, head_intermed, transferable_allow )
-            intermediate["head_tax"] = head_intermed
-            intermediate["transfer_spouse_to_head"] = transferable_allow
-        elseif allowed_to_transfer_allowance( sys, from=headtax, to=spousetax )
-            transferable_allow = min( headtax.unused_allowance, sys.marriage_allowance )
-            spousetax = calc_income_tax( spouse, sys, spouse_intermed, transferable_allow )
-            intermediate["spouse_tax"] = spouse_intermed
-            intermediate["transfer_head_to_spouse"] = transferable_allow
-        elseif old_enough_for_mca( head.age ) || old_enough_for_mca( spouse.age )
+        spousetax = calc_income_tax( spouse, sys, spouse_intermed )
+        # This is not quite right - you can't claim the
+        # MCA AND transfer an allowance. We're assuming
+        # always MCA first (I think it's always more valuable?)
+        if old_enough_for_mca( head.age ) || old_enough_for_mca( spouse.age )
             # shoud usually just go to the head but.. some stuff about partner
             # with greater income if married after 2005 and you can elect to do this if
             # married before, so:
-            mca = 0.0
             if headtax.adjusted_net_income > spousetax.adjusted_net_income
-                mca = calculate_mca( head, headtax, sys )
-                headtax.total_tax = max( 0.0, headtax.totaltax - mca )
+                headtax.mca = calculate_mca( head, headtax, sys )
+                headtax.total_tax = max( 0.0, headtax.total_tax - headtax.mca )
             else
-                mca = calculate_mca( spouse, spousetax, sys )
-                spousetax.total_tax = max( 0.0, spousetax.totaltax - mca )
+                spousetax.mca = calculate_mca( spouse, spousetax, sys )
+                spousetax.total_tax = max( 0.0, spousetax.total_tax - spousetax.mca )
             end
-            intermediate["mca"] = mca
+        end
+        if spousetax.mca == 0.0 == headtax.mca
+            if allowed_to_transfer_allowance( sys, from=spousetax, to=headtax )
+                transferable_allow = min( spousetax.unused_allowance, sys.marriage_allowance )
+                headtax = calc_income_tax( head, sys, head_intermed, transferable_allow )
+                intermediate["transfer_spouse_to_head"] = transferable_allow
+            elseif allowed_to_transfer_allowance( sys, from=headtax, to=spousetax )
+                transferable_allow = min( headtax.unused_allowance, sys.marriage_allowance )
+                spousetax = calc_income_tax( spouse, sys, spouse_intermed, transferable_allow )
+                intermediate["transfer_head_to_spouse"] = transferable_allow
+            end
         end
     end
     ( head=headtax, spouse=spousetax )
