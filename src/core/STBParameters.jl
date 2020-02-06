@@ -17,10 +17,16 @@ module STBParameters
    @with_kw mutable struct IncomeTaxSys
       non_savings_rates :: RateBands = [19.0,20.0,21.0,41.0,46.0]
       non_savings_thresholds :: RateBands = [2_049.0, 12_444.0, 30_930.0, 150_000.0]
+      non_savings_basic_rate :: Integer = 2 # above this counts as higher rate
+
       savings_rates  :: RateBands = [0.0, 20.0, 40.0, 45.0]
       savings_thresholds  :: RateBands = [5_000.0, 37_500.0, 150_000.0]
+      savings_basic_rate :: Integer = 2 # above this counts as higher rate
+
       dividend_rates :: RateBands = [0.0, 7.5,32.5,38.1]
       dividend_thresholds :: RateBands = [2_000.0, 37_500.0, 150_000.0]
+      dividend_basic_rate :: Integer = 2 # above this counts as higher rate
+
       personal_allowance          = 12_500.00
       personal_allowance_income_limit = 100_000.00
       personal_allowance_withdrawal_rate = 50.0
@@ -75,6 +81,7 @@ module STBParameters
          if ! scotland
             it.non_savings_rates = [20.0,40.0,45.0]
             it.non_savings_thresholds = [37_500, 150_000.0]
+            it.non_savings_basic_rate = 1
          end
          if weekly
             weeklyise!( it )
@@ -88,12 +95,19 @@ module STBParameters
    """
    function fromJSON( json :: Dict ) :: IncomeTaxSys
       it = IncomeTaxSys()
+
       it.non_savings_rates = convert( RateBands, json["non_savings_rates"] )
       it.non_savings_thresholds  = convert( RateBands, json["non_savings_thresholds"] )
+      it.non_savings_basic_rate = json["non_savings_basic_rate"]
+
       it.savings_rates = convert( RateBands, json["savings_rates"] )
       it.savings_thresholds = convert( RateBands, json["savings_thresholds"] )
+      it.savings_basic_rate = json["savings_basic_rate"]
+
       it.dividend_rates = convert( RateBands ,json["dividend_rates"] )
       it.non_savings_thresholds = convert( RateBands ,json["non_savings_thresholds"] )
+      it.dividends_basic_rate = json["dividends_basic_rate"]
+
       it.savings_thresholds = convert( RateBands ,json["savings_thresholds"] )
       it.dividend_thresholds = convert( RateBands ,json["dividend_thresholds"] )
       it.personal_allowance = json["personal_allowance"]

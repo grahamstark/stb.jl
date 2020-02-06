@@ -13,13 +13,16 @@ using Definitions
 export calc_income_tax, old_enough_for_mca, apply_allowance, ITResult
 
 @with_kw mutable struct ITResult
-    total :: Real = 0.0
+    total_tax :: Real = 0.0
+    taxable_income :: Real = 0.0
+    adjusted_net_income :: Real = 0.0
+    total_income :: Real = 0.0
     non_savings :: Real = 0.0
     non_savings_band :: Integer = 0
     savings :: Real = 0.0
     savings_band :: Integer = 0
     dividends :: Real = 0.0
-    dividends_band :: Integer = 0
+    dividend_band :: Integer = 0
     unused_allowance :: Real = 0.0
 end
 
@@ -245,7 +248,7 @@ function calc_income_tax(
             taxable=dividends_taxable,
             rates=dividend_rates,
             thresholds=dividend_thresholds )
-    else
+    else # some allowance left
         allowance = -taxable_income # e.g. allowance - taxable_income
     end
     intermediate["non_savings_tax"]=non_savings_tax.due
@@ -253,24 +256,49 @@ function calc_income_tax(
     intermediate["dividend_tax"]=dividend_tax.due
 
 
-    itres.total = non_savings_tax.due+savings_tax.due+dividend_tax.due
+    itres.total_tax = non_savings_tax.due+savings_tax.due+dividend_tax.due
+    itres.taxable_income = taxable_income
+    itres.total_income = total_income
+    itres.adjusted_net_income = adjusted_net_income
     itres.non_savings = non_savings_tax.due
     itres.non_savings_band = non_savings_tax.end_band
     itres.savings = savings_tax.due
     itres.savings_band = savings_tax.end_band
     itres.dividends = dividend_tax.due
-    itres.dividends_band = dividend_tax.end_band
+    itres.dividend_band = dividend_tax.end_band
     itres.unused_allowance = allowance
     itres
 end
 
+function allowed_to_transfer_allowance(
+    sys  :: IncomeTaxSys;
+    from :: ITResult,
+    to   :: ITResult ) :: Bool
+
+   can_transfer :: Bool = true
+   if ! (from.unused_allowance > 0.0 &&
+         to.unused_allowance <= 0.0)
+         # nothing to transfer - this is actually wrong since
+         # you can opt to transfer some allowance even if you
+         # can technically use it.
+       can_transfer = false
+   elseif to.savings_band > sys.savings_basic_rate ||
+      to.non_savings_band > sys.non_savings_basic_rate ||
+      to.dividend_band > sys.dividend_basic_rate
+      can_transfer = false
+   end
+   ## TODO disallow if mca claimed
+   can_transfer
+end # can_transfer
+
 function calc_income_tax(
     head   :: Person,
-    spouse :: Union{Nothing,Person}
+    spouse :: Union{Nothing,Person},
     sys    :: IncomeTaxSys,
-    intermediate :: Dict ) :: Tuple{Union{ITResult,Nothing}}
+    intermediate :: Dict ) :: Tuple
     head_intermed = Dict()
     headtax = calc_income_tax( head, sys, head_intermed )
+    intermediate["head_tax"] = head_intermed
     spousetax = nothing
     # FIXME the transferable stuff here
     # is not right as you can elect to transfer more than
@@ -281,19 +309,19 @@ function calc_income_tax(
         spouse_intermed = Dict()
         spousetax = calc_income_tax( spouse, sys, spouse_intermed )
         intermediate["spouse_tax"] = spouse_intermed
-        if spousetax.unused_allowance > 0.0 &&
-           headtax.unused_allowance == 0 ## && FIXME some stuff about higher rates
-                transferable_allow = min( spousetax.unused_allowance, sys.marriage_allowance )
-                headtax = calc_income_tax( head, sys, head_intermed, transferable_allow )
-                intermediate["head_tax"] = head_intermed
-                intermediate["transfer_spouse_to_head"] = transferable_allow
-        elseif headtax.unused_allowance > 0.0 &&
-            spousetax.unused_allowance == 0 ## && some stuff about higher rates
-                transferable_allow = min( headtax.unused_allowance, sys.marriage_allowance )
-                spousetax = calc_income_tax( spouse, sys, spouse_intermed, transferable_allow )
-                intermediate["spouse_tax"] = spouse_intermed
-                intermediate["transfer_head_to_spouse"] = transferable_allow
+        if allowed_to_transfer_allowance( sys, from=spousetax, to=headtax )
+            transferable_allow = min( spousetax.unused_allowance, sys.marriage_allowance )
+            headtax = calc_income_tax( head, sys, head_intermed, transferable_allow )
+            intermediate["head_tax"] = head_intermed
+            intermediate["transfer_spouse_to_head"] = transferable_allow
+        elseif allowed_to_transfer_allowance( sys, from=headtax, to=spousetax )
+            transferable_allow = min( headtax.unused_allowance, sys.marriage_allowance )
+            spousetax = calc_income_tax( spouse, sys, spouse_intermed, transferable_allow )
+            intermediate["spouse_tax"] = spouse_intermed
+            intermediate["transfer_head_to_spouse"] = transferable_allow
         end
+        ( headtax, spousetax )
     end
-    ( headtax, spousetax )
+end # calc_income_tax
+
 end # module
