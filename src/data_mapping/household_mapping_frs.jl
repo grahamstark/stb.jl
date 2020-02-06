@@ -480,7 +480,7 @@ function map_car_value( cv :: Integer ) :: Real
     elseif cv == 10
         v = 20_000 # Don't_know = 10
     end
-    cv
+    v
 end
 
 """
@@ -597,8 +597,10 @@ function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
         end # add bonuses
         # cars
 
-        company_car_fuel_type = Fuel_Type(a_job[j, :carval])
-        company_car_value = safe_inc(company_car_value, map_car_value(a_job[j :carval]))
+        company_car_fuel_type = a_job[j, :fueltyp]
+        mv = map_car_value(a_job[j, :carval])
+        # println( mv )
+        company_car_value = safe_inc(company_car_value, mv )
         company_car_contribution = safe_inc(company_car_contribution, a_job[j, :caramt])
         fuel_supplied = safe_inc(fuel_supplied, a_job[j, :fuelamt])
 

@@ -105,7 +105,13 @@ function map_person( model_person :: DataFrameRow )
         m2z(model_person.hours_of_childcare),
         m2z(model_person.cost_of_childcare),
         Child_Care_Type(safe_assign(model_person.childcare_type )),
-        safe_to_bool( model_person.employer_provides_child_care )
+        safe_to_bool( model_person.employer_provides_child_care ),
+
+        Fuel_Type( m2z(model_person.company_car_fuel_type )),
+        m2z(model_person.company_car_value),
+        m2z(model_person.company_car_contribution),
+        m2z(model_person.fuel_supplied)
+
     )
 
 end
