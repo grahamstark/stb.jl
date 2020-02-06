@@ -31,8 +31,13 @@ module STBParameters
       personal_allowance_income_limit = 100_000.00
       personal_allowance_withdrawal_rate = 50.0
       blind_persons_allowance     = 2_450.00
+
       married_couples_allowance   = 8_915.00
       mca_minimum                 = 3_450.00
+      mca_income_maximum          = 29_600.00
+      mca_credit_rate             = 10.0
+      mca_withdrawal_rate         = 50.0
+
       marriage_allowance          = 1_250.00
       personal_savings_allowance  = 1_000.00
    end
@@ -51,6 +56,11 @@ module STBParameters
       it.mca_minimum *= WEEKS_PER_YEAR
       it.marriage_allowance *= WEEKS_PER_YEAR
       it.personal_savings_allowance *= WEEKS_PER_YEAR
+
+      it.mca_income_maximum       *= WEEKS_PER_YEAR
+      it.mca_credit_rate             *= 100.0
+      it.mca_withdrawal_rate         *= 100.0
+
    end
 
    function weeklyise!( it :: IncomeTaxSys )
@@ -68,6 +78,9 @@ module STBParameters
       it.mca_minimum /= WEEKS_PER_YEAR
       it.marriage_allowance /= WEEKS_PER_YEAR
       it.personal_savings_allowance /= WEEKS_PER_YEAR
+      it.mca_income_maximum       /= WEEKS_PER_YEAR
+      it.mca_credit_rate             /= 100.0
+      it.mca_withdrawal_rate         /= 100.0
    end
 
    function get_default_it_system(
@@ -118,6 +131,10 @@ module STBParameters
       it.mca_minimum = json["mca_minimum"]
       it.marriage_allowance = json["marriage_allowance"]
       it.personal_savings_allowance = json["personal_savings_allowance"]
+
+      it.mca_income_maximum = json["mca_income_maximum"]
+      it.mca_credit_rate = json["mca_credit_rate"]
+      it.mca_withdrawal_rate = json["mca_withdrawal_rate"]
       it
    end
 

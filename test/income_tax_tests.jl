@@ -17,7 +17,8 @@ function get_tax(; scotland = false ) :: IncomeTaxSys
     it.savings_rates ./= 100.0
     it.dividend_rates ./= 100.0
     it.personal_allowance_withdrawal_rate /= 100.0
-
+    it.mca_credit_rate /= 100.0
+    it.mca_withdrawal_rate /= 100.0
     it
 end
 

@@ -96,7 +96,6 @@ end
 const NON_SAVINGS_INCOME = make_non_savings()
 const ALL_TAXABLE = make_all_taxable()
 
-IT_Result = TaxResult{Real}
 
 """
 Very rough approximation to MCA age - ignores all months since we don't have that in a typical dataset
@@ -309,6 +308,17 @@ function allowed_to_transfer_allowance(
    can_transfer
 end # can_transfer
 
+
+function calculate_mca( pers :: Person, tax :: ITResult, sys :: IncomeTaxSys)::Real
+    ## FIXME parameterise this
+    mca = sys.married_couples_allowance
+    if tax.adjusted_net_income > sys.mca_income_maximum
+        mca = max( sys.mca_minimum,
+           (tax.adjusted_net_income-sys.mca_income_maximum)*sys.mca_withdrawal_rate)
+    end
+    mca * sys.mca_credit_rate
+end
+
 function calc_income_tax(
     head   :: Person,
     spouse :: Union{Nothing,Person},
@@ -337,6 +347,19 @@ function calc_income_tax(
             spousetax = calc_income_tax( spouse, sys, spouse_intermed, transferable_allow )
             intermediate["spouse_tax"] = spouse_intermed
             intermediate["transfer_head_to_spouse"] = transferable_allow
+        elseif old_enough_for_mca( head.age ) || old_enough_for_mca( spouse.age )
+            # shoud usually just go to the head but.. some stuff about partner
+            # with greater income if married after 2005 and you can elect to do this if
+            # married before, so:
+            mca = 0.0
+            if headtax.adjusted_net_income > spousetax.adjusted_net_income
+                mca = calculate_mca( head, headtax, sys )
+                headtax.total_tax = max( 0.0, headtax.totaltax - mca )
+            else
+                mca = calculate_mca( spouse, spousetax, sys )
+                spousetax.total_tax = max( 0.0, spousetax.totaltax - mca )
+            end
+            intermediate["mca"] = mca
         end
     end
     ( head=headtax, spouse=spousetax )
