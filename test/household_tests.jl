@@ -7,7 +7,7 @@ import Model_Household: Household, Person, People_Dict, BUAllocation,
 
 start_year=2015
 
-@testset "load scottish households" begin
+@testset "benefit unit allocations" begin
       rc = @timed begin
          num_households,total_num_people,nhh2 = initialise(
             household_name = "model_households_scotland",
