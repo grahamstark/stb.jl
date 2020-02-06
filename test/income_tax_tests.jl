@@ -251,19 +251,25 @@ end # example1 ch3
     head.income[self_employment_income] = 11_290.0
     head_tax_due = 0.0
     spouse.income[self_employment_income] = 20_000.0
-    head_tax_due_ruk = 1_250.0
+    spouse_tax_due_ruk = 1_258.0
 
     result = calc_income_tax( head,spouse, itsys_ruk, intermediate )
+
     println( result )
     println( intermediate )
-
+    @test result.spouse.total_tax ≈ spouse_tax_due_ruk
 end # example 2 ch3
 
 @testset "ch3 blind person" begin
+    itsys_scot :: IncomeTaxSys = get_tax( scotland = true )
+    itsys_ruk :: IncomeTaxSys = get_tax( scotland = false )
+    intermediate = Dict()
     names = Example_Household_Getter.initialise()
     ruk = Example_Household_Getter.get_household( "mel_c2" )
     pers = ruk.people[RUK_PERSON]
     pers.registered_blind = true
+    result = calc_income_tax( pers, nothing, itsys_ruk, intermediate )
+    @test result.head.allowance == itsys_scot.personal_allowance + itsys_scot.blind_persons_allowance
     # test that tax is 2450xmr
 end
 

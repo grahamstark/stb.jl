@@ -18,6 +18,7 @@ export calc_income_tax, old_enough_for_mca, apply_allowance, ITResult
     adjusted_net_income :: Real = 0.0
     total_income :: Real = 0.0
     non_savings :: Real = 0.0
+    allowance   :: Real = 0.0
     non_savings_band :: Integer = 0
     savings :: Real = 0.0
     savings_band :: Integer = 0
@@ -107,6 +108,14 @@ function old_enough_for_mca(
     (model_run_date - Year(age)) < MCA_DATE
 end
 
+function calculate_allowance( pers::Person, sys :: IncomeTaxSys ) :: Real
+    allowance = sys.personal_allowance
+    if pers.registered_blind
+        allowance += sys.blind_persons_allowance
+    end
+    allowance
+end
+
 function apply_allowance( allowance::Real, income::Real )::Tuple
     r = max( 0.0, income - allowance )
     allowance = max(0.0, allowance-income)
@@ -139,7 +148,7 @@ function calc_income_tax(
     non_savings = NON_SAVINGS_INCOME*pers.income;
     savings = SAVINGS_INCOME*pers.income;
     dividends = DIVIDEND_INCOME*pers.income;
-    allowance = sys.personal_allowance+spouse_transfer
+    allowance = calculate_allowance( pers, sys )
     # allowance reductions goes here
 
     non_dividends = non_savings + savings
@@ -255,9 +264,18 @@ function calc_income_tax(
     intermediate["savings_tax"]=savings_tax.due
     intermediate["dividend_tax"]=dividend_tax.due
 
-
-    itres.total_tax = non_savings_tax.due+savings_tax.due+dividend_tax.due
+    #
+    # tax reducers
+    #
+    total_tax = non_savings_tax.due+savings_tax.due+dividend_tax.due
+    if spouse_transfer > 0
+        sp_reduction =
+            sys.non_savings_rates[sys.non_savings_basic_rate]*spouse_transfer
+        total_tax = max( 0.0, total_tax - sp_reduction )
+    end
+    itres.total_tax = total_tax
     itres.taxable_income = taxable_income
+    itres.allowance = allowance
     itres.total_income = total_income
     itres.adjusted_net_income = adjusted_net_income
     itres.non_savings = non_savings_tax.due
@@ -295,7 +313,7 @@ function calc_income_tax(
     head   :: Person,
     spouse :: Union{Nothing,Person},
     sys    :: IncomeTaxSys,
-    intermediate :: Dict ) :: Tuple
+    intermediate :: Dict ) :: NamedTuple
     head_intermed = Dict()
     headtax = calc_income_tax( head, sys, head_intermed )
     intermediate["head_tax"] = head_intermed
@@ -320,8 +338,8 @@ function calc_income_tax(
             intermediate["spouse_tax"] = spouse_intermed
             intermediate["transfer_head_to_spouse"] = transferable_allow
         end
-        ( headtax, spousetax )
     end
+    ( head=headtax, spouse=spousetax )
 end # calc_income_tax
 
 end # module
