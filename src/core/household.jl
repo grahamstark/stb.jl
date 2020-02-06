@@ -50,6 +50,11 @@ mutable struct Person
     cost_of_childcare :: Real
     childcare_type :: Child_Care_Type
     employer_provides_child_care :: Bool
+
+    company_car_fuel_type :: Fuel_Type
+    company_car_value :: Real
+    company_car_contribution :: Real
+    fuel_supplied :: Real
 end
 
 People_Dict = Dict{BigInt,Person}

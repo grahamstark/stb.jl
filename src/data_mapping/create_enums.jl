@@ -76,6 +76,9 @@ function make_from_frs()
     println( make_enumerated_type( "Child_Care_Type", chldcare[:chlook],true, true )) #
     println( make_enumerated_type( "Child_Care_Type_2015", chldcare2[:chlook],true, true )) #
     println( make_enumerated_type( "Child_Care_Type_2016", chldcare3[:chlook],true, true )) #
+
+    println( make_enumerated_type( "Fuel_Type", job[:fueltyp],true, true )) #
+    println( make_enumerated_type( "Fuel_Type", job[:carval],true, true )) #
 end
 
 make_from_frs()

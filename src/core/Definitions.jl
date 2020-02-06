@@ -1302,6 +1302,23 @@ export Missing_Child_Care_Type
    Other_non_relatives_includes_babysitters = 18
 end
 
+export Fuel_Type  # mapped from fueltyp
+export Petrol, Diesel, Biofuel_eg_E85_fuel, Hybrid_use_a_combination_of_petrol_and_electricity, Electric, LPG, Other, Dont_know
+export Missing_Fuel_Type
+
+   @enum Fuel_Type begin  # mapped from fueltyp
+      Missing_Fuel_Type = -1
+      Petrol = 1
+      Diesel = 2
+      Biofuel_eg_E85_fuel = 3
+      Hybrid_use_a_combination_of_petrol_and_electricity = 4
+      Electric = 5
+      LPG = 6
+      Other = 7
+      Dont_know = 8
+   end
+
+
 export
    Uprate_Item_Type,
    upr_no_uprate,

@@ -225,6 +225,11 @@ function initialise_person(n::Integer)::DataFrame
         employer_provides_child_care = Vector{Union{Integer,Missing}}(missing, n),
 
 
+        company_car_fuel_type = Vector{Union{Integer,Missing}}(missing, n),
+        company_car_value  = Vector{Union{Real,Missing}}(missing, n),
+        company_car_contribution  = Vector{Union{Real,Missing}}(missing, n),
+        fuel_supplied  = Vector{Union{Real,Missing}}(missing, n),
+
         relationship_to_hoh = Vector{Union{Integer,Missing}}(missing, n),
         relationship_1 = Vector{Union{Integer,Missing}}(missing, n),
         relationship_2 = Vector{Union{Integer,Missing}}(missing, n),
@@ -449,6 +454,35 @@ function map_alimony(frs_person::DataFrameRow, a_maint::DataFrame)::Real
     alimony
 end
 
+function map_car_value( cv :: Integer ) :: Real
+    v = 0.0
+    @assert cv <= 10 "cv out-of-range = $cv"
+    if cv < 0
+        v = 0.0
+    elseif cv == 1
+        v = 5_000.0
+    elseif cv == 2
+        v = 11_500.0
+    elseif cv == 3
+        v = 14_500.0
+    elseif cv == 4
+        v = 17_500.0
+    elseif cv == 5
+        v = 20_500.0
+    elseif cv == 6
+        v = 23_500.0
+    elseif cv == 7
+        v = 27_500.0
+    elseif cv == 8
+        v = 35_000.0
+    elseif cv == 9
+        v = 45_000.0
+    elseif cv == 10
+        v = 20_000 # Don't_know = 10
+    end
+    cv
+end
+
 """
 process the "r01..r014 and relhrp codes. Note we're adding 'this person' (=0) rather than missing as in the raw data"
 """
@@ -493,6 +527,12 @@ function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
     tax = 0.0
     principal_employment_type = -1
     public_or_private = -1
+
+    company_car_fuel_type = 0
+    company_car_value = 0.0
+    company_car_contribution = 0.0
+    fuel_supplied = 0.0
+
     for j in 1:njobs
         if j == 1 # take 1st record job for all of these
             principal_employment_type = safe_assign(a_job[j, :etype])
@@ -555,6 +595,13 @@ function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
                 end
             end # bonuses loop
         end # add bonuses
+        # cars
+
+        company_car_fuel_type = Fuel_Type(a_job[j, :carval])
+        company_car_value = safe_inc(company_car_value, map_car_value(a_job[j :carval]))
+        company_car_contribution = safe_inc(company_car_contribution, a_job[j, :caramt])
+        fuel_supplied = safe_inc(fuel_supplied, a_job[j, :fuelamt])
+
     end # jobs loop
 
     model_adult.usual_hours_worked = usual_hours
@@ -578,15 +625,19 @@ function process_job_rec!(model_adult::DataFrameRow, a_job::DataFrame)
     model_adult.income_self_employment_expenses = self_employment_expenses
     model_adult.income_self_employment_losses = self_employment_losses
 
-end
+    model_adult.company_car_fuel_type = company_car_fuel_type
+    model_adult.company_car_value = company_car_value
+    model_adult.company_car_contribution = company_car_contribution
+    model_adult.fuel_supplied = fuel_supplied
 
+end
 
 """
 Convoluted - take the benefit enum, make ...
 FIXME: some represent one-off payments (winter fuel..) so maybe weeklyise, but all that
 really matters is whether they are present
 """
-function process_benefits!(model_adult::DataFrameRow, a_benefits::DataFrame)
+function process_benefits!( model_adult::DataFrameRow, a_benefits::DataFrame)
     nbens = size(a_benefits)[1]
     for i in instances(Incomes_Type)
         if i >= dlaself_care && i <= personal_independence_payment_mobility
