@@ -11,6 +11,7 @@ import Parameters: @with_kw
 using Definitions
 
 export calc_income_tax, old_enough_for_mca, apply_allowance, ITResult
+export calculate_company_car_charge
 
 @with_kw mutable struct ITResult
     total_tax :: Real = 0.0
@@ -86,6 +87,19 @@ function make_all_taxable()::Incomes_Dict
     all_t
 end
 
+function calculate_company_car_charge(
+    pers :: Person,
+    calculator :: Function = guess_car_percentage_2020_21 ) :: Real
+    value = max(0.0, pers.company_car_value-
+        pers.company_car_contribution )
+    if pers.fuel_supplied > 0.0
+        value += sys.fuel_imputation
+    end
+    pct = calculator( pers.company_car_fuel_type )
+
+    value *
+end
+
 function make_non_savings()::Incomes_Dict
     excl = union(Set(keys(DIVIDEND_INCOME)), Set( keys(SAVINGS_INCOME)))
     nsi = make_all_taxable()
@@ -155,6 +169,7 @@ function calc_income_tax(
     non_dividends = non_savings + savings
 
     adjusted_net_income = total_income
+    adjusted_net_income += calculate_company_car_charge(pers)
     # ...
 
     non_savings_tax = TaxResult(0.0, 0)

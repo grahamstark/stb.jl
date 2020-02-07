@@ -40,6 +40,19 @@ module STBParameters
 
       marriage_allowance          = 1_250.00
       personal_savings_allowance  = 1_000.00
+
+      company_car_charge_by_CO2_emissions = Dict{Fuel_Type,Real}(
+            Missing_Fuel_Type=>0.1,
+            No_Fuel=>0.1,
+            Other=>0.1,
+            Dont_know=>0.1,
+            Petrol=>0.25, # dunno
+            Diesel=>0.37,
+            Hybrid_use_a_combination_of_petrol_and_electricity=>0.16,
+            Electric=>0.02,
+            LPG=>0.02,
+            Biofuel_eg_E85_fuel=>0.02 )
+      it.fuel_imputation = 24_100.00
    end
 
    function annualise!( it :: IncomeTaxSys )
@@ -60,7 +73,9 @@ module STBParameters
       it.mca_income_maximum       *= WEEKS_PER_YEAR
       it.mca_credit_rate             *= 100.0
       it.mca_withdrawal_rate         *= 100.0
-
+      for k in company_car_charge_by_CO2_emissions
+         it.company_car_charge_by_CO2_emissions[k.first] *= WEEKS_PER_YEAR
+      end
    end
 
    function weeklyise!( it :: IncomeTaxSys )
@@ -81,6 +96,10 @@ module STBParameters
       it.mca_income_maximum       /= WEEKS_PER_YEAR
       it.mca_credit_rate             /= 100.0
       it.mca_withdrawal_rate         /= 100.0
+      for k in company_car_charge_by_CO2_emissions
+         it.company_car_charge_by_CO2_emissions[k.first] /= WEEKS_PER_YEAR
+      end
+
    end
 
    function get_default_it_system(
