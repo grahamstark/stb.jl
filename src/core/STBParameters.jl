@@ -14,6 +14,19 @@ module STBParameters
    ## TODO Use Unitful to have currency weekly monthly annual counts as annotations
    # using Unitful
 
+   Fuel_Dict = Dict{Fuel_Type,Real}
+   Default_Fuel_Dict_2020_21 = Fuel_Dict(
+         Missing_Fuel_Type=>0.1,
+         No_Fuel=>0.1,
+         Other=>0.1,
+         Dont_know=>0.1,
+         Petrol=>0.25, # dunno
+         Diesel=>0.37,
+         Hybrid_use_a_combination_of_petrol_and_electricity=>0.16,
+         Electric=>0.02,
+         LPG=>0.02,
+         Biofuel_eg_E85_fuel=>0.02 )
+
    @with_kw mutable struct IncomeTaxSys
       non_savings_rates :: RateBands = [19.0,20.0,21.0,41.0,46.0]
       non_savings_thresholds :: RateBands = [2_049.0, 12_444.0, 30_930.0, 150_000.0]
@@ -41,18 +54,8 @@ module STBParameters
       marriage_allowance          = 1_250.00
       personal_savings_allowance  = 1_000.00
 
-      company_car_charge_by_CO2_emissions = Dict{Fuel_Type,Real}(
-            Missing_Fuel_Type=>0.1,
-            No_Fuel=>0.1,
-            Other=>0.1,
-            Dont_know=>0.1,
-            Petrol=>0.25, # dunno
-            Diesel=>0.37,
-            Hybrid_use_a_combination_of_petrol_and_electricity=>0.16,
-            Electric=>0.02,
-            LPG=>0.02,
-            Biofuel_eg_E85_fuel=>0.02 )
-      it.fuel_imputation = 24_100.00
+      company_car_charge_by_CO2_emissions = Default_Fuel_Dict_2020_21
+      fuel_imputation = 24_100.00
    end
 
    function annualise!( it :: IncomeTaxSys )
