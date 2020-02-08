@@ -154,6 +154,8 @@ module STBParameters
       it.mca_income_maximum = json["mca_income_maximum"]
       it.mca_credit_rate = json["mca_credit_rate"]
       it.mca_withdrawal_rate = json["mca_withdrawal_rate"]
+      it.company_car_charge_by_CO2_emissions = convert( Dict{Fuel_Type,Real},json["company_car_charge_by_CO2_emissions"])
+      it.fuel_imputation = json["fuel_imputation"]
       it
    end
 

@@ -96,8 +96,7 @@ function calculate_company_car_charge(
         value += sys.fuel_imputation
     end
     pct = calculator( pers.company_car_fuel_type )
-
-    value *
+    value * pct
 end
 
 function make_non_savings()::Incomes_Dict
