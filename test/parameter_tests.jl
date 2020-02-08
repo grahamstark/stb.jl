@@ -8,18 +8,18 @@ import TBComponents: WEEKS_PER_YEAR
     itsysdir :: IncomeTaxSys = get_default_it_system( year=2019, scotland=true)
     itsyseng :: IncomeTaxSys = get_default_it_system( year=2019, scotland=false)
     @test itsyseng.non_savings_rates[1]≈0.20
-    @test itsyseng.non_savings_bands[2]≈150_000/WEEKS_PER_YEAR
+    @test itsyseng.non_savings_thresholds[2]≈150_000/WEEKS_PER_YEAR
     it = IncomeTaxSys()
     itweekly = deepcopy(it)
     @test itweekly.savings_rates == it.savings_rates
     weeklyise!( itweekly )
     annualise!( itweekly )
-    @test isapprox( itweekly.non_savings_bands, it.non_savings_bands, rtol=0.00001 )
+    @test isapprox( itweekly.non_savings_thresholds, it.non_savings_thresholds, rtol=0.00001 )
     @test itweekly.mca_minimum ≈ it.mca_minimum
     it_s = JSON.json( it )
     itj_dic = JSON.parse( it_s )
     itj = fromJSON( itj_dic )
-    @test itj.non_savings_bands ≈ it.non_savings_bands
+    @test itj.non_savings_thresholds ≈ it.non_savings_thresholds
     @test itj.mca_minimum ≈ it.mca_minimum
 
 end # example 1

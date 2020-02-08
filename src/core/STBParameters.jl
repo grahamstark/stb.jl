@@ -76,7 +76,7 @@ module STBParameters
       it.mca_income_maximum       *= WEEKS_PER_YEAR
       it.mca_credit_rate             *= 100.0
       it.mca_withdrawal_rate         *= 100.0
-      for k in company_car_charge_by_CO2_emissions
+      for k in it.company_car_charge_by_CO2_emissions
          it.company_car_charge_by_CO2_emissions[k.first] *= WEEKS_PER_YEAR
       end
    end
@@ -99,7 +99,7 @@ module STBParameters
       it.mca_income_maximum       /= WEEKS_PER_YEAR
       it.mca_credit_rate             /= 100.0
       it.mca_withdrawal_rate         /= 100.0
-      for k in company_car_charge_by_CO2_emissions
+      for k in it.company_car_charge_by_CO2_emissions
          it.company_car_charge_by_CO2_emissions[k.first] /= WEEKS_PER_YEAR
       end
 
@@ -125,26 +125,36 @@ module STBParameters
       it
    end
 
+   function to_rate_bands( a :: Vector ) :: RateBands
+      n = size( a )[1]
+      rb :: RateBands = zeros(n)
+      for i in 1:n
+         rb[i] =  Real(a[i])
+      end
+      rb
+   end
+
    """
    Map from
    """
    function fromJSON( json :: Dict ) :: IncomeTaxSys
       it = IncomeTaxSys()
-
-      it.non_savings_rates = convert( RateBands, json["non_savings_rates"] )
-      it.non_savings_thresholds  = convert( RateBands, json["non_savings_thresholds"] )
+      println( typeof(json["non_savings_thresholds"]))
+      it.non_savings_rates = to_rate_bands( json["non_savings_rates"] )
+      it.company_car_charge_by_CO2_emissions = to_rate_bands( Dict{Fuel_Type,Real},json["company_car_charge_by_CO2_emissions"])
+      it.non_savings_thresholds  = to_rate_bands( RateBands, json["non_savings_thresholds"] )
       it.non_savings_basic_rate = json["non_savings_basic_rate"]
 
-      it.savings_rates = convert( RateBands, json["savings_rates"] )
-      it.savings_thresholds = convert( RateBands, json["savings_thresholds"] )
+      it.savings_rates = to_rate_bands( RateBands, json["savings_rates"] )
+      it.savings_thresholds = to_rate_bands( RateBands, json["savings_thresholds"] )
       it.savings_basic_rate = json["savings_basic_rate"]
 
-      it.dividend_rates = convert( RateBands ,json["dividend_rates"] )
-      it.non_savings_thresholds = convert( RateBands ,json["non_savings_thresholds"] )
+      it.dividend_rates = to_rate_bands( RateBands ,json["dividend_rates"] )
+      it.non_savings_thresholds = to_rate_bands( RateBands ,json["non_savings_thresholds"] )
       it.dividends_basic_rate = json["dividends_basic_rate"]
 
-      it.savings_thresholds = convert( RateBands ,json["savings_thresholds"] )
-      it.dividend_thresholds = convert( RateBands ,json["dividend_thresholds"] )
+      it.savings_thresholds = to_rate_bands( RateBands ,json["savings_thresholds"] )
+      it.dividend_thresholds = to_rate_bands( RateBands ,json["dividend_thresholds"] )
       it.personal_allowance = json["personal_allowance"]
       it.personal_allowance_income_limit = json["personal_allowance_income_limit"]
       it.personal_allowance_withdrawal_rate = json["personal_allowance_withdrawal_rate"]
@@ -157,7 +167,7 @@ module STBParameters
       it.mca_income_maximum = json["mca_income_maximum"]
       it.mca_credit_rate = json["mca_credit_rate"]
       it.mca_withdrawal_rate = json["mca_withdrawal_rate"]
-      it.company_car_charge_by_CO2_emissions = convert( Dict{Fuel_Type,Real},json["company_car_charge_by_CO2_emissions"])
+      ## CAREFUL!
       it.fuel_imputation = json["fuel_imputation"]
       it
    end
