@@ -134,6 +134,12 @@ module STBParameters
       rb
    end
 
+   function to_fuel_charges( d :: Dict ) :: Fuel_Dict
+      fd = Fuel_Dict()
+      ## FIXME complete
+      fd
+   end
+
    """
    Map from
    """
@@ -141,7 +147,7 @@ module STBParameters
       it = IncomeTaxSys()
       println( typeof(json["non_savings_thresholds"]))
       it.non_savings_rates = to_rate_bands( json["non_savings_rates"] )
-      it.company_car_charge_by_CO2_emissions = to_rate_bands( Dict{Fuel_Type,Real},json["company_car_charge_by_CO2_emissions"])
+      it.company_car_charge_by_CO2_emissions = to_fuel_charges( Dict{Fuel_Type,Real},json["company_car_charge_by_CO2_emissions"])
       it.non_savings_thresholds  = to_rate_bands( RateBands, json["non_savings_thresholds"] )
       it.non_savings_basic_rate = json["non_savings_basic_rate"]
 
