@@ -6,7 +6,7 @@ using Base.Unicode
 
 export @exported_enum, qstrtodict, pretty, basiccensor, get_if_set
 export addsysnotoname, diff_between, mult_dict!
-export loadtoframe, age_in_years
+export loadtoframe, age_in_years, isapprox, ≈
 
 
 function addsysnotoname(names, sysno)::Array{Symbol,1}
@@ -28,6 +28,30 @@ function get_if_set(key, dict::Dict, default; operation=nothing)
    end
    v
 end
+
+import Base.isapprox
+
+"""
+true if the keys are the same and all the elements
+   compare approx equal, else false
+"""
+function isapprox( d1::Dict, d2::Dict ) :: Bool
+   k1 = Set( collect( keys(d1)))
+   k2 = Set( collect( keys(d2)))
+   if k1 != k2
+      # println(" resturn ne $(k1) !== $(k2)")
+      return false
+   end
+   for k in k1
+      if ! (d1[k] ≈ d2[k])
+         # println( "return ne $k $(d1[k]) ≈ $(d2[k])")
+         return false
+      end
+   end
+   return true
+end
+
+const ≈ = isapprox
 
 """
 return a dict with all the elements in common where m2[k]-m1[k] is possible.

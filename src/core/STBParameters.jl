@@ -54,6 +54,9 @@ module STBParameters
       marriage_allowance          = 1_250.00
       personal_savings_allowance  = 1_000.00
 
+      # FIXME better to have it straight from
+      # the book with charges per CO2 range
+      # and the data being an estimate of CO2 per type
       company_car_charge_by_CO2_emissions = Default_Fuel_Dict_2020_21
       fuel_imputation = 24_100.00
    end
@@ -136,7 +139,10 @@ module STBParameters
 
    function to_fuel_charges( d :: Dict ) :: Fuel_Dict
       fd = Fuel_Dict()
-      ## FIXME complete
+      for i in instances(Fuel_Type)
+         k = String(Symbol(i))
+         fd[i] = d[k]
+      end
       fd
    end
 
@@ -147,20 +153,19 @@ module STBParameters
       it = IncomeTaxSys()
       println( typeof(json["non_savings_thresholds"]))
       it.non_savings_rates = to_rate_bands( json["non_savings_rates"] )
-      it.company_car_charge_by_CO2_emissions = to_fuel_charges( Dict{Fuel_Type,Real},json["company_car_charge_by_CO2_emissions"])
-      it.non_savings_thresholds  = to_rate_bands( RateBands, json["non_savings_thresholds"] )
+      it.non_savings_thresholds  = to_rate_bands( json["non_savings_thresholds"] )
       it.non_savings_basic_rate = json["non_savings_basic_rate"]
 
-      it.savings_rates = to_rate_bands( RateBands, json["savings_rates"] )
-      it.savings_thresholds = to_rate_bands( RateBands, json["savings_thresholds"] )
+      it.savings_rates = to_rate_bands( json["savings_rates"] )
+      it.savings_thresholds = to_rate_bands( json["savings_thresholds"] )
       it.savings_basic_rate = json["savings_basic_rate"]
 
-      it.dividend_rates = to_rate_bands( RateBands ,json["dividend_rates"] )
-      it.non_savings_thresholds = to_rate_bands( RateBands ,json["non_savings_thresholds"] )
-      it.dividends_basic_rate = json["dividends_basic_rate"]
+      it.dividend_rates = to_rate_bands( json["dividend_rates"] )
+      it.non_savings_thresholds = to_rate_bands( json["non_savings_thresholds"] )
+      it.dividend_basic_rate = json["dividend_basic_rate"]
 
-      it.savings_thresholds = to_rate_bands( RateBands ,json["savings_thresholds"] )
-      it.dividend_thresholds = to_rate_bands( RateBands ,json["dividend_thresholds"] )
+      it.savings_thresholds = to_rate_bands( json["savings_thresholds"] )
+      it.dividend_thresholds = to_rate_bands( json["dividend_thresholds"] )
       it.personal_allowance = json["personal_allowance"]
       it.personal_allowance_income_limit = json["personal_allowance_income_limit"]
       it.personal_allowance_withdrawal_rate = json["personal_allowance_withdrawal_rate"]
@@ -175,6 +180,8 @@ module STBParameters
       it.mca_withdrawal_rate = json["mca_withdrawal_rate"]
       ## CAREFUL!
       it.fuel_imputation = json["fuel_imputation"]
+      it.company_car_charge_by_CO2_emissions =
+         to_fuel_charges(json["company_car_charge_by_CO2_emissions"])
       it
    end
 
