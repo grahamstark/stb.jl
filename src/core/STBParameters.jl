@@ -59,6 +59,15 @@ module STBParameters
       # and the data being an estimate of CO2 per type
       company_car_charge_by_CO2_emissions = Default_Fuel_Dict_2020_21
       fuel_imputation = 24_100.00
+
+      #
+      # pensions
+      #
+      pension_contrib_basic_amount = 3_600.00
+      pension_contrib_annual_allowance = 40_000.00
+      pension_contrib_annual_minimum = 10_000.00
+      pension_contrib_threshold_income = 110_000.00
+      it.pension_contrib_withdrawal_rate = 50.0
    end
 
    function annualise!( it :: IncomeTaxSys )
@@ -75,6 +84,8 @@ module STBParameters
       it.mca_minimum *= WEEKS_PER_YEAR
       it.marriage_allowance *= WEEKS_PER_YEAR
       it.personal_savings_allowance *= WEEKS_PER_YEAR
+      it.pension_contrib_basic_amount *= WEEKS_PER_YEAR
+
 
       it.mca_income_maximum       *= WEEKS_PER_YEAR
       it.mca_credit_rate             *= 100.0
@@ -105,6 +116,7 @@ module STBParameters
       for k in it.company_car_charge_by_CO2_emissions
          it.company_car_charge_by_CO2_emissions[k.first] /= WEEKS_PER_YEAR
       end
+      it.pension_contrib_basic_amount /= WEEKS_PER_YEAR
 
    end
 
@@ -182,6 +194,11 @@ module STBParameters
       it.fuel_imputation = json["fuel_imputation"]
       it.company_car_charge_by_CO2_emissions =
          to_fuel_charges(json["company_car_charge_by_CO2_emissions"])
+      it.pension_contrib_basic_amount = json["pension_contrib_basic_amount"]
+      it.pension_contrib_annual_allowance = json["pension_contrib_annual_allowance"]
+      it.pension_contrib_annual_minimum = json["pension_contrib_annual_allowance"]
+      it.pension_contrib_threshold_income = json["pension_contrib_threshold_income"]
+      it.pension_contrib_withdrawal_rate = json["pension_contrib_withdrawal_rate"]
       it
    end
 
