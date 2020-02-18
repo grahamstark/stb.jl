@@ -16,6 +16,7 @@ using HttpCommon
 using Logging, LoggingExtras
 
 import Mux.WebSockets
+import LRUCache: get!, empty!
 
 ## !!! needs Julia 1.3:w
 import Base.Threads.@spawn
@@ -26,7 +27,8 @@ const DEFAULT_SERVER="http://localhost:$DEFAULT_PORT/"
 const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_rate_2=0.5&it_band=10000&benefit1=150.0&benefit2=60.0&ben2_min_hours = 150.0&ben2_taper=0.5&ben2_u_limit = 250.0"
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_min_hours=0&ben2_u_limit=0"
 
-
+const MAX_CACHE_SIZE=300
+const MAIN_RESULTS_CACHE = LRUCache.LRU{ MiniTB.Parameters, String }(maxsize=MAX_CACHE_SIZE)
 
 @info "server starting up"
 
@@ -111,13 +113,18 @@ const ZERO_TAX_PARAMS = makeztparams()
 const ZERO_DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
 const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_SETTINGS )
 
+function main_run_to_json( tbparams :: MiniTB.Parameters ):: String
+   results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
+   summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
+   JSON.json( summary_output )
+end
 
 function web_doonerun( req :: Dict ) :: AbstractString
    @info "web_doonerun; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req )
-   results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
-   summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
-   JSON.json( summary_output )
+   get!( MAIN_RESULTS_CACHE, tbparams) do
+      main_run_to_json( tbparams )
+   end
 end # doonerun
 
 
