@@ -1,8 +1,7 @@
 # Rough Benchmarks 20/2/2020
 
 
-
-as requested I've had a look at the likely cost of a server for this, but not got all that far. As I've mentioned the model code isn't finished yet, and in any case I've no idea how often the model will be run, so it's hard to get any kind of sensible benchmarks for how much memory/CPU time we'll need. From some time poking about on Azure and Amazon, and also talking to my own server provider, the best I can give you is rough lower/upper bounds of £25-£90 per month - so £300-1,080 pa. One possibility I'm exploring is to have something big and fast for 1 month per year - so the week before week 28 to 2 weeks after, say, and something scaled back the rest of the time: Azure certainly offer that.
+As requested I've had a look at the likely cost of a server for this, but not got all that far. As I've mentioned the model code isn't finished yet, and in any case I've no idea how often the model will be run, so it's hard to get any kind of sensible benchmarks for how much memory/CPU time we'll need. From some time poking about on Azure and Amazon, and also talking to my own server provider, the best I can give you is rough lower/upper bounds of £25-£90 per month - so £300-1,080 pa. One possibility I'm exploring is to have something big and fast for 1 month per year - so the week before week 28 to 2 weeks after, say, and something scaled back the rest of the time: Azure certainly offer that.
 
 <pre>
 

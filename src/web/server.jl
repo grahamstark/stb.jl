@@ -217,7 +217,7 @@ LogLevel( Logging.Info )
    page("/ztbc", req -> do_in_thread( web_makeztbc, req )),
    # handle main stb run a bit differently so we can
    # check & cache the results.
-   page("/stb", req -> web_doonerun, req ),
+   page("/stb", req -> web_doonerun( req )),
    Mux.notfound(),
 )
 
