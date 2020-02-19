@@ -120,11 +120,16 @@ function main_run_to_json( tbparams :: MiniTB.Parameters ):: String
 end
 
 function web_doonerun( req :: Dict ) :: AbstractString
-   @info "web_doonerun; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req )
+   json = ""
    get!( MAIN_RESULTS_CACHE, tbparams) do
-      main_run_to_json( tbparams )
+      do_in_thread( req )
+      @info "web_doonerun; running on thread $(Threads.threadid())"
+      response = @spawn main_run_to_json( tbparams )
+      json = fetch( response )
    end
+   # headers could include (e.g.) a timestamp, so add after caching
+   add_headers( json )
 end # doonerun
 
 
@@ -210,7 +215,9 @@ LogLevel( Logging.Info )
    page("/bc", req -> do_in_thread( web_makebc, req )),
    page("/zbc", req -> do_in_thread( web_makezbc, req )),
    page("/ztbc", req -> do_in_thread( web_makeztbc, req )),
-   page("/stb", req -> do_in_thread( web_doonerun, req )),
+   # handle main stb run a bit differently so we can
+   # check & cache the results.
+   page("/stb", req -> web_doonerun, req ),
    Mux.notfound(),
 )
 
