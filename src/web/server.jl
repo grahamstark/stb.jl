@@ -94,7 +94,7 @@ function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS ) :: Min
 end
 
 
-example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2015 )
+const example_names, num_households, num_people = load_data( load_examples = true, load_main = true, start_year = 2015 )
 
 const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 

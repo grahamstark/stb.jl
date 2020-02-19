@@ -8,7 +8,7 @@ include( "hhld_from_frame.jl" )
 
 export  initialise, get_household
 
-MODEL_HOUSEHOLDS=missing
+const MODEL_HOUSEHOLDS :: Vector{Union{Missing,Household}}(missing,0)
 
 """
 return (number of households available, num people loaded inc. kids, num hhls in dataset (should always = item[1]))

@@ -32,8 +32,8 @@ function load_data(; load_examples::Bool, load_main :: Bool, start_year = 2015 )
    (example_names, num_households, num_people )
 end
 
-mr_edges = [-99999.99, 0.0, 0.1, 0.25, 0.5, 0.75, 1.0, 9999.0]
-growth = 0.02
+const mr_edges = [-99999.99, 0.0, 0.1, 0.25, 0.5, 0.75, 1.0, 9999.0]
+const growth = 0.02
 
 function poverty_targetting_adder( dfr :: DataFrameRow, data :: Dict ) :: Real
    which = data[:which_element]
