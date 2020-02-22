@@ -75,7 +75,7 @@ function d100( v :: Number ) :: Number
    v/100.0
 end
 
-function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS ) :: MiniTB.Parameters
+function web_map_params( req  :: Dict, defaults = MiniTB.DEFAULT_PARAMS ) :: MiniTB.TBParameters
    querydict = req[:parsed_querystring]
    tbparams = deepcopy( defaults )
    tbparams.it_allow = get_if_set("it_allow", querydict, tbparams.it_allow, operation=weeklyise )
@@ -100,7 +100,7 @@ const DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.DEFAULT_PARAMS)
 
 const BASE_RESULTS = create_base_results( num_households, num_people )
 
-function makeztparams() :: MiniTB.Parameters
+function makeztparams() :: MiniTB.TBParameters
    pars = deepcopy( MiniTB.DEFAULT_PARAMS )
    pars.it_rate = [0.0,0.0]
    pars
@@ -113,19 +113,18 @@ const ZERO_TAX_PARAMS = makeztparams()
 const ZERO_DEFAULT_BC = local_makebc(MiniTB.DEFAULT_PERSON, MiniTB.ZERO_PARAMS)
 const ZERO_TAX_BC = local_makebc(MiniTB.DEFAULT_PERSON, ZERO_TAX_PARAMS, BC_500_SETTINGS )
 
-function main_run_to_json( tbparams :: MiniTB.Parameters ):: String
+function main_run_to_json( tbparams :: MiniTB.TBParameters ):: String
    results = doonerun( tbparams, num_households, num_people, NUM_REPEATS )
    summary_output = summarise_results!( results=results, base_results=BASE_RESULTS )
    JSON.json( summary_output )
 end
 
-function web_doonerun( req :: Dict ) :: AbstractString
+function web_doonerun( req :: Dict ) :: Dict
    tbparams = web_map_params( req )
    json = ""
    get!( MAIN_RESULTS_CACHE, tbparams) do
-      do_in_thread( req )
-      @info "web_doonerun; running on thread $(Threads.threadid())"
       response = @spawn main_run_to_json( tbparams )
+      @info "web_doonerun; running on thread $(Threads.threadid())"
       json = fetch( response )
    end
    # headers could include (e.g.) a timestamp, so add after caching

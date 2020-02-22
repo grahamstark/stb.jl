@@ -47,7 +47,7 @@ function create_base_results( num_households :: Integer, num_people :: Integer )
    base_results = doonerun( MiniTB.DEFAULT_PARAMS, num_households, num_people, 1 )
    basenames = names( base_results )
    basenames = addsysnotoname( basenames, 1 )
-   names!( base_results, basenames )
+   rename!( base_results, basenames )
    base_results
 end
 
@@ -96,7 +96,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
 
     n_names = names( results )
     n_names_2 = addsysnotoname( n_names, 2 )
-    names!( results, n_names_2 )
+    rename!( results, n_names_2 )
     results = hcat( base_results, results )
 
     @assert results.pid_1 == results.pid_2
