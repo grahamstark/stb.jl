@@ -186,7 +186,7 @@ end
 # This is my attempt at starting a task using the 1.3 @spawn macro
 # 1st parameter is a function that returns String (probably a json string) and accepts the req Dict
 #
-function do_in_thread( the_func, req :: Dict ) :: Dict
+function do_in_thread( the_func::Function, req :: Dict ) :: Dict
    response = @spawn the_func( req )
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
