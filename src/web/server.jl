@@ -16,7 +16,7 @@ using HttpCommon
 using Logging, LoggingExtras
 
 import Mux.WebSockets
-using LRUCache: get!, empty!
+using LRUCache
 
 ## !!! needs Julia 1.3:w
 import Base.Threads.@spawn
@@ -28,7 +28,7 @@ const DEFAULT_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=300.0&it_rate_1=0.25&it_ra
 const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_band=0&benefit1=0&benefit2=0.0&ben2_taper=0&ben2_min_hours=0&ben2_u_limit=0"
 
 const MAX_CACHE_SIZE=300
-const MAIN_RESULTS_CACHE = LRUCache.LRU{ MiniTB.Parameters, String }(maxsize=MAX_CACHE_SIZE)
+const MAIN_RESULTS_CACHE = LRUCache.LRU{ MiniTB.TBParameters, String }(maxsize=MAX_CACHE_SIZE)
 
 @info "server starting up"
 
