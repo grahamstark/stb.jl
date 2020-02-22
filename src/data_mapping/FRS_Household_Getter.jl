@@ -3,12 +3,13 @@ module FRS_Household_Getter
 import CSVFiles
 import DataFrames: DataFrame
 using Definitions
+import Model_Household: Household
 
 include( "hhld_from_frame.jl" )
 
 export  initialise, get_household
 
-const MODEL_HOUSEHOLDS :: Vector{Union{Missing,Household}}(missing,0)
+const MODEL_HOUSEHOLDS = Vector{Union{Missing,Household}}(missing,0)
 
 """
 return (number of households available, num people loaded inc. kids, num hhls in dataset (should always = item[1]))

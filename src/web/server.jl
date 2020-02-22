@@ -16,7 +16,7 @@ using HttpCommon
 using Logging, LoggingExtras
 
 import Mux.WebSockets
-import LRUCache: get!, empty!
+using LRUCache: get!, empty!
 
 ## !!! needs Julia 1.3:w
 import Base.Threads.@spawn
