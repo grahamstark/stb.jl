@@ -127,6 +127,8 @@ function web_doonerun( req :: Dict ) :: Dict
       @info "web_doonerun; running on thread $(Threads.threadid())"
       json = fetch( response )
    end
+   cz = length(MAIN_RESULTS_CACHE)
+   @info "web_doonerun; cache size now $cz"
    # headers could include (e.g.) a timestamp, so add after caching
    add_headers( json )
 end # doonerun
