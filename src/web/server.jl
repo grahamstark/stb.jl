@@ -123,6 +123,7 @@ function web_doonerun( req :: Dict ) :: Dict
    tbparams = web_map_params( req )
    json = ""
    get!( MAIN_RESULTS_CACHE, tbparams) do
+      @info "adding to cache"
       response = @spawn main_run_to_json( tbparams )
       @info "web_doonerun; running on thread $(Threads.threadid())"
       json = fetch( response )
