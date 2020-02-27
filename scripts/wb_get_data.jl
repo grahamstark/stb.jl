@@ -18,7 +18,7 @@ function doRunBatch( max :: Integer ) :: String
     n = 0
     threadid = Threads.threadid()
     println("doRunBatch; running on thread $threadid")
-    rc = @timed for r1 in 29:30
+    rc = @timed for r1 in 2968:30
         for r2 in 40:50
             println( "getting data r1=$r1 r2=$r2 " )
             json = getdata( r1, r2 )
