@@ -4,10 +4,10 @@ using JSON
 import Base.Threads.@spawn
 
 const TEST_URL = "http://localhost:8000/stb"
-const LIVE_URL = "https://oustb.virtual-worlds.scot/oustb/"
+const LIVE_URL = "https://oustb.virtual-worlds.scot/oustb/stb/"
 
 function getdata( rate1:: Real, rate2 :: Real ) :: Dict
-    url = "$(TEST_URL)/?it_allow=12500&it_rate_1=$rate1&it_rate_$rate2&it_band=50000"
+    url = "$(LIVE_URL)/?it_allow=12500&it_rate_1=$rate1&it_rate_$rate2&it_band=50000"
     println( "fetching from URL $url" )
     resp = HTTP.request( "GET", url )
     json = JSON.parse(join((map(Char,resp.body))))
@@ -18,7 +18,7 @@ function doRunBatch( max :: Integer ) :: String
     n = 0
     threadid = Threads.threadid()
     println("doRunBatch; running on thread $threadid")
-    rc = @timed for r1 in 10:30
+    rc = @timed for r1 in 29:30
         for r2 in 40:50
             println( "getting data r1=$r1 r2=$r2 " )
             json = getdata( r1, r2 )

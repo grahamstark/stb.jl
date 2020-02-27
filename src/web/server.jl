@@ -30,7 +30,7 @@ const ZERO_TEST_URL="$(DEFAULT_SERVER)/bc?it_allow=0&it_rate_1=0&it_rate_2=0&it_
 const MAX_CACHE_SIZE=300
 const MAIN_RESULTS_CACHE = LRUCache.LRU{ MiniTB.TBParameters, String }(maxsize=MAX_CACHE_SIZE)
 
-@info "server starting up"
+@debug "server starting up"
 
 include( "web_model_libs.jl")
 
@@ -123,18 +123,19 @@ function web_doonerun_cached( req :: Dict ) :: Dict
    tbparams = web_map_params( req )
    json = ""
    get!( MAIN_RESULTS_CACHE, tbparams) do
-      @info "adding to cache"
+      @debug "adding to cache"
       response = @spawn main_run_to_json( tbparams )
-      @info "web_doonerun; running on thread $(Threads.threadid())"
+      @debug "web_doonerun; running on thread $(Threads.threadid())"
       json = fetch( response )
    end
    cz = length(MAIN_RESULTS_CACHE)
-   @info "web_doonerun; cache size now $cz"
+   @debug "web_doonerun; cache size now $cz"
    # headers could include (e.g.) a timestamp, so add after caching
    add_headers( json )
 end # doonerun
 
 function web_doonerun( req :: Dict ) :: AbstractString
+   @info "web_doonerun; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req )
    json = main_run_to_json( tbparams )
    # headers could include (e.g.) a timestamp, so add after caching
@@ -142,28 +143,28 @@ end # doonerun
 
 
 function web_makebc( req  :: Dict ) :: AbstractString
-   @info "web_makebc; running on thread $(Threads.threadid())"
+   @debug "web_makebc; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = DEFAULT_BC, changed = bc))
 end
 
 function web_makezbc( req  :: Dict ) :: AbstractString
-   @info "web_makezbc; running on thread $(Threads.threadid())"
+   @debug "web_makezbc; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req, MiniTB.ZERO_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams )
    JSON.json((base = ZERO_DEFAULT_BC, changed = bc))
 end
 
 function web_makeztbc( req  :: Dict ) :: AbstractString
-   @info "web_makeztbc; running on thread $(Threads.threadid())"
+   @debug "web_makeztbc; running on thread $(Threads.threadid())"
    tbparams = web_map_params( req, ZERO_TAX_PARAMS )
    bc =  local_makebc( DEFAULT_PERSON, tbparams, BC_500_SETTINGS )
    JSON.json((base = ZERO_TAX_BC, changed = bc))
 end
 
 function web_doineq( req  :: Dict ) :: AbstractString
-   @info "web_doineq; running on thread $(Threads.threadid())"
+   @debug "web_doineq; running on thread $(Threads.threadid())"
    querydict = req[:parsed_querystring]
    inc=zeros(0)
    pop=zeros(0)
@@ -198,7 +199,7 @@ function do_in_thread( the_func::Function, req :: Dict ) :: Dict
    response = @spawn the_func( req )
    # note that the func returns a string but response is a Future type
    # line below converts response to a string
-   @info "do_in_thread response is $response"
+   @debug "do_in_thread response is $response"
    json = fetch( response )
    add_headers( json )
 end
@@ -238,6 +239,6 @@ end
 serve(dd226, port)
 
 while true # FIXME better way?
-   @info "main loop; server running on port $port"
+   @debug "main loop; server running on port $port"
    sleep( 60 )
  end

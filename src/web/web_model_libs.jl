@@ -195,7 +195,7 @@ function summarise_results!(; results::DataFrame, base_results :: DataFrame )::N
     push!( metr_histogram, fit(Histogram,results.metr_2,Weights(results.weight_1),mr_edges,closed=:right).weights )
     push!( metr_histogram, metr_histogram[2]-metr_histogram[1] )
 
-    @info  "totals[1] $totals[1]"
+    @debug  "totals[1] $totals[1]"
 
     targetting_total_benefits =
         add_targetting( results,
