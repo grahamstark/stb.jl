@@ -134,12 +134,10 @@ function web_doonerun_cached( req :: Dict ) :: Dict
    add_headers( json )
 end # doonerun
 
-function web_doonerun( req :: Dict ) :: Dict
+function web_doonerun( req :: Dict ) :: AbstractString
    tbparams = web_map_params( req )
    json = main_run_to_json( tbparams )
-   @info "web_doonerun; cache size now $cz"
    # headers could include (e.g.) a timestamp, so add after caching
-   add_headers( json )
 end # doonerun
 
 
