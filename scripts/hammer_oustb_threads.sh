@@ -10,7 +10,8 @@ time sh ../hammer_oustb.sh &
 cd ../o5
 time sh ../hammer_oustb.sh &
 cd ../o6
-cd o7
+time sh ../hammer_oustb.sh &
+cd ../o7
 time sh ../hammer_oustb.sh &
 cd ../o8
 time sh ../hammer_oustb.sh &
@@ -21,7 +22,8 @@ time sh ../hammer_oustb.sh &
 cd ../o11
 time sh ../hammer_oustb.sh &
 cd ../o12
-cd o13
+time sh ../hammer_oustb.sh &
+cd ../o13
 time sh ../hammer_oustb.sh &
 cd ../o14
 time sh ../hammer_oustb.sh &
