@@ -107,8 +107,6 @@ function create_adults(
             ad_hbai = hbai_adults[((hbai_adults.year.==hbai_year).&(hbai_adults.sernum.==sernum).&(hbai_adults.person.==frs_person.person).&(hbai_adults.benunit.==frs_person.benunit)), :]
             ad_hhld = hhld[ frs_person.sernum .==  hhld.sernum,:]
             ad_benunit = benunit[ (frs_person.sernum .==  benunit.sernum).&(frs_person.benunit.==benunit.benunit),:]
-            frs_person.tenure_type = safe_assign( hhld.tentyp2 )
-            frs_person.government_region = remapRegion( hhld.gvtregn )
 
             @assert size( ad_benunit)[1] == 1
             @assert size( ad_hhld )[1] == 1
@@ -118,14 +116,19 @@ function create_adults(
             if nhbai == 1 # only non-missing in HBAI
                 adno += 1
                     ## also for children
-                model_adult.frs_year = year
                 model_adult = adult_model[adno, :]
                 model_hbai = ad_hbai[1,:]
+                model_hhld = ad_hhld[1,:]
+                frs_person.tenure_type = safe_assign( model_hhld.tentyp2 )
+                frs_person.government_region = remapRegion( model_hhld.gvtregn )
+                model_adult.frs_year = year
                 model_adult.household_income = model_hbai.esninchh
                 model_adult.benefit_unit_income = model_hbai.esnincbu
                 model_adult.person = frs_person.person
                 model_adult.household_number = frs_person.sernum
                 model_adult.household_number = frs_person.sernum
+                is_hbai_spouse = ( model_hbai.personsp == model_hbai.person )
+                is_hbai_head = ( model_hbai.personhd == model_hbai.person )
 
                 model_adult.age = frs_person.age80
                 model_adult.sex = safe_assign(frs_person.sex)
