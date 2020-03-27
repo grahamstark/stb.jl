@@ -61,7 +61,7 @@ function initialise_person( n::Integer )::DataFrame
         num_children = Vector{Union{Int8,Missing}}(missing,n),
         num_adults = Vector{Union{Int8,Missing}}(missing,n),
         age = Vector{Union{Int8,Missing}}(missing,n), # age80 - 2005-2012 ; iagegr2 full
-        empstati = Vector{Union{Int8,Missing}}(missing,n),
+        employment_status = Vector{Union{Int8,Missing}}(missing,n),
         sex = Vector{Union{Int8,Missing}}(missing,n),     # full
         marital_status = Vector{Union{Int8,Missing}}(missing,n), # full
         ethnic_group  = Vector{Union{Int8,Missing}}(missing,n), # ethgr3
@@ -119,8 +119,8 @@ function create_adults(
                 model_adult = adult_model[adno, :]
                 model_hbai = ad_hbai[1,:]
                 model_hhld = ad_hhld[1,:]
-                frs_person.tenure_type = safe_assign( model_hhld.tentyp2 )
-                frs_person.government_region = remapRegion( model_hhld.gvtregn )
+                model_adult.tenure_type = safe_assign( model_hhld.tentyp2 )
+                model_adult.government_region = remapRegion( model_hhld.gvtregn )
                 model_adult.frs_year = year
                 model_adult.household_income = model_hbai.esninchh
                 model_adult.benefit_unit_income = model_hbai.esnincbu
