@@ -17,6 +17,29 @@ function loadfrs(which::AbstractString, year::Integer)::DataFrame
     loadtoframe(filename)
 end
 
+## FIXME Move these and stb versions to libs
+
+function infer_hours_of_care(hourtot::Integer)::Real
+    hrs = Dict(
+        0 => 0.0,
+        1 => 2.0,
+        2 => 7.0,
+        3 => 14.0,
+        4 => 27.5,
+        5 => 42.5,
+        6 => 75.0,
+        7 => 100.0,
+        8 => 10.0,
+        9 => 27.5,
+        10 => 50.0
+    )
+    h = 0.0
+    if hourtot in keys(hrs)
+        h = hrs[hourtot]
+    end
+    h
+end
+
 function remapRegion( r :: Integer )
         if r == 112000001 # North East
                 r = 1
@@ -172,7 +195,7 @@ function create_adults(
                 model_adult.hours_of_care_given = infer_hours_of_care(frs_person.hourtot) # also kid
 
                 model_adult.is_informal_carer = (frs_person.carefl == 1 ? 1 : 0) # also kid
-                model_adult.in_poverty = hbai_person.low60ahc == 1
+                model_adult.in_poverty =  model_hbai.low60ahc == 1
 
                 model_adult.in_debt_now = (
                     (ad_benunit.debt01 == 1 ) ||
@@ -231,8 +254,8 @@ for year in 2017:2017
         adult,
         hbai_adults
     )
-    append!(model_people, model_adults_yr)
+    append!(model_adults, model_adults_yr)
 end
 
-CSVFiles.save( File( format"CSV", "dd309_frs_households.tab" ),
+CSVFiles.save( File( format"CSV", "dd309_frs_adults_2017_v1.tab" ),
     model_adults, delim = "\t",  nastring="")
