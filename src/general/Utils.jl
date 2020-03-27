@@ -179,7 +179,7 @@ lower case
 function loadtoframe(filename::AbstractString)::DataFrame
     df = CSV.File(filename, delim = '\t') |> DataFrame
     lcnames = Symbol.(lowercase.(string.(names(df))))
-    names!(df, lcnames)
+    rename!(df, lcnames)
     df
 end
 

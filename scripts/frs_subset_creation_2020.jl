@@ -7,23 +7,15 @@
 #
 using DataFrames
 using StatFiles
-using IterableTables
-using IteratorInterfaceExtensions
 using TableTraits
 using CSV
 using Utils
-
-global HBAI_DIR = "/mnt/data/hbai/UKDA-5828-stata11/stata11/"
-
-global FRS_DIR = "/mnt/data/frs/"
+using Definitions
 
 function loadfrs(which::AbstractString, year::Integer)::DataFrame
     filename = "$(FRS_DIR)/$(year)/tab/$(which).tab"
     loadtoframe(filename)
 end
-
-hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
-
 
 function remapRegion( r :: Integer )
         if r == 112000001 # North East
@@ -86,11 +78,10 @@ function initialise_person( n::Integer )::DataFrame
         is_informal_carer = Vector{Union{Int8,Missing}}(missing,n), # carefl
         employment_earnings = Vector{Union{Real,Missing}}(missing,n), # 07-08 missing
         self_employment_income = Vector{Union{Real,Missing}}(missing,n),
-        in_poverty,  = Vector{Union{Int8,Missing}}(missing,n), # low60ahc hbai adult
+        in_poverty = Vector{Union{Int8,Missing}}(missing,n), # low60ahc hbai adult
         happiness = Vector{Union{Int8,Missing}}(missing,n), # happywb adult
         in_debt_now = Vector{Union{Int8,Missing}}(missing,n),
-        in_debt_in_last_year = Vector{Union{Int8,Missing}}(missing,n),
-        any_disability  = Vector{Union{Int8,Missing}}(missing,n)
+        in_debt_in_last_year = Vector{Union{Int8,Missing}}(missing,n)
     )
 end
 
@@ -112,13 +103,12 @@ function create_adults(
             end
 
             frs_person = frs_adults[pn, :]
-            frs_person.frs_year = frs_person.year
             sernum = frs_person.sernum
             ad_hbai = hbai_adults[((hbai_adults.year.==hbai_year).&(hbai_adults.sernum.==sernum).&(hbai_adults.person.==frs_person.person).&(hbai_adults.benunit.==frs_person.benunit)), :]
             ad_hhld = hhld[ frs_person.sernum .==  hhld.sernum,:]
-            ad_benunit = benunit[ (frs_person.sernum .==  benunit.sernum).&(frs.person.benunit.==benunit.benunit),:]
-            frs_person.tenure_type = hh.tentyp2 > 0 ? hh.tentyp2 : -1
-            frs_person.government_region = remapRegion( hh.gvtregn )
+            ad_benunit = benunit[ (frs_person.sernum .==  benunit.sernum).&(frs_person.benunit.==benunit.benunit),:]
+            frs_person.tenure_type = safe_assign( hhld.tentyp2 )
+            frs_person.government_region = remapRegion( hhld.gvtregn )
 
             @assert size( ad_benunit)[1] == 1
             @assert size( ad_hhld )[1] == 1
@@ -128,6 +118,7 @@ function create_adults(
             if nhbai == 1 # only non-missing in HBAI
                 adno += 1
                     ## also for children
+                model_adult.frs_year = year
                 model_adult = adult_model[adno, :]
                 model_hbai = ad_hbai[1,:]
                 model_adult.household_income = model_hbai.esninchh
@@ -218,10 +209,9 @@ end
 
 
 hbai_adults = loadtoframe("$(HBAI_DIR)/tab/i1718_all.tab")
-
 model_adults = initialise_person(0)
 
-for year in 2016:2017
+for year in 2017:2017
 
     print("on year $year ")
 
@@ -238,14 +228,8 @@ for year in 2016:2017
         adult,
         hbai_adults
     )
-
     append!(model_people, model_adults_yr)
-
 end
 
-#  see this bug CSV.write("$(MODEL_DATA_DIR)model_households.tab", model_households, delim = "\t")
-# CSV.write("$(MODEL_DATA_DIR)model_households.tab", model_households, delim = "\t")
-# CSV.write("$(MODEL_DATA_DIR)model_people.tab", model_people, delim = "\t")
-#
 CSVFiles.save( File( format"CSV", "dd309_frs_households.tab" ),
     model_adults, delim = "\t",  nastring="")
