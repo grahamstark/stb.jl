@@ -265,5 +265,5 @@ for year in 2017:2017
     append!(output_adults, output_adults_yr)
 end
 
-CSVFiles.save( File( format"CSV", "/mnt/data/teaching/frs/2019J/dd309_frs_adults_2017.tab" ),
+CSVFiles.save( File( format"CSV", "/mnt/data/teaching/frs/2019J/data/dd309_frs_adults_2017.tab" ),
     output_adults, delim = "\t",  nastring="")
