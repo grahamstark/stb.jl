@@ -104,7 +104,8 @@ function initialise_person( n::Integer )::DataFrame
         in_poverty = Vector{Union{Int8,Missing}}(missing,n), # low60ahc hbai adult
         happiness = Vector{Union{Int8,Missing}}(missing,n), # happywb adult
         in_debt_now = Vector{Union{Int8,Missing}}(missing,n),
-        in_debt_in_last_year = Vector{Union{Int8,Missing}}(missing,n)
+        in_debt_in_last_year = Vector{Union{Int8,Missing}}(missing,n),
+        total_hours_worked  = Vector{Union{Real,Missing}}(missing,n),
     )
 end
 
@@ -140,6 +141,8 @@ function create_adults(
                 adno += 1
                     ## also for children
                 output_adult = adult_model[adno, :]
+                # 'single' here just extracts 1 row and allows us to treat
+                # it like a tuple/struct
                 single_hbai = matching_hbai[1,:]
                 single_hhld = matching_hhld[1,:]
                 single_benunit = matching_benunit[1,:]
@@ -230,6 +233,7 @@ function create_adults(
                     (single_benunit.debtar12 == 1 ) ||
                     (single_benunit.debtar13 == 1 )) ? 1 : 0
                 output_adult.happiness =  safe_assign(single_person.happywb)
+                output_adult.total_hours_worked = safe_assign(single_person.tothours )
             end # if in HBAI
         end # adult loop
         println("final adno $adno")
